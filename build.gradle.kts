@@ -15,12 +15,12 @@ subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
-    detekt {
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         config.setFrom("$rootDir/config/detekt/detekt.yml")
         buildUponDefaultConfig = true
     }
 
-    ktlint {
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         android.set(true)
         ignoreFailures.set(false)
         reporters {

@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(libs.bundles.kotlinx)
+    implementation(libs.bundles.lifecycle)
     implementation(libs.timber)
 
     testImplementation(libs.bundles.testing)

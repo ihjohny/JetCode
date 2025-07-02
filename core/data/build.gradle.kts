@@ -42,8 +42,10 @@ dependencies {
 
     implementation(libs.bundles.kotlinx)
     implementation(libs.bundles.koin)
+    implementation(libs.bundles.ktor)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.timber)
 
     testImplementation(libs.bundles.testing)
     testImplementation(libs.androidx.work.testing)

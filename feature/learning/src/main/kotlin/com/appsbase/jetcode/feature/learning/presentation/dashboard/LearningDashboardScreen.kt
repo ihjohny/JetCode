@@ -81,7 +81,7 @@ fun LearningDashboardScreen(
 
             state.error != null && state.skills.isEmpty() -> {
                 ErrorState(
-                    message = state.error,
+                    message = state.error ?: "Unknown error",
                     onRetry = { viewModel.handleIntent(LearningDashboardIntent.RetryClicked) },
                     modifier = Modifier.fillMaxSize()
                 )

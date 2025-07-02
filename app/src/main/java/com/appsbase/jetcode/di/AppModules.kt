@@ -1,18 +1,14 @@
 package com.appsbase.jetcode.di
 
-import android.content.Context
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
-import com.appsbase.jetcode.core.data.remote.LearningApiService
-import com.appsbase.jetcode.core.data.remote.LearningApiServiceImpl
+import com.appsbase.jetcode.core.data.di.dataModule
 import com.appsbase.jetcode.core.data.repository.LearningRepositoryImpl
-import com.appsbase.jetcode.core.database.JetCodeDatabase
+import com.appsbase.jetcode.core.database.di.databaseModule
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import com.appsbase.jetcode.core.domain.usecase.*
-import com.appsbase.jetcode.core.network.NetworkClient
+import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
-import io.ktor.client.HttpClient
-import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 /**
@@ -21,28 +17,6 @@ import org.koin.dsl.module
 
 val coreModule = module {
     single<DispatcherProvider> { DefaultDispatcherProvider() }
-}
-
-val networkModule = module {
-    single<HttpClient> {
-        NetworkClient.create(
-            baseUrl = "https://api.github.com/",
-            enableLogging = true
-        )
-    }
-
-    single<LearningApiService> {
-        LearningApiServiceImpl(get())
-    }
-}
-
-val databaseModule = module {
-    single {
-        JetCodeDatabase.create(androidContext())
-    }
-
-    single { get<JetCodeDatabase>().learningDao() }
-    single { get<JetCodeDatabase>().userProgressDao() }
 }
 
 val repositoryModule = module {
@@ -120,6 +94,7 @@ val useCaseModule = module {
 val appModules = listOf(
     coreModule,
     networkModule,
+    dataModule,
     databaseModule,
     repositoryModule,
     useCaseModule,

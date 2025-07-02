@@ -55,7 +55,10 @@ class LearningDashboardViewModel(
                         Timber.d("Skills loaded successfully: ${result.data.size} skills")
                     }
                     is Result.Error -> {
-                        val errorMessage = result.exception.getUserMessage()
+                        val errorMessage = when (val exception = result.exception) {
+                            is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                            else -> exception.message ?: "An unexpected error occurred"
+                        }
                         updateState(
                             currentState().copy(
                                 isLoading = false,
@@ -83,9 +86,16 @@ class LearningDashboardViewModel(
                 }
                 is Result.Error -> {
                     updateState(currentState().copy(isRefreshing = false))
-                    val errorMessage = syncResult.exception.getUserMessage()
+                    val errorMessage = when (val exception = syncResult.exception) {
+                        is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                        else -> exception.message ?: "An unexpected error occurred"
+                    }
                     sendEffect(LearningDashboardEffect.ShowError("Sync failed: $errorMessage"))
                     Timber.e(syncResult.exception, "Error syncing content")
+                }
+                is Result.Loading -> {
+                    // Keep the refreshing state - loading is handled by the isRefreshing flag
+                    Timber.d("Syncing content...")
                 }
             }
         }
@@ -106,7 +116,10 @@ class LearningDashboardViewModel(
                     }
                     is Result.Error -> {
                         updateState(currentState().copy(isRefreshing = false))
-                        val errorMessage = result.exception.getUserMessage()
+                        val errorMessage = when (val exception = result.exception) {
+                            is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                            else -> exception.message ?: "An unexpected error occurred"
+                        }
                         sendEffect(LearningDashboardEffect.ShowError(errorMessage))
                     }
                     is Result.Loading -> {

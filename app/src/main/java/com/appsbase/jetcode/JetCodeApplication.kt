@@ -18,7 +18,7 @@ class JetCodeApplication : Application() {
         super.onCreate()
 
         // Initialize Timber for logging
-        if (BuildConfig.DEBUG) {
+        if (com.appsbase.jetcode.BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
 
