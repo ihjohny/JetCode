@@ -6,7 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.appsbase.jetcode.feature.learning.presentation.dashboard.LearningDashboardScreen
+import com.appsbase.jetcode.feature.learning.presentation.lesson.LessonScreen
+import com.appsbase.jetcode.feature.learning.presentation.skilldetail.SkillDetailScreen
 import com.appsbase.jetcode.feature.onboarding.presentation.OnboardingScreen
+import com.appsbase.jetcode.feature.practice.presentation.PracticeScreen
+import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 
 /**
  * Navigation routes for the JetCode app
@@ -33,7 +37,7 @@ fun JetCodeNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Onboarding flow - Now using actual implementation
+        // Onboarding flow
         composable(JetCodeDestinations.ONBOARDING_ROUTE) {
             OnboardingScreen(
                 onOnboardingComplete = {
@@ -46,7 +50,7 @@ fun JetCodeNavHost(
             )
         }
 
-        // Home/Learning dashboard - Now using actual implementation
+        // Home/Learning dashboard
         composable(JetCodeDestinations.HOME_ROUTE) {
             LearningDashboardScreen(
                 onSkillClick = { skillId ->
@@ -109,37 +113,4 @@ fun JetCodeNavHost(
             )
         }
     }
-}
-
-// Placeholder composables - these will be implemented in feature modules
-@Composable
-private fun SkillDetailScreen(
-    skillId: String,
-    onLessonClick: (String) -> Unit,
-    onBackClick: () -> Unit
-) {
-    // Will be implemented in :feature:learning
-}
-
-@Composable
-private fun LessonScreen(
-    lessonId: String,
-    onPracticeClick: (String) -> Unit,
-    onBackClick: () -> Unit
-) {
-    // Will be implemented in :feature:learning
-}
-
-@Composable
-private fun PracticeScreen(
-    practiceId: String,
-    onPracticeComplete: () -> Unit,
-    onBackClick: () -> Unit
-) {
-    // Will be implemented in :feature:practice
-}
-
-@Composable
-private fun ProfileScreen(onBackClick: () -> Unit) {
-    // Will be implemented in :feature:profile
 }

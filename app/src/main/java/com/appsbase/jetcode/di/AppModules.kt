@@ -86,6 +86,27 @@ val useCaseModule = module {
             dispatcherProvider = get()
         )
     }
+
+    factory {
+        GetTopicsForSkillUseCase(
+            learningRepository = get(),
+            dispatcherProvider = get()
+        )
+    }
+
+    factory {
+        GetLessonByIdUseCase(
+            learningRepository = get(),
+            dispatcherProvider = get()
+        )
+    }
+
+    factory {
+        GetLessonsForTopicUseCase(
+            learningRepository = get(),
+            dispatcherProvider = get()
+        )
+    }
 }
 
 /**
