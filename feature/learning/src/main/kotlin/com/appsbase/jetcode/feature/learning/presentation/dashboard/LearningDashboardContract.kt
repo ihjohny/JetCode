@@ -15,7 +15,7 @@ data class LearningDashboardState(
     val searchQuery: String = "",
     val filteredSkills: List<Skill> = emptyList(),
     val error: String? = null,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
 ) : UiState
 
 sealed class LearningDashboardIntent : UiIntent {
