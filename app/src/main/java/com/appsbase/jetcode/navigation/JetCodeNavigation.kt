@@ -26,6 +26,15 @@ object JetCodeDestinations {
 }
 
 /**
+ * Navigation argument keys used throughout the app
+ */
+object NavigationArgs {
+    const val SKILL_ID = "skillId"
+    const val LESSON_ID = "lessonId"
+    const val PRACTICE_ID = "practiceId"
+}
+
+/**
  * Main navigation host for the JetCode app
  */
 @Composable
@@ -63,8 +72,8 @@ fun JetCodeNavHost(
         }
 
         // Skill detail with topics
-        composable("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/{skillId}") { backStackEntry ->
-            val skillId = backStackEntry.arguments?.getString("skillId") ?: ""
+        composable("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/{${NavigationArgs.SKILL_ID}}") { backStackEntry ->
+            val skillId = backStackEntry.arguments?.getString(NavigationArgs.SKILL_ID) ?: ""
             SkillDetailScreen(
                 skillId = skillId,
                 onLessonClick = { lessonId ->
@@ -77,8 +86,8 @@ fun JetCodeNavHost(
         }
 
         // Lesson content
-        composable("${JetCodeDestinations.LESSON_ROUTE}/{lessonId}") { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+        composable("${JetCodeDestinations.LESSON_ROUTE}/{${NavigationArgs.LESSON_ID}}") { backStackEntry ->
+            val lessonId = backStackEntry.arguments?.getString(NavigationArgs.LESSON_ID) ?: ""
             LessonScreen(
                 lessonId = lessonId,
                 onPracticeClick = { practiceId ->
@@ -91,8 +100,8 @@ fun JetCodeNavHost(
         }
 
         // Practice exercises
-        composable("${JetCodeDestinations.PRACTICE_ROUTE}/{practiceId}") { backStackEntry ->
-            val practiceId = backStackEntry.arguments?.getString("practiceId") ?: ""
+        composable("${JetCodeDestinations.PRACTICE_ROUTE}/{${NavigationArgs.PRACTICE_ID}}") { backStackEntry ->
+            val practiceId = backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_ID) ?: ""
             PracticeScreen(
                 practiceId = practiceId,
                 onPracticeComplete = {

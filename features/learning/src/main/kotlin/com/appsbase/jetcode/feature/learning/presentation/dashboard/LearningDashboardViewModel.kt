@@ -9,12 +9,9 @@ import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-/**
- * ViewModel for Learning Dashboard following MVI pattern
- */
 class LearningDashboardViewModel(
     private val getSkillsUseCase: GetSkillsUseCase,
-    private val syncContentUseCase: SyncContentUseCase
+    private val syncContentUseCase: SyncContentUseCase,
 ) : BaseViewModel<LearningDashboardState, LearningDashboardIntent, LearningDashboardEffect>(
     initialState = LearningDashboardState()
 ) {
@@ -43,6 +40,7 @@ class LearningDashboardViewModel(
                     is Result.Loading -> {
                         updateState(currentState().copy(isLoading = true))
                     }
+
                     is Result.Success -> {
                         updateState(
                             currentState().copy(
@@ -54,6 +52,7 @@ class LearningDashboardViewModel(
                         )
                         Timber.d("Skills loaded successfully: ${result.data.size} skills")
                     }
+
                     is Result.Error -> {
                         val errorMessage = when (val exception = result.exception) {
                             is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
@@ -61,8 +60,7 @@ class LearningDashboardViewModel(
                         }
                         updateState(
                             currentState().copy(
-                                isLoading = false,
-                                error = errorMessage
+                                isLoading = false, error = errorMessage
                             )
                         )
                         sendEffect(LearningDashboardEffect.ShowError(errorMessage))
@@ -84,6 +82,7 @@ class LearningDashboardViewModel(
                     // Then load updated skills
                     loadSkillsAfterSync()
                 }
+
                 is Result.Error -> {
                     updateState(currentState().copy(isRefreshing = false))
                     val errorMessage = when (val exception = syncResult.exception) {
@@ -93,6 +92,7 @@ class LearningDashboardViewModel(
                     sendEffect(LearningDashboardEffect.ShowError("Sync failed: $errorMessage"))
                     Timber.e(syncResult.exception, "Error syncing content")
                 }
+
                 is Result.Loading -> {
                     // Keep the refreshing state - loading is handled by the isRefreshing flag
                     Timber.d("Syncing content...")
@@ -110,10 +110,13 @@ class LearningDashboardViewModel(
                             currentState().copy(
                                 isRefreshing = false,
                                 skills = result.data,
-                                filteredSkills = filterSkills(result.data, currentState().searchQuery)
+                                filteredSkills = filterSkills(
+                                    result.data, currentState().searchQuery
+                                )
                             )
                         )
                     }
+
                     is Result.Error -> {
                         updateState(currentState().copy(isRefreshing = false))
                         val errorMessage = when (val exception = result.exception) {
@@ -122,6 +125,7 @@ class LearningDashboardViewModel(
                         }
                         sendEffect(LearningDashboardEffect.ShowError(errorMessage))
                     }
+
                     is Result.Loading -> {
                         // Keep refreshing state
                     }
@@ -134,19 +138,22 @@ class LearningDashboardViewModel(
         val filteredSkills = filterSkills(currentState().skills, query)
         updateState(
             currentState().copy(
-                searchQuery = query,
-                filteredSkills = filteredSkills
+                searchQuery = query, filteredSkills = filteredSkills
             )
         )
         Timber.d("Search query: '$query', found ${filteredSkills.size} results")
     }
 
-    private fun filterSkills(skills: List<com.appsbase.jetcode.core.domain.model.Skill>, query: String): List<com.appsbase.jetcode.core.domain.model.Skill> {
+    private fun filterSkills(
+        skills: List<com.appsbase.jetcode.core.domain.model.Skill>, query: String
+    ): List<com.appsbase.jetcode.core.domain.model.Skill> {
         if (query.isBlank()) return skills
 
         return skills.filter { skill ->
-            skill.name.contains(query, ignoreCase = true) ||
-            skill.description.contains(query, ignoreCase = true)
+            skill.name.contains(query, ignoreCase = true) || skill.description.contains(
+                query,
+                ignoreCase = true
+            )
         }
     }
 
