@@ -1,15 +1,30 @@
 package com.appsbase.jetcode.feature.onboarding.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -19,7 +34,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnboardingScreen(
     onOnboardingComplete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
@@ -28,17 +43,15 @@ fun OnboardingScreen(
         OnboardingPage(
             title = "Welcome to JetCode",
             description = "Learn modern Android development with Kotlin and Jetpack Compose through interactive lessons and hands-on practice.",
-            buttonText = "Next"
-        ),
-        OnboardingPage(
+            buttonText = "Next",
+        ), OnboardingPage(
             title = "Interactive Learning",
             description = "Master concepts through structured lessons, code examples, and interactive exercises designed for all skill levels.",
-            buttonText = "Next"
-        ),
-        OnboardingPage(
+            buttonText = "Next",
+        ), OnboardingPage(
             title = "Practice & Progress",
             description = "Track your progress, complete challenges, and build real Android apps with the skills you learn.",
-            buttonText = "Get Started"
+            buttonText = "Get Started",
         )
     )
 
@@ -47,11 +60,11 @@ fun OnboardingScreen(
     ) {
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) { page ->
             OnboardingPageContent(
                 page = onboardingPages[page],
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
 
@@ -61,7 +74,7 @@ fun OnboardingScreen(
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Skip button
             if (pagerState.currentPage < onboardingPages.size - 1) {
@@ -88,9 +101,8 @@ fun OnboardingScreen(
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.outline
-                                },
-                                shape = androidx.compose.foundation.shape.CircleShape
-                            )
+                                }, shape = androidx.compose.foundation.shape.CircleShape
+                            ),
                     )
                 }
             }
@@ -105,7 +117,7 @@ fun OnboardingScreen(
                     } else {
                         onOnboardingComplete()
                     }
-                }
+                },
             ) {
                 Text(onboardingPages[pagerState.currentPage].buttonText)
             }
@@ -116,12 +128,12 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingPageContent(
     page: OnboardingPage,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         // Placeholder for illustration
         Box(
@@ -129,13 +141,13 @@ private fun OnboardingPageContent(
                 .size(200.dp)
                 .background(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "📚",
-                style = MaterialTheme.typography.displayLarge
+                style = MaterialTheme.typography.displayLarge,
             )
         }
 
@@ -145,7 +157,7 @@ private fun OnboardingPageContent(
             text = page.title,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -155,7 +167,7 @@ private fun OnboardingPageContent(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.2
+            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.2,
         )
     }
 }
@@ -163,5 +175,15 @@ private fun OnboardingPageContent(
 private data class OnboardingPage(
     val title: String,
     val description: String,
-    val buttonText: String
+    val buttonText: String,
 )
+
+@Preview(showBackground = true)
+@Composable
+private fun OnboardingScreenPreview() {
+    MaterialTheme {
+        OnboardingScreen(
+            onOnboardingComplete = { },
+        )
+    }
+}

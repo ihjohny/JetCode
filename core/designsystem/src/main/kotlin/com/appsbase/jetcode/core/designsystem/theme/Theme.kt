@@ -1,7 +1,6 @@
 package com.appsbase.jetcode.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -59,47 +58,39 @@ data class JetCodeExtendedColors(
     val difficultyExpert: androidx.compose.ui.graphics.Color,
 )
 
+/**
+ * Default extended colors instance
+ */
+private val DefaultJetCodeExtendedColors = JetCodeExtendedColors(
+    success = JetCodeColors.Success,
+    warning = JetCodeColors.Warning,
+    info = JetCodeColors.Info,
+    progressComplete = JetCodeColors.ProgressComplete,
+    progressInProgress = JetCodeColors.ProgressInProgress,
+    progressLocked = JetCodeColors.ProgressLocked,
+    difficultyBeginner = JetCodeColors.DifficultyBeginner,
+    difficultyIntermediate = JetCodeColors.DifficultyIntermediate,
+    difficultyAdvanced = JetCodeColors.DifficultyAdvanced,
+    difficultyExpert = JetCodeColors.DifficultyExpert,
+)
+
 private val LocalJetCodeExtendedColors = staticCompositionLocalOf {
-    JetCodeExtendedColors(
-        success = JetCodeColors.Success,
-        warning = JetCodeColors.Warning,
-        info = JetCodeColors.Info,
-        progressComplete = JetCodeColors.ProgressComplete,
-        progressInProgress = JetCodeColors.ProgressInProgress,
-        progressLocked = JetCodeColors.ProgressLocked,
-        difficultyBeginner = JetCodeColors.DifficultyBeginner,
-        difficultyIntermediate = JetCodeColors.DifficultyIntermediate,
-        difficultyAdvanced = JetCodeColors.DifficultyAdvanced,
-        difficultyExpert = JetCodeColors.DifficultyExpert,
-    )
+    DefaultJetCodeExtendedColors
 }
 
 @Composable
 fun JetCodeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-    val extendedColors = JetCodeExtendedColors(
-        success = JetCodeColors.Success,
-        warning = JetCodeColors.Warning,
-        info = JetCodeColors.Info,
-        progressComplete = JetCodeColors.ProgressComplete,
-        progressInProgress = JetCodeColors.ProgressInProgress,
-        progressLocked = JetCodeColors.ProgressLocked,
-        difficultyBeginner = JetCodeColors.DifficultyBeginner,
-        difficultyIntermediate = JetCodeColors.DifficultyIntermediate,
-        difficultyAdvanced = JetCodeColors.DifficultyAdvanced,
-        difficultyExpert = JetCodeColors.DifficultyExpert,
-    )
 
     CompositionLocalProvider(
-        LocalJetCodeExtendedColors provides extendedColors
+        LocalJetCodeExtendedColors provides DefaultJetCodeExtendedColors
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = JetCodeTypography,
-            content = content
+            content = content,
         )
     }
 }
@@ -109,6 +100,5 @@ fun JetCodeTheme(
  */
 object JetCodeTheme {
     val extendedColors: JetCodeExtendedColors
-        @Composable
-        get() = LocalJetCodeExtendedColors.current
+        @Composable get() = LocalJetCodeExtendedColors.current
 }

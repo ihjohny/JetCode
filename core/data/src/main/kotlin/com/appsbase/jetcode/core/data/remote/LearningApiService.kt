@@ -1,5 +1,6 @@
 package com.appsbase.jetcode.core.data.remote
 
+import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.network.safeNetworkCall
 import io.ktor.client.HttpClient
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface LearningApiService {
     suspend fun getSkills(): List<Skill>
-    fun getSkillsFlow(): Flow<com.appsbase.jetcode.core.common.Result<List<Skill>>>
+    fun getSkillsFlow(): Flow<Result<List<Skill>>>
 }
 
 class LearningApiServiceImpl(
@@ -28,7 +29,7 @@ class LearningApiServiceImpl(
         return getSampleSkills()
     }
 
-    override fun getSkillsFlow(): Flow<com.appsbase.jetcode.core.common.Result<List<Skill>>> {
+    override fun getSkillsFlow(): Flow<Result<List<Skill>>> {
         return safeNetworkCall<List<Skill>> {
             httpClient.get(SKILLS_ENDPOINT)
         }

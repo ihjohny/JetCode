@@ -6,11 +6,6 @@ package com.appsbase.jetcode.core.common.mvi
 interface UiState
 
 /**
- * Base interface for all UI events/actions in MVI pattern
- */
-interface UiEvent
-
-/**
  * Base interface for all side effects in MVI pattern
  */
 interface UiEffect

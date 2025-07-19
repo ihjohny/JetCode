@@ -31,7 +31,7 @@ object JetCodeDestinations {
 @Composable
 fun JetCodeNavHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = JetCodeDestinations.HOME_ROUTE
+    startDestination: String = JetCodeDestinations.ONBOARDING_ROUTE
 ) {
     NavHost(
         navController = navController,
@@ -72,7 +72,7 @@ fun JetCodeNavHost(
                 },
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
             )
         }
 
@@ -86,7 +86,7 @@ fun JetCodeNavHost(
                 },
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
             )
         }
 
@@ -100,7 +100,7 @@ fun JetCodeNavHost(
                 },
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
             )
         }
 
@@ -109,7 +109,7 @@ fun JetCodeNavHost(
             ProfileScreen(
                 onBackClick = {
                     navController.popBackStack()
-                }
+                },
             )
         }
     }
