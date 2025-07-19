@@ -35,7 +35,7 @@ include(":data:repository")
 include(":data:database")
 
 // Feature modules
-include(":feature:onboarding")
-include(":feature:learning")
-include(":feature:practice")
-include(":feature:profile")
+include(":features:onboarding")
+include(":features:learning")
+include(":features:practice")
+include(":features:profile")

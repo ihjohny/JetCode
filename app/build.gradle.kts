@@ -67,10 +67,10 @@ dependencies {
     implementation(project(":data:repository"))
 
     // Feature modules
-    implementation(project(":feature:onboarding"))
-    implementation(project(":feature:learning"))
-    implementation(project(":feature:practice"))
-    implementation(project(":feature:profile"))
+    implementation(project(":features:onboarding"))
+    implementation(project(":features:learning"))
+    implementation(project(":features:practice"))
+    implementation(project(":features:profile"))
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
