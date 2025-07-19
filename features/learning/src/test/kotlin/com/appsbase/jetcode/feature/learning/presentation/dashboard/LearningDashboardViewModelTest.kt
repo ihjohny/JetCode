@@ -1,7 +1,6 @@
 package com.appsbase.jetcode.feature.learning.presentation.dashboard
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
@@ -17,11 +16,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Unit tests for LearningDashboardViewModel demonstrating MVI testing patterns
@@ -32,12 +31,6 @@ class LearningDashboardViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val mockGetSkillsUseCase: GetSkillsUseCase = mockk()
     private val mockSyncContentUseCase: SyncContentUseCase = mockk()
-    private val mockDispatcherProvider: DispatcherProvider = mockk {
-        every { io } returns testDispatcher
-        every { main } returns testDispatcher
-        every { default } returns testDispatcher
-        every { unconfined } returns testDispatcher
-    }
 
     private lateinit var viewModel: LearningDashboardViewModel
 
