@@ -1,17 +1,40 @@
 package com.appsbase.jetcode.feature.learning.presentation.skilldetail
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.appsbase.jetcode.core.domain.model.Difficulty
+import com.appsbase.jetcode.core.domain.model.Skill
+import com.appsbase.jetcode.core.domain.model.Topic
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
@@ -43,6 +66,7 @@ fun SkillDetailScreen(
                 is SkillDetailEffect.NavigateToTopic -> {
                     onLessonClick(effect.topicId)
                 }
+
                 is SkillDetailEffect.ShowError -> {
                     // Handle error - could show snackbar
                 }
@@ -54,29 +78,23 @@ fun SkillDetailScreen(
         modifier = modifier.fillMaxSize()
     ) {
         // Top App Bar
-        TopAppBar(
-            title = {
-                Text(
-                    text = state.skill?.name ?: "Skill Detail",
-                    fontWeight = FontWeight.Bold
+        TopAppBar(title = {
+            Text(
+                text = state.skill?.name ?: "Skill Detail", fontWeight = FontWeight.Bold
+            )
+        }, navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack, contentDescription = "Back"
                 )
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
             }
-        )
+        })
 
         // Content
         when {
             state.isLoading -> {
                 LoadingState(
-                    modifier = Modifier.fillMaxSize(),
-                    message = "Loading skill details..."
+                    modifier = Modifier.fillMaxSize(), message = "Loading skill details..."
                 )
             }
 
@@ -90,11 +108,9 @@ fun SkillDetailScreen(
 
             state.skill != null -> {
                 SkillDetailContent(
-                    state = state,
-                    onTopicClick = { topicId ->
+                    state = state, onTopicClick = { topicId ->
                         viewModel.handleIntent(SkillDetailIntent.TopicClicked(topicId))
-                    },
-                    modifier = Modifier.fillMaxSize()
+                    }, modifier = Modifier.fillMaxSize()
                 )
             }
         }
@@ -103,15 +119,12 @@ fun SkillDetailScreen(
 
 @Composable
 private fun SkillDetailContent(
-    state: SkillDetailState,
-    onTopicClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    state: SkillDetailState, onTopicClick: (String) -> Unit, modifier: Modifier = Modifier
 ) {
     val skill = state.skill ?: return
 
     LazyColumn(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Skill Overview Card
         item {
@@ -183,12 +196,10 @@ private fun SkillDetailContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         InfoChip(
-                            label = "Duration",
-                            value = "${skill.estimatedDuration} min"
+                            label = "Duration", value = "${skill.estimatedDuration} min"
                         )
                         InfoChip(
-                            label = "Topics",
-                            value = "${state.topics.size}"
+                            label = "Topics", value = "${state.topics.size}"
                         )
                         InfoChip(
                             label = "Status",
@@ -230,13 +241,9 @@ private fun SkillDetailContent(
             }
         } else {
             items(
-                items = state.topics,
-                key = { it.id }
-            ) { topic ->
+                items = state.topics, key = { it.id }) { topic ->
                 TopicCard(
-                    topic = topic,
-                    onClick = { onTopicClick(topic.id) }
-                )
+                    topic = topic, onClick = { onTopicClick(topic.id) })
             }
         }
     }
@@ -244,9 +251,7 @@ private fun SkillDetailContent(
 
 @Composable
 private fun TopicCard(
-    topic: com.appsbase.jetcode.core.domain.model.Topic,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    topic: Topic, onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Card(
         onClick = onClick,
@@ -284,8 +289,7 @@ private fun TopicCard(
                         MaterialTheme.colorScheme.secondaryContainer
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant
-                    },
-                    shape = MaterialTheme.shapes.small
+                    }, shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         text = when {
@@ -316,13 +320,10 @@ private fun TopicCard(
 
 @Composable
 private fun InfoChip(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
+    label: String, value: String, modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = value,
@@ -334,6 +335,87 @@ private fun InfoChip(
             text = label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+    }
+}
+
+// Preview Data
+private val mockSkill = Skill(
+    id = "kotlin-basics",
+    name = "Kotlin Fundamentals",
+    description = "Learn the fundamentals of Kotlin programming language including variables, functions, classes, and control flow.",
+    iconUrl = null,
+    difficulty = Difficulty.BEGINNER,
+    estimatedDuration = 120,
+    isCompleted = false,
+    progress = 0.65f
+)
+
+private val mockTopics = listOf(
+    Topic(
+        id = "variables",
+        skillId = "kotlin-basics",
+        name = "Variables and Data Types",
+        description = "Learn about different data types and how to declare variables in Kotlin",
+        order = 1,
+        isUnlocked = true,
+        isCompleted = true,
+        progress = 1.0f
+    ), Topic(
+        id = "functions",
+        skillId = "kotlin-basics",
+        name = "Functions",
+        description = "Understand how to create and use functions in Kotlin",
+        order = 2,
+        isUnlocked = true,
+        isCompleted = true,
+        progress = 1.0f
+    ), Topic(
+        id = "classes",
+        skillId = "kotlin-basics",
+        name = "Classes and Objects",
+        description = "Learn object-oriented programming concepts in Kotlin",
+        order = 3,
+        isUnlocked = true,
+        isCompleted = false,
+        progress = 0.6f
+    ), Topic(
+        id = "control-flow",
+        skillId = "kotlin-basics",
+        name = "Control Flow",
+        description = "Master if statements, loops, and conditional expressions",
+        order = 4,
+        isUnlocked = false,
+        isCompleted = false,
+        progress = 0.0f
+    )
+)
+
+private val mockStateWithData = SkillDetailState(
+    isLoading = false,
+    skill = mockSkill,
+    topics = mockTopics,
+    error = null,
+)
+
+@Preview(showBackground = true)
+@Composable
+private fun SkillDetailContentPreview() {
+    MaterialTheme {
+        SkillDetailContent(
+            state = mockStateWithData, onTopicClick = {}, modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SkillDetailContentEmptyTopicsPreview() {
+    MaterialTheme {
+        SkillDetailContent(
+            state = mockStateWithData.copy(topics = emptyList()),
+            onTopicClick = {},
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
