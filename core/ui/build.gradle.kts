@@ -39,7 +39,7 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(project(":core:domain"))
+    implementation(project(":domain"))
     implementation(project(":core:designsystem"))
 
     implementation(platform(libs.androidx.compose.bom))

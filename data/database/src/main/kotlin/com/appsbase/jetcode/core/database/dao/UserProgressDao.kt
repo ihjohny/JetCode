@@ -39,15 +39,19 @@ interface UserProgressDao {
     @Query("DELETE FROM lesson_progress WHERE userId = :userId")
     suspend fun clearUserLessonProgresses(userId: String)
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(*) FROM lesson_progress 
         WHERE userId = :userId AND isCompleted = 1
-    """)
+    """
+    )
     fun getCompletedLessonsCount(userId: String): Flow<Int>
 
-    @Query("""
+    @Query(
+        """
         SELECT SUM(score) FROM lesson_progress 
         WHERE userId = :userId AND isCompleted = 1
-    """)
+    """
+    )
     fun getTotalScore(userId: String): Flow<Int>
 }

@@ -36,9 +36,9 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(project(":core:domain"))
+    implementation(project(":domain"))
     implementation(project(":core:network"))
-    implementation(project(":core:database"))
+    implementation(project(":data:database"))
 
     implementation(libs.bundles.kotlinx)
     implementation(libs.bundles.koin)

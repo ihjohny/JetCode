@@ -27,8 +27,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -57,13 +56,15 @@ android {
 dependencies {
     // Core modules
     implementation(project(":core:common"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:data"))
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:analytics"))
     implementation(project(":core:network"))
-    implementation(project(":core:database"))
+
+    // Data modules
+    implementation(project(":domain"))
+    implementation(project(":data:database"))
+    implementation(project(":data:repository"))
 
     // Feature modules
     implementation(project(":feature:onboarding"))

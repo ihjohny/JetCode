@@ -17,7 +17,7 @@ import com.appsbase.jetcode.core.database.entity.*
         MaterialEntity::class,
         PracticeEntity::class,
         UserProgressEntity::class,
-        LessonProgressEntity::class
+        LessonProgressEntity::class,
     ],
     version = 1,
     exportSchema = false
@@ -35,10 +35,10 @@ abstract class JetCodeDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context.applicationContext,
                 JetCodeDatabase::class.java,
-                DATABASE_NAME
+                DATABASE_NAME,
             )
-            .fallbackToDestructiveMigration()
-            .build()
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
 }

@@ -66,24 +66,30 @@ interface LearningDao {
     @Query("DELETE FROM practices")
     suspend fun clearPractices()
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM skills 
         WHERE name LIKE '%' || :query || '%' 
         OR description LIKE '%' || :query || '%'
-    """)
+    """
+    )
     fun searchSkills(query: String): Flow<List<SkillEntity>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM topics 
         WHERE name LIKE '%' || :query || '%' 
         OR description LIKE '%' || :query || '%'
-    """)
+    """
+    )
     fun searchTopics(query: String): Flow<List<TopicEntity>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM lessons 
         WHERE title LIKE '%' || :query || '%' 
         OR description LIKE '%' || :query || '%'
-    """)
+    """
+    )
     fun searchLessons(query: String): Flow<List<LessonEntity>>
 }

@@ -24,13 +24,15 @@ include(":app")
 
 // Core modules
 include(":core:common")
-include(":core:data")
-include(":core:domain")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:analytics")
 include(":core:network")
-include(":core:database")
+
+// Data modules
+include(":domain")
+include(":data:repository")
+include(":data:database")
 
 // Feature modules
 include(":feature:onboarding")
