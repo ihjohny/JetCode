@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
+import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
 import kotlinx.coroutines.launch
@@ -145,8 +146,8 @@ class LearningDashboardViewModel(
     }
 
     private fun filterSkills(
-        skills: List<com.appsbase.jetcode.core.domain.model.Skill>, query: String
-    ): List<com.appsbase.jetcode.core.domain.model.Skill> {
+        skills: List<Skill>, query: String
+    ): List<Skill> {
         if (query.isBlank()) return skills
 
         return skills.filter { skill ->
