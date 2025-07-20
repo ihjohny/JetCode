@@ -117,19 +117,28 @@ class LearningRepositoryImpl(
 
     override suspend fun syncContent(): Result<Unit> {
         return try {
-            // Fetch content from remote API (GitHub in this case)
+            // Fetch all content from remote API
             val remoteSkills = apiService.getSkills()
+            val remoteTopics = apiService.getTopics()
+            val remoteLessons = apiService.getLessons()
+            val remoteMaterials = apiService.getMaterials()
+            val remotePractices = apiService.getPractices()
 
-            // Clear existing data and insert new data
-            learningDao.clearSkills()
-            learningDao.clearTopics()
-            learningDao.clearLessons()
-            learningDao.clearMaterials()
+            // Clear existing data in proper order (respecting foreign key constraints)
             learningDao.clearPractices()
+            learningDao.clearMaterials()
+            learningDao.clearLessons()
+            learningDao.clearTopics()
+            learningDao.clearSkills()
 
-            // Insert new data
+            // Insert new data in proper order (respecting foreign key constraints)
             learningDao.insertSkills(remoteSkills.map { it.toEntity() })
+            learningDao.insertTopics(remoteTopics.map { it.toEntity() })
+            learningDao.insertLessons(remoteLessons.map { it.toEntity() })
+            learningDao.insertMaterials(remoteMaterials.map { it.toEntity() })
+            learningDao.insertPractices(remotePractices.map { it.toEntity() })
 
+            Timber.d("Content sync completed successfully")
             Result.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e, "Error syncing content")

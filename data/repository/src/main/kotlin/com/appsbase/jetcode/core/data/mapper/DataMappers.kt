@@ -1,7 +1,18 @@
 package com.appsbase.jetcode.core.data.mapper
 
-import com.appsbase.jetcode.core.database.entity.*
-import com.appsbase.jetcode.core.domain.model.*
+import com.appsbase.jetcode.core.database.entity.LessonEntity
+import com.appsbase.jetcode.core.database.entity.MaterialEntity
+import com.appsbase.jetcode.core.database.entity.PracticeEntity
+import com.appsbase.jetcode.core.database.entity.SkillEntity
+import com.appsbase.jetcode.core.database.entity.TopicEntity
+import com.appsbase.jetcode.core.domain.model.Difficulty
+import com.appsbase.jetcode.core.domain.model.Lesson
+import com.appsbase.jetcode.core.domain.model.Material
+import com.appsbase.jetcode.core.domain.model.MaterialType
+import com.appsbase.jetcode.core.domain.model.Practice
+import com.appsbase.jetcode.core.domain.model.PracticeType
+import com.appsbase.jetcode.core.domain.model.Skill
+import com.appsbase.jetcode.core.domain.model.Topic
 
 /**
  * Mappers to convert between database entities and domain models
@@ -16,7 +27,7 @@ fun SkillEntity.toDomain(): Skill = Skill(
     estimatedDuration = estimatedDuration,
     isCompleted = isCompleted,
     progress = progress,
-    topics = emptyList() // Will be populated by use cases if needed
+    topicIds = topicIds
 )
 
 fun Skill.toEntity(): SkillEntity = SkillEntity(
@@ -28,7 +39,7 @@ fun Skill.toEntity(): SkillEntity = SkillEntity(
     estimatedDuration = estimatedDuration,
     isCompleted = isCompleted,
     progress = progress,
-    topicIds = topics.map { it.id }
+    topicIds = topicIds
 )
 
 fun TopicEntity.toDomain(): Topic = Topic(
@@ -40,7 +51,7 @@ fun TopicEntity.toDomain(): Topic = Topic(
     isUnlocked = isUnlocked,
     isCompleted = isCompleted,
     progress = progress,
-    lessons = emptyList() // Will be populated by use cases if needed
+    lessonIds = lessonIds
 )
 
 fun Topic.toEntity(): TopicEntity = TopicEntity(
@@ -52,7 +63,7 @@ fun Topic.toEntity(): TopicEntity = TopicEntity(
     isUnlocked = isUnlocked,
     isCompleted = isCompleted,
     progress = progress,
-    lessonIds = lessons.map { it.id }
+    lessonIds = lessonIds
 )
 
 fun LessonEntity.toDomain(): Lesson = Lesson(
@@ -64,8 +75,8 @@ fun LessonEntity.toDomain(): Lesson = Lesson(
     duration = duration,
     isCompleted = isCompleted,
     score = score,
-    materials = emptyList(), // Will be populated by use cases if needed
-    practices = emptyList() // Will be populated by use cases if needed
+    materialIds = materialIds,
+    practiceIds = practiceIds
 )
 
 fun Lesson.toEntity(): LessonEntity = LessonEntity(
@@ -77,8 +88,8 @@ fun Lesson.toEntity(): LessonEntity = LessonEntity(
     duration = duration,
     isCompleted = isCompleted,
     score = score,
-    materialIds = materials.map { it.id },
-    practiceIds = practices.map { it.id }
+    materialIds = materialIds,
+    practiceIds = practiceIds
 )
 
 fun MaterialEntity.toDomain(): Material = Material(

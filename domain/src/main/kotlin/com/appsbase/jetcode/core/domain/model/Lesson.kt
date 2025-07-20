@@ -8,8 +8,8 @@ data class Lesson(
     val topicId: String,
     val title: String,
     val description: String,
-    val materials: List<Material> = emptyList(),
-    val practices: List<Practice> = emptyList(),
+    val materialIds: List<String> = emptyList(),
+    val practiceIds: List<String> = emptyList(),
     val order: Int,
     val duration: Int, // in minutes
     val isCompleted: Boolean = false,

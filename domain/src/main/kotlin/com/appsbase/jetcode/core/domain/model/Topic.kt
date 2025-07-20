@@ -8,7 +8,7 @@ data class Topic(
     val skillId: String,
     val name: String,
     val description: String,
-    val lessons: List<Lesson> = emptyList(),
+    val lessonIds: List<String> = emptyList(),
     val order: Int,
     val isUnlocked: Boolean = false,
     val isCompleted: Boolean = false,

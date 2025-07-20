@@ -8,7 +8,7 @@ data class Skill(
     val name: String,
     val description: String,
     val iconUrl: String?,
-    val topics: List<Topic> = emptyList(),
+    val topicIds: List<String> = emptyList(),
     val difficulty: Difficulty,
     val estimatedDuration: Int, // in minutes
     val isCompleted: Boolean = false,

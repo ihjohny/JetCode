@@ -43,8 +43,8 @@ class LessonViewModel(
                             currentState().copy(
                                 isLoading = false,
                                 lesson = lesson,
-                                materials = lesson.materials,
-                                practices = lesson.practices,
+                                materials = emptyList(),
+                                practices = emptyList(),
                                 isCompleted = lesson.isCompleted,
                                 error = null
                             )
