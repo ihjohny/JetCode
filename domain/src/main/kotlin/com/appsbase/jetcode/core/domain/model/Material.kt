@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Material(
     val id: String,
-    val lessonId: String,
     val type: MaterialType,
     val title: String,
     val content: String,

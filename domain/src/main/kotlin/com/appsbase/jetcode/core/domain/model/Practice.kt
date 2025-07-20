@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Practice(
     val id: String,
-    val lessonId: String,
     val type: PracticeType,
     val question: String,
     val options: List<String> = emptyList(), // for MCQ

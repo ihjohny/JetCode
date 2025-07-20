@@ -25,7 +25,6 @@ data class SkillEntity(
 @TypeConverters(Converters::class)
 data class TopicEntity(
     @PrimaryKey val id: String,
-    val skillId: String,
     val name: String,
     val description: String,
     val order: Int,
@@ -39,7 +38,6 @@ data class TopicEntity(
 @TypeConverters(Converters::class)
 data class LessonEntity(
     @PrimaryKey val id: String,
-    val topicId: String,
     val title: String,
     val description: String,
     val order: Int,
@@ -54,7 +52,6 @@ data class LessonEntity(
 @TypeConverters(Converters::class)
 data class MaterialEntity(
     @PrimaryKey val id: String,
-    val lessonId: String,
     val type: String,
     val title: String,
     val content: String,
@@ -66,7 +63,6 @@ data class MaterialEntity(
 @TypeConverters(Converters::class)
 data class PracticeEntity(
     @PrimaryKey val id: String,
-    val lessonId: String,
     val type: String,
     val question: String,
     val options: List<String> = emptyList(),

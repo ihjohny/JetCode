@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.appsbase.jetcode.core.database.entity.SkillEntity
 import com.appsbase.jetcode.core.database.entity.TopicEntity
 import com.appsbase.jetcode.core.database.entity.LessonEntity
@@ -21,20 +20,23 @@ interface LearningDao {
     @Query("SELECT * FROM skills WHERE id = :skillId")
     fun getSkillById(skillId: String): Flow<SkillEntity?>
 
-    @Query("SELECT * FROM topics WHERE skillId = :skillId ORDER BY `order` ASC")
-    fun getTopicsForSkill(skillId: String): Flow<List<TopicEntity>>
+    @Query("SELECT * FROM topics WHERE id = :topicId")
+    fun getTopicById(topicId: String): Flow<TopicEntity?>
 
-    @Query("SELECT * FROM lessons WHERE topicId = :topicId ORDER BY `order` ASC")
-    fun getLessonsForTopic(topicId: String): Flow<List<LessonEntity>>
+    @Query("SELECT * FROM topics WHERE id IN (:topicIds) ORDER BY `order` ASC")
+    fun getTopicsByIds(topicIds: List<String>): Flow<List<TopicEntity>>
+
+    @Query("SELECT * FROM lessons WHERE id IN (:lessonIds) ORDER BY `order` ASC")
+    fun getLessonsByIds(lessonIds: List<String>): Flow<List<LessonEntity>>
 
     @Query("SELECT * FROM lessons WHERE id = :lessonId")
     fun getLessonById(lessonId: String): Flow<LessonEntity?>
 
-    @Query("SELECT * FROM materials WHERE lessonId = :lessonId ORDER BY `order` ASC")
-    fun getMaterialsForLesson(lessonId: String): Flow<List<MaterialEntity>>
+    @Query("SELECT * FROM materials WHERE id IN (:materialIds) ORDER BY `order` ASC")
+    fun getMaterialsByIds(materialIds: List<String>): Flow<List<MaterialEntity>>
 
-    @Query("SELECT * FROM practices WHERE lessonId = :lessonId")
-    fun getPracticesForLesson(lessonId: String): Flow<List<PracticeEntity>>
+    @Query("SELECT * FROM practices WHERE id IN (:practiceIds)")
+    fun getPracticesByIds(practiceIds: List<String>): Flow<List<PracticeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSkills(skills: List<SkillEntity>)

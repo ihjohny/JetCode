@@ -12,7 +12,9 @@ import com.appsbase.jetcode.core.domain.model.Topic
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
 
 /**
@@ -58,31 +60,51 @@ class LearningRepositoryImpl(
     }
 
     override fun getTopicsForSkill(skillId: String): Flow<Result<List<Topic>>> {
-        return learningDao.getTopicsForSkill(skillId).map { entities ->
+        return learningDao.getSkillById(skillId).flatMapLatest { skillEntity ->
             try {
-                val topics = entities.map { it.toDomain() }
-                Result.Success(topics)
+                if (skillEntity != null) {
+                    // Get topics using the topicIds from the skill
+                    if (skillEntity.topicIds.isNotEmpty()) {
+                        learningDao.getTopicsByIds(skillEntity.topicIds).map { topicEntities ->
+                            Result.Success(topicEntities.map { it.toDomain() })
+                        }
+                    } else {
+                        flowOf(Result.Success(emptyList()))
+                    }
+                } else {
+                    flowOf(Result.Error(AppError.DataError.NotFound))
+                }
             } catch (e: Exception) {
-                Timber.e(e, "Error mapping topics to domain")
-                Result.Error(AppError.DataError.ParseError(e))
+                Timber.e(e, "Error getting topics for skill")
+                flowOf(Result.Error(AppError.DataError.ParseError(e)))
             }
         }.catch { e ->
-            Timber.e(e, "Error getting topics from database")
+            Timber.e(e, "Error getting topics for skill from database")
             emit(Result.Error(AppError.DataError.DatabaseError))
         }
     }
 
     override fun getLessonsForTopic(topicId: String): Flow<Result<List<Lesson>>> {
-        return learningDao.getLessonsForTopic(topicId).map { entities ->
+        return learningDao.getTopicById(topicId).flatMapLatest { topicEntity ->
             try {
-                val lessons = entities.map { it.toDomain() }
-                Result.Success(lessons)
+                if (topicEntity != null) {
+                    // Get lessons using the lessonIds from the topic
+                    if (topicEntity.lessonIds.isNotEmpty()) {
+                        learningDao.getLessonsByIds(topicEntity.lessonIds).map { lessonEntities ->
+                            Result.Success(lessonEntities.map { it.toDomain() })
+                        }
+                    } else {
+                        flowOf(Result.Success(emptyList()))
+                    }
+                } else {
+                    flowOf(Result.Error(AppError.DataError.NotFound))
+                }
             } catch (e: Exception) {
-                Timber.e(e, "Error mapping lessons to domain")
-                Result.Error(AppError.DataError.ParseError(e))
+                Timber.e(e, "Error getting lessons for topic")
+                flowOf(Result.Error(AppError.DataError.ParseError(e)))
             }
         }.catch { e ->
-            Timber.e(e, "Error getting lessons from database")
+            Timber.e(e, "Error getting lessons for topic from database")
             emit(Result.Error(AppError.DataError.DatabaseError))
         }
     }
