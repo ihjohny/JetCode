@@ -112,7 +112,9 @@ class TopicDetailViewModel(
         if (nextIndex < state.materials.size) {
             updateState(state.copy(currentMaterialIndex = nextIndex))
         } else {
-            // All materials completed, start practices
+            // All materials completed, update index to show completion state
+            updateState(state.copy(currentMaterialIndex = nextIndex))
+            Timber.d("All materials completed for topic: ${state.topic?.name}")
         }
     }
 
