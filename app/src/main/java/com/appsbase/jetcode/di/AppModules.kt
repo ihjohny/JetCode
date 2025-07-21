@@ -88,7 +88,7 @@ val useCaseModule = module {
     }
 
     factory {
-        GetTopicsForSkillUseCase(
+        GetTopicsByIdsUseCase(
             learningRepository = get(),
             dispatcherProvider = get()
         )
@@ -102,7 +102,7 @@ val useCaseModule = module {
     }
 
     factory {
-        GetLessonsForTopicUseCase(
+        GetLessonsByIdsUseCase(
             learningRepository = get(),
             dispatcherProvider = get()
         )

@@ -354,7 +354,6 @@ private val mockSkill = Skill(
 private val mockTopics = listOf(
     Topic(
         id = "variables",
-        skillId = "kotlin-basics",
         name = "Variables and Data Types",
         description = "Learn about different data types and how to declare variables in Kotlin",
         order = 1,
@@ -363,7 +362,6 @@ private val mockTopics = listOf(
         progress = 1.0f
     ), Topic(
         id = "functions",
-        skillId = "kotlin-basics",
         name = "Functions",
         description = "Understand how to create and use functions in Kotlin",
         order = 2,
@@ -372,7 +370,6 @@ private val mockTopics = listOf(
         progress = 1.0f
     ), Topic(
         id = "classes",
-        skillId = "kotlin-basics",
         name = "Classes and Objects",
         description = "Learn object-oriented programming concepts in Kotlin",
         order = 3,
@@ -381,7 +378,6 @@ private val mockTopics = listOf(
         progress = 0.6f
     ), Topic(
         id = "control-flow",
-        skillId = "kotlin-basics",
         name = "Control Flow",
         description = "Master if statements, loops, and conditional expressions",
         order = 4,

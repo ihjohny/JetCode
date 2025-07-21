@@ -27,7 +27,7 @@ fun SkillEntity.toDomain(): Skill = Skill(
     estimatedDuration = estimatedDuration,
     isCompleted = isCompleted,
     progress = progress,
-    topicIds = topicIds
+    topicIds = topicIds,
 )
 
 fun Skill.toEntity(): SkillEntity = SkillEntity(
@@ -39,36 +39,33 @@ fun Skill.toEntity(): SkillEntity = SkillEntity(
     estimatedDuration = estimatedDuration,
     isCompleted = isCompleted,
     progress = progress,
-    topicIds = topicIds
+    topicIds = topicIds,
 )
 
 fun TopicEntity.toDomain(): Topic = Topic(
     id = id,
-    skillId = skillId,
     name = name,
     description = description,
     order = order,
     isUnlocked = isUnlocked,
     isCompleted = isCompleted,
     progress = progress,
-    lessonIds = lessonIds
+    lessonIds = lessonIds,
 )
 
 fun Topic.toEntity(): TopicEntity = TopicEntity(
     id = id,
-    skillId = skillId,
     name = name,
     description = description,
     order = order,
     isUnlocked = isUnlocked,
     isCompleted = isCompleted,
     progress = progress,
-    lessonIds = lessonIds
+    lessonIds = lessonIds,
 )
 
 fun LessonEntity.toDomain(): Lesson = Lesson(
     id = id,
-    topicId = topicId,
     title = title,
     description = description,
     order = order,
@@ -76,12 +73,11 @@ fun LessonEntity.toDomain(): Lesson = Lesson(
     isCompleted = isCompleted,
     score = score,
     materialIds = materialIds,
-    practiceIds = practiceIds
+    practiceIds = practiceIds,
 )
 
 fun Lesson.toEntity(): LessonEntity = LessonEntity(
     id = id,
-    topicId = topicId,
     title = title,
     description = description,
     order = order,
@@ -89,49 +85,45 @@ fun Lesson.toEntity(): LessonEntity = LessonEntity(
     isCompleted = isCompleted,
     score = score,
     materialIds = materialIds,
-    practiceIds = practiceIds
+    practiceIds = practiceIds,
 )
 
 fun MaterialEntity.toDomain(): Material = Material(
     id = id,
-    lessonId = lessonId,
     type = MaterialType.valueOf(type),
     title = title,
     content = content,
     order = order,
-    metadata = metadata
+    metadata = metadata,
 )
 
 fun Material.toEntity(): MaterialEntity = MaterialEntity(
     id = id,
-    lessonId = lessonId,
     type = type.name,
     title = title,
     content = content,
     order = order,
-    metadata = metadata
+    metadata = metadata,
 )
 
 fun PracticeEntity.toDomain(): Practice = Practice(
     id = id,
-    lessonId = lessonId,
     type = PracticeType.valueOf(type),
     question = question,
     options = options,
     correctAnswer = correctAnswer,
     explanation = explanation,
     difficulty = Difficulty.valueOf(difficulty),
-    points = points
+    points = points,
 )
 
 fun Practice.toEntity(): PracticeEntity = PracticeEntity(
     id = id,
-    lessonId = lessonId,
     type = type.name,
     question = question,
     options = options,
     correctAnswer = correctAnswer,
     explanation = explanation,
     difficulty = difficulty.name,
-    points = points
+    points = points,
 )

@@ -2,6 +2,8 @@ package com.appsbase.jetcode.core.domain.repository
 
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.domain.model.Lesson
+import com.appsbase.jetcode.core.domain.model.Material
+import com.appsbase.jetcode.core.domain.model.Practice
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.model.Topic
 import kotlinx.coroutines.flow.Flow
@@ -17,24 +19,39 @@ interface LearningRepository {
     fun getSkills(): Flow<Result<List<Skill>>>
 
     /**
-     * Get skill by ID with topics
+     * Get skill by ID
      */
     fun getSkillById(skillId: String): Flow<Result<Skill>>
 
     /**
-     * Get topics for a skill
+     * Get topic by ID
      */
-    fun getTopicsForSkill(skillId: String): Flow<Result<List<Topic>>>
+    fun getTopicById(topicId: String): Flow<Result<Topic>>
 
     /**
-     * Get lessons for a topic
+     * Get topics by list of IDs
      */
-    fun getLessonsForTopic(topicId: String): Flow<Result<List<Lesson>>>
+    fun getTopicsByIds(topicIds: List<String>): Flow<Result<List<Topic>>>
 
     /**
-     * Get lesson by ID with materials and practices
+     * Get lessons by list of IDs
+     */
+    fun getLessonsByIds(lessonIds: List<String>): Flow<Result<List<Lesson>>>
+
+    /**
+     * Get lesson by ID
      */
     fun getLessonById(lessonId: String): Flow<Result<Lesson>>
+
+    /**
+     * Get materials by list of IDs
+     */
+    fun getMaterialsByIds(materialIds: List<String>): Flow<Result<List<Material>>>
+
+    /**
+     * Get practices by list of IDs
+     */
+    fun getPracticesByIds(practiceIds: List<String>): Flow<Result<List<Practice>>>
 
     /**
      * Sync content from remote source

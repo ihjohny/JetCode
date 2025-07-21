@@ -11,8 +11,8 @@ import com.appsbase.jetcode.core.domain.model.Topic
  */
 interface LearningApiService {
     suspend fun getSkills(): List<Skill>
-    suspend fun getTopics(): List<Topic>
-    suspend fun getLessons(): List<Lesson>
-    suspend fun getMaterials(): List<Material>
-    suspend fun getPractices(): List<Practice>
+    suspend fun getTopicsByIds(topicIds: List<String>): List<Topic>
+    suspend fun getLessonsByIds(lessonIds: List<String>): List<Lesson>
+    suspend fun getMaterialsByIds(materialIds: List<String>): List<Material>
+    suspend fun getPracticesByIds(practiceIds: List<String>): List<Practice>
 }

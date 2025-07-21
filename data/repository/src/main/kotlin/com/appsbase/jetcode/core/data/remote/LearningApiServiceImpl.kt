@@ -25,43 +25,35 @@ class LearningApiServiceImpl(
         return SampleData.getSampleSkills()
     }
 
-    override suspend fun getTopics(skillId: String?): List<Topic> {
-        // For now, return sample data. In production, this would fetch from GitHub
+    override suspend fun getTopicsByIds(topicIds: List<String>): List<Topic> {
+        if (topicIds.isEmpty()) return emptyList()
+
+        // Get all topics and filter by the requested IDs
         val allTopics = SampleData.getSampleTopics()
-        return if (skillId != null) {
-            allTopics.filter { it.skillId == skillId }
-        } else {
-            allTopics
-        }
+        return allTopics.filter { topic -> topic.id in topicIds }
     }
 
-    override suspend fun getLessons(topicId: String?): List<Lesson> {
-        // For now, return sample data. In production, this would fetch from GitHub
+    override suspend fun getLessonsByIds(lessonIds: List<String>): List<Lesson> {
+        if (lessonIds.isEmpty()) return emptyList()
+
+        // Get all lessons and filter by the requested IDs
         val allLessons = SampleData.getSampleLessons()
-        return if (topicId != null) {
-            allLessons.filter { it.topicId == topicId }
-        } else {
-            allLessons
-        }
+        return allLessons.filter { lesson -> lesson.id in lessonIds }
     }
 
-    override suspend fun getMaterials(lessonId: String?): List<Material> {
-        // For now, return sample data. In production, this would fetch from GitHub
+    override suspend fun getMaterialsByIds(materialIds: List<String>): List<Material> {
+        if (materialIds.isEmpty()) return emptyList()
+
+        // Get all materials and filter by the requested IDs
         val allMaterials = SampleData.getSampleMaterials()
-        return if (lessonId != null) {
-            allMaterials.filter { it.lessonId == lessonId }
-        } else {
-            allMaterials
-        }
+        return allMaterials.filter { material -> material.id in materialIds }
     }
 
-    override suspend fun getPractices(lessonId: String?): List<Practice> {
-        // For now, return sample data. In production, this would fetch from GitHub
+    override suspend fun getPracticesByIds(practiceIds: List<String>): List<Practice> {
+        if (practiceIds.isEmpty()) return emptyList()
+
+        // Get all practices and filter by the requested IDs
         val allPractices = SampleData.getSamplePractices()
-        return if (lessonId != null) {
-            allPractices.filter { it.lessonId == lessonId }
-        } else {
-            allPractices
-        }
+        return allPractices.filter { practice -> practice.id in practiceIds }
     }
 }

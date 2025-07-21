@@ -38,7 +38,6 @@ object SampleData {
         return listOf(
             Topic(
                 id = "variables-types",
-                skillId = "kotlin-basics",
                 name = "Variables and Types",
                 description = "Learn about Kotlin variables and type system",
                 order = 1,
@@ -47,7 +46,6 @@ object SampleData {
             ),
             Topic(
                 id = "functions-classes",
-                skillId = "kotlin-basics",
                 name = "Functions and Classes",
                 description = "Understanding functions and object-oriented programming in Kotlin",
                 order = 2,
@@ -56,7 +54,6 @@ object SampleData {
             ),
             Topic(
                 id = "compose-basics",
-                skillId = "jetpack-compose",
                 name = "Compose Basics",
                 description = "Introduction to Jetpack Compose fundamentals",
                 order = 1,
@@ -65,7 +62,6 @@ object SampleData {
             ),
             Topic(
                 id = "compose-layouts",
-                skillId = "jetpack-compose",
                 name = "Compose Layouts",
                 description = "Building layouts with Jetpack Compose",
                 order = 2,
@@ -79,7 +75,6 @@ object SampleData {
         return listOf(
             Lesson(
                 id = "var-val-lesson",
-                topicId = "variables-types",
                 title = "Variables: var vs val",
                 description = "Understanding mutable and immutable variables in Kotlin",
                 order = 1,
@@ -89,7 +84,6 @@ object SampleData {
             ),
             Lesson(
                 id = "types-lesson",
-                topicId = "variables-types",
                 title = "Kotlin Type System",
                 description = "Exploring Kotlin's type system and type inference",
                 order = 2,
@@ -99,7 +93,6 @@ object SampleData {
             ),
             Lesson(
                 id = "functions-lesson",
-                topicId = "functions-classes",
                 title = "Functions in Kotlin",
                 description = "Creating and using functions in Kotlin",
                 order = 1,
@@ -109,7 +102,6 @@ object SampleData {
             ),
             Lesson(
                 id = "classes-lesson",
-                topicId = "functions-classes",
                 title = "Classes and Objects",
                 description = "Object-oriented programming with Kotlin classes",
                 order = 2,
@@ -119,7 +111,6 @@ object SampleData {
             ),
             Lesson(
                 id = "compose-intro-lesson",
-                topicId = "compose-basics",
                 title = "Introduction to Compose",
                 description = "Getting started with Jetpack Compose",
                 order = 1,
@@ -129,7 +120,6 @@ object SampleData {
             ),
             Lesson(
                 id = "layouts-lesson",
-                topicId = "compose-layouts",
                 title = "Building Layouts",
                 description = "Creating UI layouts with Compose",
                 order = 1,
@@ -144,7 +134,6 @@ object SampleData {
         return listOf(
             Material(
                 id = "var-val-material",
-                lessonId = "var-val-lesson",
                 type = MaterialType.TEXT,
                 title = "Variables in Kotlin",
                 content = """
@@ -159,7 +148,6 @@ object SampleData {
             ),
             Material(
                 id = "types-material",
-                lessonId = "types-lesson",
                 type = MaterialType.TEXT,
                 title = "Kotlin Type System",
                 content = """
@@ -176,7 +164,6 @@ object SampleData {
             ),
             Material(
                 id = "functions-material",
-                lessonId = "functions-lesson",
                 type = MaterialType.CODE,
                 title = "Function Syntax",
                 content = """
@@ -191,7 +178,6 @@ object SampleData {
             ),
             Material(
                 id = "classes-material",
-                lessonId = "classes-lesson",
                 type = MaterialType.CODE,
                 title = "Class Declaration",
                 content = """
@@ -205,7 +191,6 @@ object SampleData {
             ),
             Material(
                 id = "compose-intro-material",
-                lessonId = "compose-intro-lesson",
                 type = MaterialType.TEXT,
                 title = "What is Jetpack Compose?",
                 content = """
@@ -222,7 +207,6 @@ object SampleData {
             ),
             Material(
                 id = "layouts-material",
-                lessonId = "layouts-lesson",
                 type = MaterialType.CODE,
                 title = "Compose Layouts",
                 content = """
@@ -246,7 +230,6 @@ object SampleData {
         return listOf(
             Practice(
                 id = "var-val-practice",
-                lessonId = "var-val-lesson",
                 type = PracticeType.MCQ,
                 question = "Which keyword is used for immutable variables in Kotlin?",
                 options = listOf("var", "val", "let", "const"),
@@ -257,7 +240,6 @@ object SampleData {
             ),
             Practice(
                 id = "types-practice",
-                lessonId = "types-lesson",
                 type = PracticeType.MCQ,
                 question = "What is the default type for whole numbers in Kotlin?",
                 options = listOf("Long", "Int", "Short", "Byte"),
@@ -268,7 +250,6 @@ object SampleData {
             ),
             Practice(
                 id = "functions-practice",
-                lessonId = "functions-lesson",
                 type = PracticeType.CODE_CHALLENGE,
                 question = "Write a function that takes two integers and returns their sum",
                 correctAnswer = "fun add(a: Int, b: Int): Int = a + b",
@@ -278,7 +259,6 @@ object SampleData {
             ),
             Practice(
                 id = "classes-practice",
-                lessonId = "classes-lesson",
                 type = PracticeType.CODE_CHALLENGE,
                 question = "Create a class 'Book' with properties 'title' and 'author'",
                 correctAnswer = "class Book(val title: String, val author: String)",
@@ -288,7 +268,6 @@ object SampleData {
             ),
             Practice(
                 id = "compose-intro-practice",
-                lessonId = "compose-intro-lesson",
                 type = PracticeType.MCQ,
                 question = "What is the main benefit of Jetpack Compose?",
                 options = listOf(
@@ -301,7 +280,6 @@ object SampleData {
             ),
             Practice(
                 id = "layouts-practice",
-                lessonId = "layouts-lesson",
                 type = PracticeType.CODE_CHALLENGE,
                 question = "Create a Column with two Text composables",
                 correctAnswer = """

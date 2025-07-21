@@ -6,6 +6,8 @@ import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.core.domain.usecase.GetLessonByIdUseCase
+import com.appsbase.jetcode.core.domain.usecase.GetMaterialsForLessonUseCase
+import com.appsbase.jetcode.core.domain.usecase.GetPracticesForLessonUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -13,7 +15,9 @@ import timber.log.Timber
  * ViewModel for Lesson screen following MVI pattern
  */
 class LessonViewModel(
-    private val getLessonByIdUseCase: GetLessonByIdUseCase
+    private val getLessonByIdUseCase: GetLessonByIdUseCase,
+    private val getMaterialsForLessonUseCase: GetMaterialsForLessonUseCase,
+    private val getPracticesForLessonUseCase: GetPracticesForLessonUseCase
 ) : BaseViewModel<LessonState, LessonIntent, LessonEffect>(
     initialState = LessonState()
 ) {
@@ -43,12 +47,13 @@ class LessonViewModel(
                             currentState().copy(
                                 isLoading = false,
                                 lesson = lesson,
-                                materials = emptyList(),
-                                practices = emptyList(),
                                 isCompleted = lesson.isCompleted,
                                 error = null
                             )
                         )
+                        // Load materials and practices for this lesson
+                        loadMaterials(lessonId)
+                        loadPractices(lessonId)
                         Timber.d("Lesson loaded successfully: ${lesson.title}")
                     }
                     is Result.Error -> {
@@ -64,6 +69,46 @@ class LessonViewModel(
                         )
                         sendEffect(LessonEffect.ShowError(errorMessage))
                         Timber.e(result.exception, "Error loading lesson")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadMaterials(lessonId: String) {
+        viewModelScope.launch {
+            getMaterialsForLessonUseCase(lessonId).collect { result ->
+                when (result) {
+                    is Result.Success -> {
+                        updateState(currentState().copy(materials = result.data))
+                        Timber.d("Materials loaded successfully: ${result.data.size} materials")
+                    }
+                    is Result.Error -> {
+                        Timber.e(result.exception, "Error loading materials")
+                        // Don't show error for materials if lesson loaded successfully
+                    }
+                    is Result.Loading -> {
+                        // Already showing loading for lesson
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadPractices(lessonId: String) {
+        viewModelScope.launch {
+            getPracticesForLessonUseCase(lessonId).collect { result ->
+                when (result) {
+                    is Result.Success -> {
+                        updateState(currentState().copy(practices = result.data))
+                        Timber.d("Practices loaded successfully: ${result.data.size} practices")
+                    }
+                    is Result.Error -> {
+                        Timber.e(result.exception, "Error loading practices")
+                        // Don't show error for practices if lesson loaded successfully
+                    }
+                    is Result.Loading -> {
+                        // Already showing loading for lesson
                     }
                 }
             }
