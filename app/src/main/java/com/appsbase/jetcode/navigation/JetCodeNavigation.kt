@@ -68,6 +68,9 @@ fun JetCodeNavHost(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
+                onPracticeClick = { practiceSetId ->
+
+                },
             )
         }
 

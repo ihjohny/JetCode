@@ -7,10 +7,7 @@ import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.core.domain.usecase.GetMaterialsByIdsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetTopicByIdUseCase
-import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowCorrectAnswer
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowError
-import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowIncorrectAnswer
-import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowTopicCompleted
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -29,11 +26,7 @@ class TopicDetailViewModel(
             is TopicDetailIntent.LoadTopic -> loadTopic(intent.topicId)
             is TopicDetailIntent.NextMaterial -> nextMaterial()
             is TopicDetailIntent.PreviousMaterial -> previousMaterial()
-            is TopicDetailIntent.StartPractice -> startPractice()
-            is TopicDetailIntent.NextPractice -> nextPractice()
-            is TopicDetailIntent.PreviousPractice -> previousPractice()
-            is TopicDetailIntent.SubmitAnswer -> submitAnswer(intent.answer)
-            is TopicDetailIntent.CompleteTopic -> completeTopic()
+            is TopicDetailIntent.StartPractice -> {}
             is TopicDetailIntent.RetryClicked -> retryLoading(intent.topicId)
         }
     }
@@ -120,7 +113,6 @@ class TopicDetailViewModel(
             updateState(state.copy(currentMaterialIndex = nextIndex))
         } else {
             // All materials completed, start practices
-            startPractice()
         }
     }
 
@@ -130,58 +122,6 @@ class TopicDetailViewModel(
         if (prevIndex >= 0) {
             updateState(state.copy(currentMaterialIndex = prevIndex))
         }
-    }
-
-    private fun startPractice() {
-        val state = currentState()
-        if (state.practices.isNotEmpty()) {
-            updateState(
-                state.copy(
-                    isShowingPractice = true, currentPracticeIndex = 0
-                )
-            )
-        } else {
-            // No practices, complete the topic
-            completeTopic()
-        }
-    }
-
-    private fun nextPractice() {
-        val state = currentState()
-        val nextIndex = state.currentPracticeIndex + 1
-        if (nextIndex < state.practices.size) {
-            updateState(state.copy(currentPracticeIndex = nextIndex))
-        } else {
-            // All practices completed
-            completeTopic()
-        }
-    }
-
-    private fun previousPractice() {
-        val state = currentState()
-        val prevIndex = state.currentPracticeIndex - 1
-        if (prevIndex >= 0) {
-            updateState(state.copy(currentPracticeIndex = prevIndex))
-        } else {
-            // Go back to materials
-            updateState(state.copy(isShowingPractice = false))
-        }
-    }
-
-    private fun submitAnswer(answer: String) {
-        val state = currentState()
-        if (state.practices.isNotEmpty() && state.currentPracticeIndex < state.practices.size) {
-            val currentPractice = state.practices[state.currentPracticeIndex]
-            if (answer == currentPractice.correctAnswer) {
-                sendEffect(ShowCorrectAnswer)
-            } else {
-                sendEffect(ShowIncorrectAnswer(currentPractice.correctAnswer))
-            }
-        }
-    }
-
-    private fun completeTopic() {
-        sendEffect(ShowTopicCompleted(33))
     }
 
     private fun retryLoading(topicId: String) {

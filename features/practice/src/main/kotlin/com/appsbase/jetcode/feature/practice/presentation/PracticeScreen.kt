@@ -18,12 +18,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.appsbase.jetcode.core.domain.model.Quiz
 
 /**
  * Practice Screen - Interactive coding challenges and exercises
@@ -119,6 +127,92 @@ fun PracticeScreen(
                         ) {
                             Text("Complete")
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PracticeSection(
+    practices: List<Quiz>,
+    currentIndex: Int,
+    onSubmitAnswer: (String) -> Unit,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (practices.isEmpty()) return
+
+    val currentPractice = practices[currentIndex]
+    var selectedAnswer by remember(currentIndex) { mutableStateOf("") }
+
+    Column(modifier = modifier) {
+        Text(
+            text = "Practice (${currentIndex + 1}/${practices.size})",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = currentPractice.question,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Show options for MCQ
+                if (!currentPractice.options.isNullOrEmpty()) {
+                    currentPractice.options?.forEach { option ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            RadioButton(
+                                selected = selectedAnswer == option,
+                                onClick = { selectedAnswer = option })
+                            Text(
+                                text = option, modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // Text input for code challenges
+                    OutlinedTextField(
+                        value = selectedAnswer,
+                        onValueChange = { selectedAnswer = it },
+                        label = { Text("Your answer") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = onPrevious
+                    ) {
+                        Text("Previous")
+                    }
+
+                    Button(
+                        onClick = { onSubmitAnswer(selectedAnswer) },
+                        enabled = selectedAnswer.isNotEmpty()
+                    ) {
+                        Text("Submit")
                     }
                 }
             }
