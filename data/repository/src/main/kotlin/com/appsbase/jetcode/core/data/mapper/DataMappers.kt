@@ -1,14 +1,16 @@
 package com.appsbase.jetcode.core.data.mapper
 
 import com.appsbase.jetcode.core.database.entity.MaterialEntity
-import com.appsbase.jetcode.core.database.entity.PracticeEntity
+import com.appsbase.jetcode.core.database.entity.PracticeSetEntity
+import com.appsbase.jetcode.core.database.entity.QuizEntity
 import com.appsbase.jetcode.core.database.entity.SkillEntity
 import com.appsbase.jetcode.core.database.entity.TopicEntity
 import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.MaterialType
-import com.appsbase.jetcode.core.domain.model.Practice
-import com.appsbase.jetcode.core.domain.model.PracticeType
+import com.appsbase.jetcode.core.domain.model.PracticeSet
+import com.appsbase.jetcode.core.domain.model.Quiz
+import com.appsbase.jetcode.core.domain.model.QuizType
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.model.Topic
 
@@ -23,8 +25,6 @@ fun SkillEntity.toDomain(): Skill = Skill(
     iconUrl = iconUrl,
     difficulty = Difficulty.valueOf(difficulty),
     estimatedDuration = estimatedDuration,
-    isCompleted = isCompleted,
-    progress = progress,
     topicIds = topicIds,
 )
 
@@ -35,8 +35,6 @@ fun Skill.toEntity(): SkillEntity = SkillEntity(
     iconUrl = iconUrl,
     difficulty = difficulty.name,
     estimatedDuration = estimatedDuration,
-    isCompleted = isCompleted,
-    progress = progress,
     topicIds = topicIds,
 )
 
@@ -45,10 +43,8 @@ fun TopicEntity.toDomain(): Topic = Topic(
     name = name,
     description = description,
     materialIds = materialIds,
-    practiceIds = practiceIds,
+    practiceSetId = practiceSetId,
     duration = duration,
-    isCompleted = isCompleted,
-    progress = progress,
 )
 
 fun Topic.toEntity(): TopicEntity = TopicEntity(
@@ -56,10 +52,8 @@ fun Topic.toEntity(): TopicEntity = TopicEntity(
     name = name,
     description = description,
     materialIds = materialIds,
-    practiceIds = practiceIds,
+    practiceSetId = practiceSetId,
     duration = duration,
-    isCompleted = isCompleted,
-    progress = progress,
 )
 
 fun MaterialEntity.toDomain(): Material = Material(
@@ -78,18 +72,34 @@ fun Material.toEntity(): MaterialEntity = MaterialEntity(
     metadata = metadata,
 )
 
-fun PracticeEntity.toDomain(): Practice = Practice(
+fun PracticeSetEntity.toDomain(): PracticeSet = PracticeSet(
     id = id,
-    type = PracticeType.valueOf(type),
+    name = name,
+    description = description,
+    quizIds = quizIds,
+    attributes = attributes,
+)
+
+fun PracticeSet.toEntity(): PracticeSetEntity = PracticeSetEntity(
+    id = id,
+    name = name,
+    description = description,
+    quizIds = quizIds,
+    attributes = attributes,
+)
+
+fun QuizEntity.toDomain(): Quiz = Quiz(
+    id = id,
+    type = QuizType.valueOf(type),
     question = question,
     options = options,
     correctAnswer = correctAnswer,
     explanation = explanation,
     difficulty = Difficulty.valueOf(difficulty),
-    points = points,
+    attributes = attributes,
 )
 
-fun Practice.toEntity(): PracticeEntity = PracticeEntity(
+fun Quiz.toEntity(): QuizEntity = QuizEntity(
     id = id,
     type = type.name,
     question = question,
@@ -97,5 +107,5 @@ fun Practice.toEntity(): PracticeEntity = PracticeEntity(
     correctAnswer = correctAnswer,
     explanation = explanation,
     difficulty = difficulty.name,
-    points = points,
+    attributes = attributes,
 )

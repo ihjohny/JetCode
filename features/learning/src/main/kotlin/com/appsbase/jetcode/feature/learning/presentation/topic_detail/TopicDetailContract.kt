@@ -4,7 +4,7 @@ import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
 import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Practice
+import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.Topic
 
 /**
@@ -15,7 +15,7 @@ data class TopicDetailState(
     val isLoading: Boolean = false,
     val topic: Topic? = null,
     val materials: List<Material> = emptyList(),
-    val practices: List<Practice> = emptyList(),
+    val practices: List<Quiz> = emptyList(),
     val currentMaterialIndex: Int = 0,
     val currentPracticeIndex: Int = 0,
     val isShowingPractice: Boolean = false,

@@ -28,7 +28,6 @@ val learningModule = module {
         TopicDetailViewModel(
             getTopicByIdUseCase = get(),
             getMaterialsForTopicUseCase = get(),
-            getPracticesForTopicUseCase = get(),
         )
     }
 }

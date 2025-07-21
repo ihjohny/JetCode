@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.appsbase.jetcode.core.database.dao.LearningDao
+import com.appsbase.jetcode.core.database.dao.PracticeDao
 import com.appsbase.jetcode.core.database.entity.Converters
 import com.appsbase.jetcode.core.database.entity.MaterialEntity
-import com.appsbase.jetcode.core.database.entity.PracticeEntity
+import com.appsbase.jetcode.core.database.entity.PracticeSetEntity
+import com.appsbase.jetcode.core.database.entity.QuizEntity
 import com.appsbase.jetcode.core.database.entity.SkillEntity
 import com.appsbase.jetcode.core.database.entity.TopicEntity
 
@@ -17,15 +19,17 @@ import com.appsbase.jetcode.core.database.entity.TopicEntity
         SkillEntity::class,
         TopicEntity::class,
         MaterialEntity::class,
-        PracticeEntity::class,
+        PracticeSetEntity::class,
+        QuizEntity::class,
     ],
-    version = 2, // Increment version due to schema changes
+    version = 1,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
 abstract class JetCodeDatabase : RoomDatabase() {
 
     abstract fun learningDao(): LearningDao
+    abstract fun practiceDao(): PracticeDao
 
     companion object {
         const val DATABASE_NAME = "jetcode_database"

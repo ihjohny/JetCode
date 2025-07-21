@@ -1,7 +1,6 @@
 package com.appsbase.jetcode.core.domain.usecase
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 
 /**
@@ -11,6 +10,6 @@ class SyncContentUseCase(
     private val learningRepository: LearningRepository,
 ) {
     suspend operator fun invoke(): Result<Unit> {
-        return learningRepository.syncContent()
+        return learningRepository.syncLearningContent()
     }
 }

@@ -170,7 +170,7 @@ private fun TopicContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            text = "Progress: ${(topic.progress * 100).toInt()}%",
+                            text = "Progress: 33%",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -266,7 +266,7 @@ private fun MaterialSection(
 
 @Composable
 private fun PracticeSection(
-    practices: List<com.appsbase.jetcode.core.domain.model.Practice>,
+    practices: List<com.appsbase.jetcode.core.domain.model.Quiz>,
     currentIndex: Int,
     onSubmitAnswer: (String) -> Unit,
     onNext: () -> Unit,
@@ -302,8 +302,8 @@ private fun PracticeSection(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Show options for MCQ
-                if (currentPractice.options.isNotEmpty()) {
-                    currentPractice.options.forEach { option ->
+                if (!currentPractice.options.isNullOrEmpty()) {
+                    currentPractice.options?.forEach { option ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()

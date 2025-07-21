@@ -6,7 +6,6 @@ import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.core.domain.usecase.GetMaterialsByIdsUseCase
-import com.appsbase.jetcode.core.domain.usecase.GetPracticesByIdsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowCorrectAnswer
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowError
@@ -21,7 +20,6 @@ import timber.log.Timber
 class TopicDetailViewModel(
     private val getTopicByIdUseCase: GetTopicByIdUseCase,
     private val getMaterialsForTopicUseCase: GetMaterialsByIdsUseCase,
-    private val getPracticesForTopicUseCase: GetPracticesByIdsUseCase
 ) : BaseViewModel<TopicDetailState, TopicDetailIntent, TopicDetailEffect>(
     initialState = TopicDetailState()
 ) {
@@ -60,7 +58,6 @@ class TopicDetailViewModel(
                             )
                         )
                         loadMaterials(topicResult.data.materialIds)
-                        loadPractices(topicResult.data.practiceIds)
                         Timber.d("Topic loaded successfully: ${topicResult.data.name}")
                     }
 
@@ -106,35 +103,6 @@ class TopicDetailViewModel(
                             else -> exception.message ?: "Failed to load materials"
                         }
                         Timber.e("Error loading materials: $errorMessage")
-                    }
-
-                    is Result.Loading -> {
-
-                    }
-                }
-            }
-        }
-    }
-
-    private fun loadPractices(practiceIds: List<String>) {
-        viewModelScope.launch {
-            getPracticesForTopicUseCase(practiceIds).collect { practicesResult ->
-                when (practicesResult) {
-                    is Result.Success -> {
-                        updateState(
-                            currentState().copy(
-                                practices = practicesResult.data
-                            )
-                        )
-                        Timber.d("Practices loaded successfully: ${practicesResult.data.size} items")
-                    }
-
-                    is Result.Error -> {
-                        val errorMessage = when (val exception = practicesResult.exception) {
-                            is AppError -> exception.getUserMessage()
-                            else -> exception.message ?: "Failed to load practices"
-                        }
-                        Timber.e("Error loading practices: $errorMessage")
                     }
 
                     is Result.Loading -> {
@@ -213,15 +181,7 @@ class TopicDetailViewModel(
     }
 
     private fun completeTopic() {
-        val state = currentState()
-        val score = calculateScore(state)
-        sendEffect(ShowTopicCompleted(score))
-        // Here you would typically save progress to the repository
-    }
-
-    private fun calculateScore(state: TopicDetailState): Int {
-        // Simple scoring logic - in reality this would be more sophisticated
-        return state.practices.sumOf { it.points }
+        sendEffect(ShowTopicCompleted(33))
     }
 
     private fun retryLoading(topicId: String) {

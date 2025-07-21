@@ -3,12 +3,10 @@ package com.appsbase.jetcode.core.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Skill(
+data class PracticeSet(
     val id: String,
     val name: String,
     val description: String,
-    val iconUrl: String?,
-    val topicIds: List<String> = emptyList(),
-    val difficulty: Difficulty,
-    val estimatedDuration: Int,
+    val quizIds: List<String>,
+    val attributes: List<String>? = null,
 ) : Content()

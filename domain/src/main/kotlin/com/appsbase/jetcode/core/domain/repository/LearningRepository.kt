@@ -3,7 +3,6 @@ package com.appsbase.jetcode.core.domain.repository
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.domain.model.Content
 import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Practice
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.model.Topic
 import kotlinx.coroutines.flow.Flow
@@ -39,17 +38,12 @@ interface LearningRepository {
     fun getMaterialsByIds(materialIds: List<String>): Flow<Result<List<Material>>>
 
     /**
-     * Get practices by list of IDs
-     */
-    fun getPracticesByIds(practiceIds: List<String>): Flow<Result<List<Practice>>>
-
-    /**
      * Sync content from remote source
      */
-    suspend fun syncContent(): Result<Unit>
+    suspend fun syncLearningContent(): Result<Unit>
 
     /**
      * Search content
      */
-    fun searchContent(query: String): Flow<Result<List<Content>>>
+    fun searchLearningContent(query: String): Flow<Result<List<Content>>>
 }

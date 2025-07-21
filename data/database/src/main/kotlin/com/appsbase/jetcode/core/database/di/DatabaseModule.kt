@@ -13,4 +13,6 @@ val databaseModule = module {
     }
 
     single { get<JetCodeDatabase>().learningDao() }
+
+    single { get<JetCodeDatabase>().practiceDao() }
 }

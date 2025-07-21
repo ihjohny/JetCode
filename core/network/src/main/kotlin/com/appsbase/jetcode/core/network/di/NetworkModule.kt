@@ -1,5 +1,6 @@
 package com.appsbase.jetcode.core.network.di
 
+import com.appsbase.jetcode.core.network.Constants
 import com.appsbase.jetcode.core.network.NetworkClient
 import io.ktor.client.HttpClient
 import org.koin.dsl.module
@@ -10,7 +11,7 @@ import org.koin.dsl.module
 val networkModule = module {
     single<HttpClient> {
         NetworkClient.create(
-            baseUrl = "https://api.github.com/",
+            baseUrl = Constants.BASE_URL,
             enableLogging = true
         )
     }

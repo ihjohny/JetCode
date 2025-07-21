@@ -40,7 +40,6 @@ import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 /**
  * Skill Detail Screen - Shows detailed information about a specific skill with real data
@@ -182,7 +181,7 @@ private fun SkillDetailContent(
                             fontWeight = FontWeight.Medium,
                         )
                         Text(
-                            text = "${(skill.progress * 100).toInt()}%",
+                            text = "33%",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.primary,
                         )
@@ -191,7 +190,7 @@ private fun SkillDetailContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LinearProgressIndicator(
-                        progress = { skill.progress },
+                        progress = { .33f },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp),
@@ -213,8 +212,7 @@ private fun SkillDetailContent(
                             value = "${state.topics.size}",
                         )
                         InfoChip(
-                            label = "Status",
-                            value = if (skill.isCompleted) "Completed" else "In Progress"
+                            label = "Status", value = if (false) "Completed" else "In Progress"
                         )
                     }
                 }
@@ -299,7 +297,7 @@ private fun TopicCard(
                 }
 
                 Surface(
-                    color = if (topic.isCompleted) {
+                    color = if (false) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant
@@ -308,7 +306,7 @@ private fun TopicCard(
                 ) {
                     Text(
                         text = when {
-                            topic.isCompleted -> "✓"
+                            false -> "✓"
                             else -> "🔒"
                         },
                         modifier = Modifier.padding(8.dp),
@@ -320,7 +318,7 @@ private fun TopicCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             LinearProgressIndicator(
-                progress = { topic.progress },
+                progress = { .33f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp),
@@ -361,8 +359,6 @@ private val mockSkill = Skill(
     iconUrl = null,
     difficulty = Difficulty.BEGINNER,
     estimatedDuration = 120,
-    isCompleted = false,
-    progress = 0.65f,
 )
 
 private val mockStateWithData = SkillDetailState(

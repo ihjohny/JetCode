@@ -14,7 +14,7 @@ class SearchContentUseCase(
     private val dispatcherProvider: DispatcherProvider
 ) {
     operator fun invoke(query: String): Flow<Result<List<Any>>> {
-        return learningRepository.searchContent(query)
+        return learningRepository.searchLearningContent(query)
             .flowOn(dispatcherProvider.io)
     }
 }

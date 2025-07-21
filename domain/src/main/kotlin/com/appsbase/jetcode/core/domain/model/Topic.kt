@@ -8,8 +8,6 @@ data class Topic(
     val name: String,
     val description: String,
     val materialIds: List<String> = emptyList(),
-    val practiceIds: List<String> = emptyList(),
-    val duration: Int, // in minutes - total estimated duration for all materials and practices
-    val isCompleted: Boolean = false,
-    val progress: Float = 0f
+    val practiceSetId: String,
+    val duration: Int,
 ) : Content()

@@ -23,17 +23,19 @@ import timber.log.Timber
 object NetworkClient {
 
     fun create(
-        baseUrl: String = "https://api.github.com/",
-        enableLogging: Boolean = true
+        baseUrl: String,
+        enableLogging: Boolean,
     ): HttpClient {
         return HttpClient(Android) {
             // JSON serialization
             install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
+                json(
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    },
+                )
             }
 
             // Logging

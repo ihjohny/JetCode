@@ -1,10 +1,10 @@
 package com.appsbase.jetcode.core.data.remote
 
 import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Practice
 import com.appsbase.jetcode.core.domain.model.SampleData
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.core.network.Constants.GITHUB_CONTENT_BASE
 import io.ktor.client.HttpClient
 
 class LearningApiServiceImpl(
@@ -12,11 +12,9 @@ class LearningApiServiceImpl(
 ) : LearningApiService {
 
     companion object {
-        private const val GITHUB_CONTENT_BASE = "repos/your-username/jetcode-content/contents"
         private const val SKILLS_ENDPOINT = "$GITHUB_CONTENT_BASE/skills.json"
         private const val TOPICS_ENDPOINT = "$GITHUB_CONTENT_BASE/topics.json"
         private const val MATERIALS_ENDPOINT = "$GITHUB_CONTENT_BASE/materials.json"
-        private const val PRACTICES_ENDPOINT = "$GITHUB_CONTENT_BASE/practices.json"
     }
 
     override suspend fun getSkills(): List<Skill> {
@@ -38,13 +36,5 @@ class LearningApiServiceImpl(
         // Get all materials and filter by the requested IDs
         val allMaterials = SampleData.getSampleMaterials()
         return allMaterials.filter { material -> material.id in materialIds }
-    }
-
-    override suspend fun getPracticesByIds(practiceIds: List<String>): List<Practice> {
-        if (practiceIds.isEmpty()) return emptyList()
-
-        // Get all practices and filter by the requested IDs
-        val allPractices = SampleData.getSamplePractices()
-        return allPractices.filter { practice -> practice.id in practiceIds }
     }
 }

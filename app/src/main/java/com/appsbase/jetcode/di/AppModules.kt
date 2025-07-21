@@ -7,7 +7,6 @@ import com.appsbase.jetcode.core.data.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.core.database.di.databaseModule
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import com.appsbase.jetcode.core.domain.usecase.GetMaterialsByIdsUseCase
-import com.appsbase.jetcode.core.domain.usecase.GetPracticesByIdsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetTopicByIdUseCase
@@ -29,7 +28,8 @@ val coreModule = module {
 val repositoryModule = module {
     single<LearningRepository> {
         LearningRepositoryImpl(
-            learningDao = get(), apiService = get()
+            learningDao = get(),
+            apiService = get(),
         )
     }
 
@@ -67,13 +67,6 @@ val useCaseModule = module {
 
     factory {
         GetMaterialsByIdsUseCase(
-            learningRepository = get(),
-            dispatcherProvider = get(),
-        )
-    }
-
-    factory {
-        GetPracticesByIdsUseCase(
             learningRepository = get(),
             dispatcherProvider = get(),
         )
