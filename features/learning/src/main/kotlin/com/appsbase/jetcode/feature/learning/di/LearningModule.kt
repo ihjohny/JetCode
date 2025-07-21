@@ -1,8 +1,8 @@
 package com.appsbase.jetcode.feature.learning.di
 
-import com.appsbase.jetcode.feature.learning.presentation.dashboard.LearningDashboardViewModel
-import com.appsbase.jetcode.feature.learning.presentation.lesson.LessonViewModel
-import com.appsbase.jetcode.feature.learning.presentation.skilldetail.SkillDetailViewModel
+import com.appsbase.jetcode.feature.learning.presentation.skill_detail.SkillDetailViewModel
+import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListViewModel
+import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -11,22 +11,24 @@ import org.koin.dsl.module
  */
 val learningModule = module {
     viewModel {
-        LearningDashboardViewModel(
+        SkillListViewModel(
             getSkillsUseCase = get(),
-            syncContentUseCase = get()
+            syncContentUseCase = get(),
         )
     }
 
-    viewModel { (skillId: String) ->
+    viewModel {
         SkillDetailViewModel(
             getSkillByIdUseCase = get(),
-            getTopicsForSkillUseCase = get()
+            getTopicsByIdsUseCase = get(),
         )
     }
 
-    viewModel { (lessonId: String) ->
-        LessonViewModel(
-            getLessonByIdUseCase = get()
+    viewModel {
+        TopicDetailViewModel(
+            getTopicByIdUseCase = get(),
+            getMaterialsForTopicUseCase = get(),
+            getPracticesForTopicUseCase = get(),
         )
     }
 }

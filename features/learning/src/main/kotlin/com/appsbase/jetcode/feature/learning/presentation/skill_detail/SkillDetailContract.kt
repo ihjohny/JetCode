@@ -1,8 +1,8 @@
-package com.appsbase.jetcode.feature.learning.presentation.skilldetail
+package com.appsbase.jetcode.feature.learning.presentation.skill_detail
 
-import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiEffect
+import com.appsbase.jetcode.core.common.mvi.UiIntent
+import com.appsbase.jetcode.core.common.mvi.UiState
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.model.Topic
 
@@ -20,7 +20,7 @@ data class SkillDetailState(
 sealed class SkillDetailIntent : UiIntent {
     data class LoadSkill(val skillId: String) : SkillDetailIntent()
     data class TopicClicked(val topicId: String) : SkillDetailIntent()
-    data object RetryClicked : SkillDetailIntent()
+    data class RetryClicked(val skillId: String) : SkillDetailIntent()
 }
 
 sealed class SkillDetailEffect : UiEffect {

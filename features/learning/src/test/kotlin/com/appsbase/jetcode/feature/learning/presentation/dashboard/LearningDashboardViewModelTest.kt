@@ -5,6 +5,8 @@ import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListIntent
+import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -32,7 +34,7 @@ class LearningDashboardViewModelTest {
     private val mockGetSkillsUseCase: GetSkillsUseCase = mockk()
     private val mockSyncContentUseCase: SyncContentUseCase = mockk()
 
-    private lateinit var viewModel: LearningDashboardViewModel
+    private lateinit var viewModel: SkillListViewModel
 
     private val sampleSkills = listOf(
         Skill(
@@ -71,7 +73,7 @@ class LearningDashboardViewModelTest {
         every { mockGetSkillsUseCase() } returns flowOf(Result.Success(sampleSkills))
 
         // When
-        viewModel = LearningDashboardViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
+        viewModel = SkillListViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -89,7 +91,7 @@ class LearningDashboardViewModelTest {
         every { mockGetSkillsUseCase() } returns flowOf(Result.Error(exception))
 
         // When
-        viewModel = LearningDashboardViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
+        viewModel = SkillListViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -103,11 +105,11 @@ class LearningDashboardViewModelTest {
     fun `when searchSkills is called, filteredSkills should be updated`() = runTest {
         // Given
         every { mockGetSkillsUseCase() } returns flowOf(Result.Success(sampleSkills))
-        viewModel = LearningDashboardViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
+        viewModel = SkillListViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // When
-        viewModel.handleIntent(LearningDashboardIntent.SearchSkills("Kotlin"))
+        viewModel.handleIntent(SkillListIntent.SearchSkills("Kotlin"))
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
@@ -122,16 +124,16 @@ class LearningDashboardViewModelTest {
         // Given
         every { mockGetSkillsUseCase() } returns flowOf(Result.Success(sampleSkills))
         coEvery { mockSyncContentUseCase() } returns Result.Success(Unit)
-        viewModel = LearningDashboardViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
+        viewModel = SkillListViewModel(mockGetSkillsUseCase, mockSyncContentUseCase)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // When
-        viewModel.handleIntent(LearningDashboardIntent.RefreshSkills)
+        viewModel.handleIntent(SkillListIntent.RefreshSkills)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         val state = viewModel.uiState.value
-        assertFalse(state.isRefreshing)
+        assertFalse(state.isSyncing)
         assertEquals(sampleSkills, state.skills)
     }
 }

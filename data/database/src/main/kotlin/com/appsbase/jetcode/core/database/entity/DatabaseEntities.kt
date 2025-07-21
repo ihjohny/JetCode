@@ -18,7 +18,7 @@ data class SkillEntity(
     val estimatedDuration: Int,
     val isCompleted: Boolean = false,
     val progress: Float = 0f,
-    val topicIds: List<String> = emptyList()
+    val topicIds: List<String> = emptyList(),
 )
 
 @Entity(tableName = "topics")
@@ -27,25 +27,11 @@ data class TopicEntity(
     @PrimaryKey val id: String,
     val name: String,
     val description: String,
-    val order: Int,
-    val isUnlocked: Boolean = false,
-    val isCompleted: Boolean = false,
-    val progress: Float = 0f,
-    val lessonIds: List<String> = emptyList()
-)
-
-@Entity(tableName = "lessons")
-@TypeConverters(Converters::class)
-data class LessonEntity(
-    @PrimaryKey val id: String,
-    val title: String,
-    val description: String,
-    val order: Int,
+    val materialIds: List<String> = emptyList(),
+    val practiceIds: List<String> = emptyList(),
     val duration: Int,
     val isCompleted: Boolean = false,
-    val score: Int? = null,
-    val materialIds: List<String> = emptyList(),
-    val practiceIds: List<String> = emptyList()
+    val progress: Float = 0f,
 )
 
 @Entity(tableName = "materials")
@@ -55,8 +41,7 @@ data class MaterialEntity(
     val type: String,
     val title: String,
     val content: String,
-    val order: Int,
-    val metadata: Map<String, String> = emptyMap()
+    val metadata: Map<String, String> = emptyMap(),
 )
 
 @Entity(tableName = "practices")
@@ -69,28 +54,7 @@ data class PracticeEntity(
     val correctAnswer: String,
     val explanation: String,
     val difficulty: String,
-    val points: Int = 10
-)
-
-@Entity(tableName = "user_progress")
-@TypeConverters(Converters::class)
-data class UserProgressEntity(
-    @PrimaryKey val userId: String,
-    val totalPoints: Int = 0,
-    val streak: Int = 0,
-    val lastActivityDate: String? = null
-)
-
-@Entity(tableName = "lesson_progress")
-data class LessonProgressEntity(
-    @PrimaryKey val id: String, // userId_lessonId
-    val userId: String,
-    val lessonId: String,
-    val isCompleted: Boolean = false,
-    val score: Int = 0,
-    val attempts: Int = 0,
-    val timeSpent: Int = 0,
-    val completedAt: String? = null
+    val points: Int = 10,
 )
 
 class Converters {

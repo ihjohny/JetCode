@@ -1,7 +1,8 @@
-package com.appsbase.jetcode.feature.learning.presentation.dashboard
+package com.appsbase.jetcode.feature.learning.presentation.skill_list
 
 import androidx.lifecycle.viewModelScope
 import com.appsbase.jetcode.core.common.Result
+import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.core.domain.model.Skill
@@ -10,25 +11,25 @@ import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class LearningDashboardViewModel(
+class SkillListViewModel(
     private val getSkillsUseCase: GetSkillsUseCase,
     private val syncContentUseCase: SyncContentUseCase,
-) : BaseViewModel<LearningDashboardState, LearningDashboardIntent, LearningDashboardEffect>(
-    initialState = LearningDashboardState()
+) : BaseViewModel<SkillListState, SkillListIntent, SkillListEffect>(
+    initialState = SkillListState()
 ) {
 
     init {
-        handleIntent(LearningDashboardIntent.LoadSkills)
+        handleIntent(SkillListIntent.LoadSkills)
     }
 
-    override fun handleIntent(intent: LearningDashboardIntent) {
+    override fun handleIntent(intent: SkillListIntent) {
         when (intent) {
-            is LearningDashboardIntent.LoadSkills -> loadSkills()
-            is LearningDashboardIntent.RefreshSkills -> refreshSkills()
-            is LearningDashboardIntent.SearchSkills -> searchSkills(intent.query)
-            is LearningDashboardIntent.SkillClicked -> handleSkillClick(intent.skillId)
-            is LearningDashboardIntent.ProfileClicked -> handleProfileClick()
-            is LearningDashboardIntent.RetryClicked -> loadSkills()
+            is SkillListIntent.LoadSkills -> loadSkills()
+            is SkillListIntent.SyncSkills -> syncSkills()
+            is SkillListIntent.SearchSkills -> searchSkills(intent.query)
+            is SkillListIntent.SkillClicked -> handleSkillClick(intent.skillId)
+            is SkillListIntent.ProfileClicked -> handleProfileClick()
+            is SkillListIntent.RetryClicked -> loadSkills()
         }
     }
 
@@ -51,12 +52,12 @@ class LearningDashboardViewModel(
                                 error = null
                             )
                         )
-                        Timber.d("Skills loaded successfully: ${result.data.size} skills")
+                        Timber.Forest.d("Skills loaded successfully: ${result.data.size} skills")
                     }
 
                     is Result.Error -> {
                         val errorMessage = when (val exception = result.exception) {
-                            is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                            is AppError -> exception.getUserMessage()
                             else -> exception.message ?: "An unexpected error occurred"
                         }
                         updateState(
@@ -64,39 +65,39 @@ class LearningDashboardViewModel(
                                 isLoading = false, error = errorMessage
                             )
                         )
-                        sendEffect(LearningDashboardEffect.ShowError(errorMessage))
-                        Timber.e(result.exception, "Error loading skills")
+                        sendEffect(SkillListEffect.ShowError(errorMessage))
+                        Timber.Forest.e(result.exception, "Error loading skills")
                     }
                 }
             }
         }
     }
 
-    private fun refreshSkills() {
-        updateState(currentState().copy(isRefreshing = true))
+    private fun syncSkills() {
+        updateState(currentState().copy(isSyncing = true))
 
         viewModelScope.launch {
             // First sync content from remote
             when (val syncResult = syncContentUseCase()) {
                 is Result.Success -> {
-                    Timber.d("Content synced successfully")
+                    Timber.Forest.d("Content synced successfully")
                     // Then load updated skills
                     loadSkillsAfterSync()
                 }
 
                 is Result.Error -> {
-                    updateState(currentState().copy(isRefreshing = false))
+                    updateState(currentState().copy(isSyncing = false))
                     val errorMessage = when (val exception = syncResult.exception) {
-                        is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                        is AppError -> exception.getUserMessage()
                         else -> exception.message ?: "An unexpected error occurred"
                     }
-                    sendEffect(LearningDashboardEffect.ShowError("Sync failed: $errorMessage"))
-                    Timber.e(syncResult.exception, "Error syncing content")
+                    sendEffect(SkillListEffect.ShowError("Sync failed: $errorMessage"))
+                    Timber.Forest.e(syncResult.exception, "Error syncing content")
                 }
 
                 is Result.Loading -> {
                     // Keep the refreshing state - loading is handled by the isRefreshing flag
-                    Timber.d("Syncing content...")
+                    Timber.Forest.d("Syncing content...")
                 }
             }
         }
@@ -109,7 +110,7 @@ class LearningDashboardViewModel(
                     is Result.Success -> {
                         updateState(
                             currentState().copy(
-                                isRefreshing = false,
+                                isSyncing = false,
                                 skills = result.data,
                                 filteredSkills = filterSkills(
                                     result.data, currentState().searchQuery
@@ -119,12 +120,12 @@ class LearningDashboardViewModel(
                     }
 
                     is Result.Error -> {
-                        updateState(currentState().copy(isRefreshing = false))
+                        updateState(currentState().copy(isSyncing = false))
                         val errorMessage = when (val exception = result.exception) {
-                            is com.appsbase.jetcode.core.common.error.AppError -> exception.getUserMessage()
+                            is AppError -> exception.getUserMessage()
                             else -> exception.message ?: "An unexpected error occurred"
                         }
-                        sendEffect(LearningDashboardEffect.ShowError(errorMessage))
+                        sendEffect(SkillListEffect.ShowError(errorMessage))
                     }
 
                     is Result.Loading -> {
@@ -142,7 +143,7 @@ class LearningDashboardViewModel(
                 searchQuery = query, filteredSkills = filteredSkills
             )
         )
-        Timber.d("Search query: '$query', found ${filteredSkills.size} results")
+        Timber.Forest.d("Search query: '$query', found ${filteredSkills.size} results")
     }
 
     private fun filterSkills(
@@ -152,19 +153,18 @@ class LearningDashboardViewModel(
 
         return skills.filter { skill ->
             skill.name.contains(query, ignoreCase = true) || skill.description.contains(
-                query,
-                ignoreCase = true
+                query, ignoreCase = true
             )
         }
     }
 
     private fun handleSkillClick(skillId: String) {
-        sendEffect(LearningDashboardEffect.NavigateToSkillDetail(skillId))
-        Timber.d("Skill clicked: $skillId")
+        sendEffect(SkillListEffect.NavigateToSkillDetail(skillId))
+        Timber.Forest.d("Skill clicked: $skillId")
     }
 
     private fun handleProfileClick() {
-        sendEffect(LearningDashboardEffect.NavigateToProfile)
-        Timber.d("Profile clicked")
+        sendEffect(SkillListEffect.NavigateToProfile)
+        Timber.Forest.d("Profile clicked")
     }
 }

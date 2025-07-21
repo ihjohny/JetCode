@@ -6,7 +6,7 @@ import com.appsbase.jetcode.core.data.mapper.toDomain
 import com.appsbase.jetcode.core.data.mapper.toEntity
 import com.appsbase.jetcode.core.data.remote.LearningApiService
 import com.appsbase.jetcode.core.database.dao.LearningDao
-import com.appsbase.jetcode.core.domain.model.Lesson
+import com.appsbase.jetcode.core.domain.model.Content
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.Practice
 import com.appsbase.jetcode.core.domain.model.Skill
@@ -14,6 +14,7 @@ import com.appsbase.jetcode.core.domain.model.Topic
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
@@ -97,43 +98,6 @@ class LearningRepositoryImpl(
         }
     }
 
-    override fun getLessonById(lessonId: String): Flow<Result<Lesson>> {
-        return learningDao.getLessonById(lessonId).map { entity ->
-            try {
-                if (entity != null) {
-                    Result.Success(entity.toDomain())
-                } else {
-                    Result.Error(AppError.DataError.NotFound)
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Error mapping lesson to domain")
-                Result.Error(AppError.DataError.ParseError(e))
-            }
-        }.catch { e ->
-            Timber.e(e, "Error getting lesson by id from database")
-            emit(Result.Error(AppError.DataError.DatabaseError))
-        }
-    }
-
-    override fun getLessonsByIds(lessonIds: List<String>): Flow<Result<List<Lesson>>> {
-        return if (lessonIds.isEmpty()) {
-            flowOf(Result.Success(emptyList()))
-        } else {
-            learningDao.getLessonsByIds(lessonIds).map { entities ->
-                try {
-                    val lessons = entities.map { it.toDomain() }
-                    Result.Success(lessons)
-                } catch (e: Exception) {
-                    Timber.e(e, "Error mapping lessons to domain")
-                    Result.Error(AppError.DataError.ParseError(e))
-                }
-            }.catch { e ->
-                Timber.e(e, "Error getting lessons from database")
-                emit(Result.Error(AppError.DataError.DatabaseError))
-            }
-        }
-    }
-
     override fun getMaterialsByIds(materialIds: List<String>): Flow<Result<List<Material>>> {
         return if (materialIds.isEmpty()) {
             flowOf(Result.Success(emptyList()))
@@ -176,14 +140,27 @@ class LearningRepositoryImpl(
         return try {
             // Fetch all content types independently
             val skills = fetchContent("skills") { apiService.getSkills() }
-            val topics = fetchContent("topics") { apiService.getTopics() }
-            val lessons = fetchContent("lessons") { apiService.getLessons() }
-            val materials = fetchContent("materials") { apiService.getMaterials() }
-            val practices = fetchContent("practices") { apiService.getPractices() }
+
+            // Fetch all topic IDs from skills to get topics
+            val allTopicIds = skills?.flatMap { it.topicIds }?.distinct() ?: emptyList()
+            val topics = if (allTopicIds.isNotEmpty()) {
+                fetchContent("topics") { apiService.getTopicsByIds(allTopicIds) }
+            } else null
+
+            // Fetch all material and practice IDs from topics
+            val allMaterialIds = topics?.flatMap { it.materialIds }?.distinct() ?: emptyList()
+            val allPracticeIds = topics?.flatMap { it.practiceIds }?.distinct() ?: emptyList()
+
+            val materials = if (allMaterialIds.isNotEmpty()) {
+                fetchContent("materials") { apiService.getMaterialsByIds(allMaterialIds) }
+            } else null
+
+            val practices = if (allPracticeIds.isNotEmpty()) {
+                fetchContent("practices") { apiService.getPracticesByIds(allPracticeIds) }
+            } else null
 
             // Check if at least one fetch succeeded
-            val hasAnySuccess =
-                listOf(skills, topics, lessons, materials, practices).any { it != null }
+            val hasAnySuccess = listOf(skills, topics, materials, practices).any { it != null }
             if (!hasAnySuccess) {
                 Timber.e("All remote data fetches failed")
                 return Result.Error(AppError.NetworkError.Unknown(Exception("All remote data sources failed")))
@@ -203,12 +180,6 @@ class LearningRepositoryImpl(
                     Timber.d("Materials synced successfully")
                 }
 
-                lessons?.let {
-                    learningDao.clearLessons()
-                    learningDao.insertLessons(it.map { lesson -> lesson.toEntity() })
-                    Timber.d("Lessons synced successfully")
-                }
-
                 topics?.let {
                     learningDao.clearTopics()
                     learningDao.insertTopics(it.map { topic -> topic.toEntity() })
@@ -221,54 +192,54 @@ class LearningRepositoryImpl(
                     Timber.d("Skills synced successfully")
                 }
 
-                // Log summary
-                val successCount =
-                    listOf(skills, topics, lessons, materials, practices).count { it != null }
-                val totalCount = 5
-
-                if (successCount < totalCount) {
-                    Timber.w("Partial sync completed: $successCount/$totalCount content types synced")
-                } else {
-                    Timber.d("Complete sync successful: all $totalCount content types updated")
-                }
-
+                Timber.i("Content sync completed successfully")
                 Result.Success(Unit)
-
             } catch (e: Exception) {
-                Timber.e(e, "Database update failed during sync")
+                Timber.e(e, "Error saving synced content to database")
                 Result.Error(AppError.DataError.DatabaseError)
             }
-
         } catch (e: Exception) {
-            Timber.e(e, "Unexpected error during sync")
+            Timber.e(e, "Error during content sync")
             Result.Error(AppError.NetworkError.Unknown(e))
         }
     }
 
-    private suspend fun <T> fetchContent(type: String, fetcher: suspend () -> List<T>): List<T>? {
-        return try {
-            val result = fetcher()
-            Timber.d("Successfully fetched $type")
-            result
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to fetch $type")
-            null
-        }
-    }
-
-    override fun searchContent(query: String): Flow<Result<List<Any>>> {
-        return learningDao.searchSkills(query).map { skillEntities ->
+    override fun searchContent(query: String): Flow<Result<List<Content>>> {
+        return combine(
+            learningDao.searchSkills(query),
+            learningDao.searchTopics(query),
+            learningDao.searchMaterials(query),
+            learningDao.searchPractices(query)
+        ) { skillEntities, topicEntities, materialEntities, practiceEntities ->
             try {
-                val results = mutableListOf<Any>()
+                val results = mutableListOf<Content>()
                 results.addAll(skillEntities.map { it.toDomain() })
-                Result.Success(results as List<Any>)
+                results.addAll(topicEntities.map { it.toDomain() })
+                results.addAll(materialEntities.map { it.toDomain() })
+                results.addAll(practiceEntities.map { it.toDomain() })
+                Result.Success(results)
             } catch (e: Exception) {
-                Timber.e(e, "Error searching content")
+                Timber.e(e, "Error mapping search results to domain")
                 Result.Error(AppError.DataError.ParseError(e))
             }
         }.catch { e ->
-            Timber.e(e, "Error in search query")
+            Timber.e(e, "Error searching content")
             emit(Result.Error(AppError.DataError.DatabaseError))
+        }
+    }
+
+    private suspend fun <T> fetchContent(
+        contentType: String, apiCall: suspend () -> List<T>
+    ): List<T>? {
+        return try {
+            val content = apiCall()
+            Timber.d("Successfully fetched ${content.size} $contentType")
+            content
+        } catch (e: Exception) {
+            Timber.w(
+                e, "Failed to fetch $contentType from remote, will continue with other content"
+            )
+            null
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.feature.learning.presentation.skilldetail
+package com.appsbase.jetcode.feature.learning.presentation.skill_detail
 
 import androidx.lifecycle.viewModelScope
 import com.appsbase.jetcode.core.common.Result
@@ -24,7 +24,7 @@ class SkillDetailViewModel(
         when (intent) {
             is SkillDetailIntent.LoadSkill -> loadSkill(intent.skillId)
             is SkillDetailIntent.TopicClicked -> handleTopicClick(intent.topicId)
-            is SkillDetailIntent.RetryClicked -> retryLoading()
+            is SkillDetailIntent.RetryClicked -> retryLoading(intent.skillId)
         }
     }
 
@@ -99,9 +99,7 @@ class SkillDetailViewModel(
         Timber.d("Topic clicked: $topicId")
     }
 
-    private fun retryLoading() {
-        currentState().skill?.let { skill ->
-            loadSkill(skill.id)
-        }
+    private fun retryLoading(skillId: String) {
+        loadSkill(skillId)
     }
 }

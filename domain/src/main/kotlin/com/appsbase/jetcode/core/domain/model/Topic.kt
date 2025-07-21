@@ -7,9 +7,9 @@ data class Topic(
     val id: String,
     val name: String,
     val description: String,
-    val lessonIds: List<String> = emptyList(),
-    val order: Int,
-    val isUnlocked: Boolean = false,
+    val materialIds: List<String> = emptyList(),
+    val practiceIds: List<String> = emptyList(),
+    val duration: Int, // in minutes - total estimated duration for all materials and practices
     val isCompleted: Boolean = false,
     val progress: Float = 0f
-)
+) : Content()

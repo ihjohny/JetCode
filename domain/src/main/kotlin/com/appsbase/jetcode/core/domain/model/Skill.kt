@@ -13,4 +13,4 @@ data class Skill(
     val estimatedDuration: Int, // in minutes
     val isCompleted: Boolean = false,
     val progress: Float = 0f // 0.0 to 1.0
-)
+) : Content()

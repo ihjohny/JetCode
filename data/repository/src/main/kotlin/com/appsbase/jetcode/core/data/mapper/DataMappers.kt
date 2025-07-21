@@ -1,12 +1,10 @@
 package com.appsbase.jetcode.core.data.mapper
 
-import com.appsbase.jetcode.core.database.entity.LessonEntity
 import com.appsbase.jetcode.core.database.entity.MaterialEntity
 import com.appsbase.jetcode.core.database.entity.PracticeEntity
 import com.appsbase.jetcode.core.database.entity.SkillEntity
 import com.appsbase.jetcode.core.database.entity.TopicEntity
 import com.appsbase.jetcode.core.domain.model.Difficulty
-import com.appsbase.jetcode.core.domain.model.Lesson
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.MaterialType
 import com.appsbase.jetcode.core.domain.model.Practice
@@ -46,46 +44,22 @@ fun TopicEntity.toDomain(): Topic = Topic(
     id = id,
     name = name,
     description = description,
-    order = order,
-    isUnlocked = isUnlocked,
+    materialIds = materialIds,
+    practiceIds = practiceIds,
+    duration = duration,
     isCompleted = isCompleted,
     progress = progress,
-    lessonIds = lessonIds,
 )
 
 fun Topic.toEntity(): TopicEntity = TopicEntity(
     id = id,
     name = name,
     description = description,
-    order = order,
-    isUnlocked = isUnlocked,
+    materialIds = materialIds,
+    practiceIds = practiceIds,
+    duration = duration,
     isCompleted = isCompleted,
     progress = progress,
-    lessonIds = lessonIds,
-)
-
-fun LessonEntity.toDomain(): Lesson = Lesson(
-    id = id,
-    title = title,
-    description = description,
-    order = order,
-    duration = duration,
-    isCompleted = isCompleted,
-    score = score,
-    materialIds = materialIds,
-    practiceIds = practiceIds,
-)
-
-fun Lesson.toEntity(): LessonEntity = LessonEntity(
-    id = id,
-    title = title,
-    description = description,
-    order = order,
-    duration = duration,
-    isCompleted = isCompleted,
-    score = score,
-    materialIds = materialIds,
-    practiceIds = practiceIds,
 )
 
 fun MaterialEntity.toDomain(): Material = Material(
@@ -93,7 +67,6 @@ fun MaterialEntity.toDomain(): Material = Material(
     type = MaterialType.valueOf(type),
     title = title,
     content = content,
-    order = order,
     metadata = metadata,
 )
 
@@ -102,7 +75,6 @@ fun Material.toEntity(): MaterialEntity = MaterialEntity(
     type = type.name,
     title = title,
     content = content,
-    order = order,
     metadata = metadata,
 )
 

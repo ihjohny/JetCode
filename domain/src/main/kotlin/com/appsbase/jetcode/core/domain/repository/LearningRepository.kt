@@ -1,7 +1,7 @@
 package com.appsbase.jetcode.core.domain.repository
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.model.Lesson
+import com.appsbase.jetcode.core.domain.model.Content
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.Practice
 import com.appsbase.jetcode.core.domain.model.Skill
@@ -34,16 +34,6 @@ interface LearningRepository {
     fun getTopicsByIds(topicIds: List<String>): Flow<Result<List<Topic>>>
 
     /**
-     * Get lessons by list of IDs
-     */
-    fun getLessonsByIds(lessonIds: List<String>): Flow<Result<List<Lesson>>>
-
-    /**
-     * Get lesson by ID
-     */
-    fun getLessonById(lessonId: String): Flow<Result<Lesson>>
-
-    /**
      * Get materials by list of IDs
      */
     fun getMaterialsByIds(materialIds: List<String>): Flow<Result<List<Material>>>
@@ -61,5 +51,5 @@ interface LearningRepository {
     /**
      * Search content
      */
-    fun searchContent(query: String): Flow<Result<List<Any>>> // Can be Skill, Topic, or Lesson
+    fun searchContent(query: String): Flow<Result<List<Content>>>
 }

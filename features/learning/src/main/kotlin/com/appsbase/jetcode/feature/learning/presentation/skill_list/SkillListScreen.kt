@@ -1,16 +1,36 @@
-package com.appsbase.jetcode.feature.learning.presentation.dashboard
+package com.appsbase.jetcode.feature.learning.presentation.skill_list
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,11 +44,11 @@ import org.koin.androidx.compose.koinViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LearningDashboardScreen(
+fun SkillListScreen(
     onSkillClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LearningDashboardViewModel = koinViewModel()
+    viewModel: SkillListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -36,13 +56,15 @@ fun LearningDashboardScreen(
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is LearningDashboardEffect.NavigateToSkillDetail -> {
+                is SkillListEffect.NavigateToSkillDetail -> {
                     onSkillClick(effect.skillId)
                 }
-                is LearningDashboardEffect.NavigateToProfile -> {
+
+                is SkillListEffect.NavigateToProfile -> {
                     onProfileClick()
                 }
-                is LearningDashboardEffect.ShowError -> {
+
+                is SkillListEffect.ShowError -> {
                     // Handle error - could show snackbar
                 }
             }
@@ -52,37 +74,31 @@ fun LearningDashboardScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Top App Bar
-        TopAppBar(
-            title = {
-                Text(
-                    text = "JetCode Learning",
-                    fontWeight = FontWeight.Bold
+        TopAppBar(title = {
+            Text(
+                text = "JetCode Learning", fontWeight = FontWeight.Bold
+            )
+        }, actions = {
+            IconButton(
+                onClick = { viewModel.handleIntent(SkillListIntent.ProfileClicked) },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person, contentDescription = "Profile"
                 )
-            },
-            actions = {
-                IconButton(onClick = { viewModel.handleIntent(LearningDashboardIntent.ProfileClicked) }) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile"
-                    )
-                }
             }
-        )
+        })
 
-        // Content
         when {
             state.isLoading && state.skills.isEmpty() -> {
                 LoadingState(
-                    modifier = Modifier.fillMaxSize(),
-                    message = "Loading skills..."
+                    modifier = Modifier.fillMaxSize(), message = "Loading skills..."
                 )
             }
 
             state.error != null && state.skills.isEmpty() -> {
                 ErrorState(
                     message = state.error ?: "Unknown error",
-                    onRetry = { viewModel.handleIntent(LearningDashboardIntent.RetryClicked) },
+                    onRetry = { viewModel.handleIntent(SkillListIntent.RetryClicked) },
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -100,41 +116,30 @@ fun LearningDashboardScreen(
 
 @Composable
 private fun LearningContent(
-    state: LearningDashboardState,
-    onIntent: (LearningDashboardIntent) -> Unit,
-    modifier: Modifier = Modifier
+    state: SkillListState, onIntent: (SkillListIntent) -> Unit, modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(16.dp)
     ) {
-        // Search Bar
         OutlinedTextField(
-            value = state.searchQuery,
-            onValueChange = { query ->
-                onIntent(LearningDashboardIntent.SearchSkills(query))
-            },
-            label = { Text("Search skills...") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            },
-            modifier = Modifier
+            value = state.searchQuery, onValueChange = { query ->
+            onIntent(SkillListIntent.SearchSkills(query))
+        }, label = { Text("Search skills...") }, leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search, contentDescription = "Search"
+            )
+        }, modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            singleLine = true
+                .padding(bottom = 16.dp), singleLine = true
         )
 
-        // Pull to refresh
         Box(modifier = Modifier.fillMaxSize()) {
-            if (state.isRefreshing) {
+            if (state.isSyncing) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            // Skills List
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 8.dp)
@@ -156,34 +161,28 @@ private fun LearningContent(
                     }
                 } else {
                     items(
-                        items = state.filteredSkills,
-                        key = { it.id }
-                    ) { skill ->
+                        items = state.filteredSkills, key = { it.id }) { skill ->
                         SkillCard(
-                            skill = skill,
-                            onClick = {
-                                onIntent(LearningDashboardIntent.SkillClicked(skill.id))
-                            }
-                        )
+                            skill = skill, onClick = {
+                                onIntent(SkillListIntent.SkillClicked(skill.id))
+                            })
                     }
                 }
 
-                // Add refresh button at the bottom
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedButton(
-                        onClick = { onIntent(LearningDashboardIntent.RefreshSkills) },
+                        onClick = { onIntent(SkillListIntent.SyncSkills) },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isRefreshing
+                        enabled = !state.isSyncing,
                     ) {
-                        if (state.isRefreshing) {
+                        if (state.isSyncing) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(16.dp), strokeWidth = 2.dp
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        Text(if (state.isRefreshing) "Syncing..." else "Sync Content")
+                        Text(if (state.isSyncing) "Syncing..." else "Sync Content")
                     }
                 }
             }

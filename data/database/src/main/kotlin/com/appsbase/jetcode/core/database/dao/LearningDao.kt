@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.appsbase.jetcode.core.database.entity.SkillEntity
 import com.appsbase.jetcode.core.database.entity.TopicEntity
-import com.appsbase.jetcode.core.database.entity.LessonEntity
 import com.appsbase.jetcode.core.database.entity.MaterialEntity
 import com.appsbase.jetcode.core.database.entity.PracticeEntity
 import kotlinx.coroutines.flow.Flow
@@ -23,16 +22,10 @@ interface LearningDao {
     @Query("SELECT * FROM topics WHERE id = :topicId")
     fun getTopicById(topicId: String): Flow<TopicEntity?>
 
-    @Query("SELECT * FROM topics WHERE id IN (:topicIds) ORDER BY `order` ASC")
+    @Query("SELECT * FROM topics WHERE id IN (:topicIds)")
     fun getTopicsByIds(topicIds: List<String>): Flow<List<TopicEntity>>
 
-    @Query("SELECT * FROM lessons WHERE id IN (:lessonIds) ORDER BY `order` ASC")
-    fun getLessonsByIds(lessonIds: List<String>): Flow<List<LessonEntity>>
-
-    @Query("SELECT * FROM lessons WHERE id = :lessonId")
-    fun getLessonById(lessonId: String): Flow<LessonEntity?>
-
-    @Query("SELECT * FROM materials WHERE id IN (:materialIds) ORDER BY `order` ASC")
+    @Query("SELECT * FROM materials WHERE id IN (:materialIds)")
     fun getMaterialsByIds(materialIds: List<String>): Flow<List<MaterialEntity>>
 
     @Query("SELECT * FROM practices WHERE id IN (:practiceIds)")
@@ -45,9 +38,6 @@ interface LearningDao {
     suspend fun insertTopics(topics: List<TopicEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLessons(lessons: List<LessonEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMaterials(materials: List<MaterialEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -58,9 +48,6 @@ interface LearningDao {
 
     @Query("DELETE FROM topics")
     suspend fun clearTopics()
-
-    @Query("DELETE FROM lessons")
-    suspend fun clearLessons()
 
     @Query("DELETE FROM materials")
     suspend fun clearMaterials()
@@ -88,10 +75,19 @@ interface LearningDao {
 
     @Query(
         """
-        SELECT * FROM lessons 
+        SELECT * FROM materials 
         WHERE title LIKE '%' || :query || '%' 
-        OR description LIKE '%' || :query || '%'
+        OR content LIKE '%' || :query || '%'
     """
     )
-    fun searchLessons(query: String): Flow<List<LessonEntity>>
+    fun searchMaterials(query: String): Flow<List<MaterialEntity>>
+
+    @Query(
+        """
+        SELECT * FROM practices 
+        WHERE question LIKE '%' || :query || '%' 
+        OR explanation LIKE '%' || :query || '%'
+    """
+    )
+    fun searchPractices(query: String): Flow<List<PracticeEntity>>
 }

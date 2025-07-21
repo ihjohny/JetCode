@@ -9,7 +9,6 @@ import com.appsbase.jetcode.core.domain.repository.LearningRepository
  */
 class SyncContentUseCase(
     private val learningRepository: LearningRepository,
-    private val dispatcherProvider: DispatcherProvider
 ) {
     suspend operator fun invoke(): Result<Unit> {
         return learningRepository.syncContent()
