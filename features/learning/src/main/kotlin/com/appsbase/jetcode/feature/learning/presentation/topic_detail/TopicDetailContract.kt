@@ -16,7 +16,9 @@ data class TopicDetailState(
     val materials: List<Material> = emptyList(),
     val currentMaterialIndex: Int = 0,
     val error: String? = null
-) : UiState
+) : UiState {
+    val progressValueLabel get() = "${(currentMaterialIndex + 1).coerceAtMost(materials.size)} of ${materials.size}"
+}
 
 sealed class TopicDetailIntent : UiIntent {
     data class LoadTopic(val topicId: String) : TopicDetailIntent()

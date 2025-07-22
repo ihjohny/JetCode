@@ -66,6 +66,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.MaterialType
+import com.appsbase.jetcode.core.domain.model.Topic
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
@@ -107,7 +108,8 @@ fun TopicDetailScreen(
                     state.topic?.practiceSetId?.let { practiceSetId ->
                         onPracticeClick(practiceSetId)
                     }
-                })
+                },
+            )
         },
     ) { paddingValues ->
         when {
@@ -160,6 +162,7 @@ private fun TopicContentSection(
                 topic = topic,
                 currentMaterialIndex = state.currentMaterialIndex,
                 totalMaterials = state.materials.size,
+                progressValueLabel = state.progressValueLabel,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
@@ -182,9 +185,10 @@ private fun TopicContentSection(
 
 @Composable
 private fun TopicHeaderCard(
-    topic: com.appsbase.jetcode.core.domain.model.Topic,
+    topic: Topic,
     currentMaterialIndex: Int,
     totalMaterials: Int,
+    progressValueLabel: String,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -218,7 +222,7 @@ private fun TopicHeaderCard(
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "${currentMaterialIndex + 1} of $totalMaterials",
+                        text = progressValueLabel,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -626,56 +630,9 @@ private fun NavigationControls(
     }
 }
 
-// Preview section
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun TopicDetailScreenPreview() {
-    JetCodeTheme {
-        TopicContentSection(
-            state = TopicDetailState(
-                isLoading = false, topic = com.appsbase.jetcode.core.domain.model.Topic(
-                    id = "1",
-                    name = "Kotlin Basics",
-                    description = "Learn the fundamentals of Kotlin programming language including variables, functions, classes, and more.",
-                    materialIds = listOf("1", "2", "3"),
-                    practiceSetId = "practice_1",
-                    duration = 45
-                ), materials = listOf(
-                    Material(
-                        id = "1",
-                        type = MaterialType.TEXT,
-                        title = "Introduction to Kotlin",
-                        content = "Kotlin is a modern programming language that runs on the Java Virtual Machine (JVM). It's fully interoperable with Java and offers many features that make development more productive and enjoyable."
-                    ), Material(
-                        id = "2",
-                        type = MaterialType.CODE,
-                        title = "Variables and Data Types",
-                        content = """
-                            // Declaring variables in Kotlin
-                            val name: String = "John" // Immutable
-                            var age: Int = 25 // Mutable
-                            
-                            // Type inference
-                            val city = "New York"
-                            var temperature = 23.5
-                        """.trimIndent()
-                    ), Material(
-                        id = "3",
-                        type = MaterialType.VIDEO,
-                        title = "Kotlin Functions",
-                        content = "Watch this comprehensive video about Kotlin functions, parameters, and return types."
-                    )
-                ), currentMaterialIndex = 0, error = null
-            ),
-            onIntent = { },
-            onPracticeClick = { },
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopicDetailTopAppBar(
+private fun TopicDetailTopAppBar(
     title: String,
     onNavigateBack: () -> Unit,
     onPracticeClick: () -> Unit,
@@ -723,4 +680,57 @@ fun TopicDetailTopAppBar(
             }
         },
     )
+}
+
+// Preview section
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun TopicDetailScreenPreview() {
+    JetCodeTheme {
+        TopicContentSection(
+            state = TopicDetailState(
+                isLoading = false,
+                topic = Topic(
+                    id = "1",
+                    name = "Kotlin Basics",
+                    description = "Learn the fundamentals of Kotlin programming language including variables, functions, classes, and more.",
+                    materialIds = listOf("1", "2", "3"),
+                    practiceSetId = "practice_1",
+                    duration = 45,
+                ),
+                materials = listOf(
+                    Material(
+                        id = "1",
+                        type = MaterialType.TEXT,
+                        title = "Introduction to Kotlin",
+                        content = "Kotlin is a modern programming language that runs on the Java Virtual Machine (JVM). It's fully interoperable with Java and offers many features that make development more productive and enjoyable."
+                    ),
+                    Material(
+                        id = "2",
+                        type = MaterialType.CODE,
+                        title = "Variables and Data Types",
+                        content = """
+                            // Declaring variables in Kotlin
+                            val name: String = "John" // Immutable
+                            var age: Int = 25 // Mutable
+                            
+                            // Type inference
+                            val city = "New York"
+                            var temperature = 23.5
+                        """.trimIndent(),
+                    ),
+                    Material(
+                        id = "3",
+                        type = MaterialType.VIDEO,
+                        title = "Kotlin Functions",
+                        content = "Watch this comprehensive video about Kotlin functions, parameters, and return types.",
+                    ),
+                ),
+                currentMaterialIndex = 0,
+                error = null,
+            ),
+            onIntent = { },
+            onPracticeClick = { },
+        )
+    }
 }
