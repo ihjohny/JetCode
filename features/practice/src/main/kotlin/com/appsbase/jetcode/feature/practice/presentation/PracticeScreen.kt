@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,8 +18,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,9 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -46,7 +42,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -61,17 +56,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
+import com.appsbase.jetcode.feature.practice.presentation.components.AllAnswersDialog
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
@@ -84,7 +80,6 @@ fun PracticeScreen(
     practiceId: String,
     onPracticeComplete: () -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: PracticeViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -138,12 +133,9 @@ fun PracticeScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    // Keep Practice Set Header visible even after completion
                     state.practiceSet?.let { practiceSet ->
                         PracticeHeaderCard(
                             practiceSet = practiceSet,
-                            currentQuizIndex = state.currentQuizIndex,
-                            totalQuizzes = state.quizzes.size,
                             progressValueLabel = state.progressLabel,
                             progressValue = state.progressValue,
                             modifier = Modifier
@@ -152,12 +144,20 @@ fun PracticeScreen(
                         )
                     }
 
-                    // Completion Section
                     CompletionSection(
                         state = state,
                         onIntent = viewModel::handleIntent,
+                        onViewAnswers = { viewModel.handleIntent(PracticeIntent.ShowAllAnswers) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp),
+                    )
+
+                    CompletionActionButtons(
                         onComplete = onPracticeComplete,
-                        modifier = Modifier.weight(1f),
+                        onRestart = { viewModel.handleIntent(PracticeIntent.RestartPractice) },
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
             }
@@ -182,12 +182,9 @@ private fun PracticeContentSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        // Practice Set Header Card
         state.practiceSet?.let { practiceSet ->
             PracticeHeaderCard(
                 practiceSet = practiceSet,
-                currentQuizIndex = state.currentQuizIndex,
-                totalQuizzes = state.quizzes.size,
                 progressValueLabel = state.progressLabel,
                 progressValue = state.progressValue,
                 modifier = Modifier
@@ -207,9 +204,7 @@ private fun PracticeContentSection(
 
 @Composable
 private fun PracticeHeaderCard(
-    practiceSet: com.appsbase.jetcode.core.domain.model.PracticeSet,
-    currentQuizIndex: Int,
-    totalQuizzes: Int,
+    practiceSet: PracticeSet,
     progressValueLabel: String,
     progressValue: Float,
     modifier: Modifier = Modifier
@@ -232,7 +227,6 @@ private fun PracticeHeaderCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Progress Section
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -251,17 +245,10 @@ private fun PracticeHeaderCard(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-
-                Text(
-                    text = "🎯 ${totalQuizzes} quizzes",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Progress Bar
             LinearProgressIndicator(
                 progress = { progressValue },
                 modifier = Modifier
@@ -284,7 +271,6 @@ private fun QuizFlashCardSection(
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
     Column(modifier = modifier) {
-        // Quiz Card
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -296,26 +282,19 @@ private fun QuizFlashCardSection(
                 QuizCard(
                     quiz = currentQuiz,
                     userAnswer = state.userAnswer,
-                    showAnswer = state.showAnswer,
                     quizResult = state.quizResults.getOrNull(state.currentQuizIndex),
                     dragOffset = dragOffset,
                     onDragOffsetChange = { dragOffset = it },
                     onSwipeLeft = { onIntent(PracticeIntent.NextQuiz) },
                     onSwipeRight = { onIntent(PracticeIntent.PreviousQuiz) },
                     onAnswerChanged = { onIntent(PracticeIntent.AnswerChanged(it)) },
-                    onSubmitAnswer = { onIntent(PracticeIntent.SubmitAnswer) },
-                    onShowAnswer = { onIntent(PracticeIntent.ShowCorrectAnswer) },
                     modifier = Modifier.fillMaxSize()
                 )
             }
         }
 
-        // Navigation Controls
         QuizNavigationControls(
             canGoPrevious = state.currentQuizIndex > 0,
-            canGoNext = state.currentQuizIndex < state.quizzes.size - 1,
-            hasAnswered = state.quizResults.size > state.currentQuizIndex,
-            showAnswer = state.showAnswer,
             onPrevious = { onIntent(PracticeIntent.PreviousQuiz) },
             onNext = { onIntent(PracticeIntent.NextQuiz) },
             modifier = Modifier.padding(16.dp),
@@ -327,15 +306,12 @@ private fun QuizFlashCardSection(
 private fun QuizCard(
     quiz: Quiz,
     userAnswer: String,
-    showAnswer: Boolean,
     quizResult: QuizResult?,
     dragOffset: Float,
     onDragOffsetChange: (Float) -> Unit,
     onSwipeLeft: () -> Unit,
     onSwipeRight: () -> Unit,
     onAnswerChanged: (String) -> Unit,
-    onSubmitAnswer: () -> Unit,
-    onShowAnswer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val animatedOffset by animateFloatAsState(
@@ -401,47 +377,8 @@ private fun QuizCard(
 
                 // Quiz Input based on type
                 QuizInputRenderer(
-                    quiz = quiz,
-                    userAnswer = userAnswer,
-                    onAnswerChanged = onAnswerChanged,
-                    showAnswer = showAnswer,
-                    quizResult = quizResult
+                    quiz = quiz, userAnswer = userAnswer, onAnswerChanged = onAnswerChanged
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Answer feedback section
-                if (showAnswer && quizResult != null) {
-                    AnswerFeedbackSection(
-                        quizResult = quizResult, quiz = quiz
-                    )
-                } else if (!showAnswer && quizResult == null) {
-                    // Submit button
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = onShowAnswer, modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Show Answer")
-                        }
-
-                        Button(
-                            onClick = onSubmitAnswer,
-                            enabled = userAnswer.isNotBlank(),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Submit")
-                        }
-                    }
-                }
             }
         }
     }
@@ -469,7 +406,7 @@ private fun QuizTypeBadge(type: QuizType) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }
@@ -479,55 +416,35 @@ private fun QuizInputRenderer(
     quiz: Quiz,
     userAnswer: String,
     onAnswerChanged: (String) -> Unit,
-    showAnswer: Boolean,
-    quizResult: QuizResult?
 ) {
     when (quiz.type) {
         QuizType.MCQ -> {
             quiz.options?.forEach { option ->
                 val isSelected = userAnswer == option
-                val isCorrect = showAnswer && option == quiz.correctAnswer
-                val isWrong = showAnswer && isSelected && option != quiz.correctAnswer
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(enabled = !showAnswer) {
+                        .clickable {
                             onAnswerChanged(option)
                         }
                         .background(
-                            when {
-                                isCorrect -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                                isWrong -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-                                else -> MaterialTheme.colorScheme.surface
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                            } else {
+                                MaterialTheme.colorScheme.surface
                             }, RoundedCornerShape(8.dp)
                         )
                         .padding(12.dp)) {
                     RadioButton(
-                        selected = isSelected, onClick = null, enabled = !showAnswer
+                        selected = isSelected, onClick = null
                     )
                     Text(
                         text = option, modifier = Modifier
                             .padding(start = 8.dp)
                             .weight(1f)
                     )
-
-                    if (showAnswer && isCorrect) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Correct",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    } else if (showAnswer && isWrong) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Wrong",
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -548,11 +465,10 @@ private fun QuizInputRenderer(
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !showAnswer,
                 minLines = if (quiz.type == QuizType.CODE_CHALLENGE) 5 else 1,
                 textStyle = if (quiz.type == QuizType.CODE_CHALLENGE) {
                     MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace
                     )
                 } else {
                     MaterialTheme.typography.bodyMedium
@@ -563,65 +479,8 @@ private fun QuizInputRenderer(
 }
 
 @Composable
-private fun AnswerFeedbackSection(
-    quizResult: QuizResult, quiz: Quiz
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
-            containerColor = if (quizResult.isCorrect) {
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            } else {
-                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-            }
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = if (quizResult.isCorrect) Icons.Default.CheckCircle else Icons.Default.Close,
-                    contentDescription = null,
-                    tint = if (quizResult.isCorrect) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (quizResult.isCorrect) "Correct!" else "Incorrect",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = if (quizResult.isCorrect) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Correct Answer: ${quiz.correctAnswer}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
-            )
-
-            if (!quiz.explanation.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Explanation: ${quiz.explanation}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun QuizNavigationControls(
     canGoPrevious: Boolean,
-    canGoNext: Boolean,
-    hasAnswered: Boolean,
-    showAnswer: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
@@ -647,7 +506,7 @@ private fun QuizNavigationControls(
 
         Button(
             onClick = onNext,
-            enabled = canGoNext && (hasAnswered || showAnswer),
+            enabled = true, // Always enabled - will submit answer regardless of selection
             modifier = Modifier.weight(1f)
         ) {
             Text("Next")
@@ -665,12 +524,11 @@ private fun QuizNavigationControls(
 private fun CompletionSection(
     state: PracticeState,
     onIntent: (PracticeIntent) -> Unit,
-    onComplete: () -> Unit,
+    onViewAnswers: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Completion Card
     Card(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -708,61 +566,72 @@ private fun CompletionSection(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Action Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedButton(
-                    onClick = { onIntent(PracticeIntent.ShowAllAnswers) },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "View Answers",
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
-
-                Button(
-                    onClick = { onIntent(PracticeIntent.RestartPractice) },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Restart")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             Button(
-                onClick = onComplete,
-                modifier = Modifier.fillMaxWidth(),
+                onClick = onViewAnswers,
+                modifier = Modifier.fillMaxWidth(0.8f),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Complete Practice")
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "View Answers",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
 
-    // All Answers Dialog
     if (state.showAllAnswers) {
         AllAnswersDialog(
             quizResults = state.quizResults,
             onDismiss = { onIntent(PracticeIntent.HideAllAnswers) })
+    }
+}
+
+@Composable
+private fun CompletionActionButtons(
+    onComplete: () -> Unit,
+    onRestart: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedButton(
+            onClick = onRestart, modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text("Restart")
+        }
+
+        Button(
+            onClick = onComplete,
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = "Complete Practice",
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(16.dp),
+            )
+        }
     }
 }
 
@@ -777,7 +646,8 @@ private fun QuizStatisticsCard(
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "Results Summary",
@@ -825,148 +695,6 @@ private fun StatisticItem(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
-    }
-}
-
-@Composable
-private fun AllAnswersDialog(
-    quizResults: List<QuizResult>,
-    onDismiss: () -> Unit,
-) {
-    Dialog(
-        onDismissRequest = onDismiss, properties = DialogProperties(
-            dismissOnBackPress = true, dismissOnClickOutside = true, usePlatformDefaultWidth = false
-        )
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.9f)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 8.dp
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Header with title and close button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "All Answers & Explanations",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    IconButton(
-                        onClick = onDismiss, modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-
-                // Divider
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
-                )
-
-                // Scrollable content
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 20.dp)
-                ) {
-                    itemsIndexed(quizResults) { index, result ->
-                        QuizAnswerItem(
-                            index = index + 1, quiz = result.quiz, quizResult = result
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun QuizAnswerItem(
-    index: Int,
-    quiz: Quiz,
-    quizResult: QuizResult,
-) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (quizResult.isCorrect) {
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            } else {
-                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-            }
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "$index.",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = if (quizResult.isCorrect) Icons.Default.CheckCircle else Icons.Default.Close,
-                    contentDescription = null,
-                    tint = if (quizResult.isCorrect) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = quiz.question,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Your answer: ${quizResult.userAnswer}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-
-            Text(
-                text = "Correct answer: ${quiz.correctAnswer}",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium
-            )
-
-            if (!quiz.explanation.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = quiz.explanation ?: "",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-            }
-        }
     }
 }
 

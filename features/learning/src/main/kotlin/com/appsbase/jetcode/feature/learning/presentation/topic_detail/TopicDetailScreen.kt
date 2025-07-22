@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -81,6 +82,7 @@ import kotlin.math.roundToInt
 fun TopicDetailScreen(
     topicId: String,
     onNavigateBack: () -> Unit,
+    onFinishClick: (String) -> Unit,
     onPracticeClick: (String) -> Unit,
     viewModel: TopicDetailViewModel = koinViewModel(),
 ) {
@@ -136,11 +138,19 @@ fun TopicDetailScreen(
 
             else -> {
                 TopicContentSection(
-                    state = state, onIntent = viewModel::handleIntent, onPracticeClick = {
+                    state = state,
+                    onIntent = viewModel::handleIntent,
+                    onPracticeClick = {
                         state.topic?.practiceSetId?.let { practiceSetId ->
                             onPracticeClick(practiceSetId)
                         }
-                    }, modifier = Modifier
+                    },
+                    onFinishClick = {
+                        state.topic?.id?.let { topicId ->
+                            onFinishClick(topicId)
+                        }
+                    },
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
                 )
@@ -154,6 +164,7 @@ private fun TopicContentSection(
     state: TopicDetailState,
     onIntent: (TopicDetailIntent) -> Unit,
     onPracticeClick: () -> Unit,
+    onFinishClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -178,6 +189,7 @@ private fun TopicContentSection(
                 onNext = { onIntent(TopicDetailIntent.NextMaterial) },
                 onPrevious = { onIntent(TopicDetailIntent.PreviousMaterial) },
                 onPracticeClick = onPracticeClick,
+                onFinishClick = onFinishClick,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -260,6 +272,7 @@ private fun MaterialFlashCardSection(
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onPracticeClick: () -> Unit,
+    onFinishClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var dragOffset by remember { mutableFloatStateOf(0f) }
@@ -298,8 +311,10 @@ private fun MaterialFlashCardSection(
             canGoPrevious = currentIndex > 0,
             canGoNext = currentIndex < materials.size,
             isLastMaterial = currentIndex == materials.size - 1,
+            isCompletionState = currentIndex >= materials.size,
             onPrevious = onPrevious,
             onNext = onNext,
+            onFinish = onFinishClick,
             modifier = Modifier.padding(16.dp),
         )
     }
@@ -577,8 +592,10 @@ private fun NavigationControls(
     canGoPrevious: Boolean,
     canGoNext: Boolean,
     isLastMaterial: Boolean,
+    isCompletionState: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onFinish: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -600,33 +617,39 @@ private fun NavigationControls(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        if (isLastMaterial) {
-            Button(
-                onClick = onNext,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-            ) {
-                Text("Complete")
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
+        when {
+            isCompletionState -> {
+                Button(
+                    onClick = onFinish,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text("Finish")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
-        } else {
-            Button(
-                onClick = onNext, enabled = canGoNext, modifier = Modifier.weight(1f)
-            ) {
-                Text("Next")
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
+
+            else -> {
+                Button(
+                    onClick = onNext,
+                    enabled = canGoNext || isLastMaterial,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("Next")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
         }
     }
@@ -735,6 +758,7 @@ private fun TopicDetailScreenPreview() {
             ),
             onIntent = { },
             onPracticeClick = { },
+            onFinishClick = { },
         )
     }
 }

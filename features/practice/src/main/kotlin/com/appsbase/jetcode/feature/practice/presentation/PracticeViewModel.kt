@@ -24,11 +24,8 @@ class PracticeViewModel(
         when (intent) {
             is PracticeIntent.LoadPracticeSet -> loadPracticeSet(intent.practiceSetId)
             is PracticeIntent.AnswerChanged -> updateAnswer(intent.answer)
-            is PracticeIntent.SubmitAnswer -> submitAnswer()
             is PracticeIntent.NextQuiz -> nextQuiz()
             is PracticeIntent.PreviousQuiz -> previousQuiz()
-            is PracticeIntent.ShowCorrectAnswer -> showCorrectAnswer()
-            is PracticeIntent.HideAnswer -> hideAnswer()
             is PracticeIntent.ShowAllAnswers -> showAllAnswers()
             is PracticeIntent.HideAllAnswers -> hideAllAnswers()
             is PracticeIntent.RestartPractice -> restartPractice()
@@ -116,72 +113,77 @@ class PracticeViewModel(
         updateState(currentState().copy(userAnswer = answer))
     }
 
-    private fun submitAnswer() {
-        val state = currentState()
-        val currentQuiz = state.currentQuiz ?: return
-
-        val isCorrect = when (currentQuiz.type) {
-            com.appsbase.jetcode.core.domain.model.QuizType.MCQ -> {
-                state.userAnswer == currentQuiz.correctAnswer
-            }
-            else -> {
-                state.userAnswer.trim().equals(currentQuiz.correctAnswer.trim(), ignoreCase = true)
-            }
-        }
-
-        val timeTaken = System.currentTimeMillis() - state.startTime
-        val quizResult = QuizResult(
-            quiz = currentQuiz,
-            userAnswer = state.userAnswer,
-            isCorrect = isCorrect,
-            timeTaken = timeTaken
-        )
-
-        val updatedResults = state.quizResults + quizResult
-
-        // Check if this was the last quiz
-        val isLastQuiz = state.currentQuizIndex == state.quizzes.size - 1
-
-        updateState(
-            state.copy(
-                quizResults = updatedResults,
-                showAnswer = true,
-                isCompleted = isLastQuiz // Set completion if this is the last quiz
-            )
-        )
-
-        // Send completion effect if this was the last quiz
-        if (isLastQuiz) {
-            sendEffect(PracticeEffect.QuizCompleted)
-            Timber.d("All quizzes completed for practice set: ${state.practiceSet?.name}")
-        }
-
-        Timber.d("Answer submitted: ${if (isCorrect) "Correct" else "Incorrect"}")
-    }
-
     private fun nextQuiz() {
         val state = currentState()
-        val nextIndex = state.currentQuizIndex + 1
+        val currentQuiz = state.currentQuiz
 
-        if (nextIndex < state.quizzes.size) {
-            updateState(
-                state.copy(
-                    currentQuizIndex = nextIndex,
-                    userAnswer = "",
-                    showAnswer = false,
-                    startTime = System.currentTimeMillis()
-                )
+        // Submit answer for current quiz if it hasn't been answered yet
+        if (currentQuiz != null && state.quizResults.size <= state.currentQuizIndex) {
+            // If no answer is provided, treat it as incorrect
+            val userAnswer = state.userAnswer.trim()
+            val isCorrect = if (userAnswer.isEmpty()) {
+                false // No answer selected = wrong
+            } else {
+                when (currentQuiz.type) {
+                    com.appsbase.jetcode.core.domain.model.QuizType.MCQ -> {
+                        userAnswer == currentQuiz.correctAnswer
+                    }
+
+                    else -> {
+                        userAnswer.equals(currentQuiz.correctAnswer.trim(), ignoreCase = true)
+                    }
+                }
+            }
+
+            val timeTaken = System.currentTimeMillis() - state.startTime
+            val quizResult = QuizResult(
+                quiz = currentQuiz,
+                userAnswer = if (userAnswer.isEmpty()) "No answer" else userAnswer,
+                isCorrect = isCorrect,
+                timeTaken = timeTaken
             )
+
+            val updatedResults = state.quizResults + quizResult
+
+            // Check if this was the last quiz
+            val isLastQuiz = state.currentQuizIndex == state.quizzes.size - 1
+
+            if (isLastQuiz) {
+                // Complete the practice
+                updateState(
+                    state.copy(
+                        quizResults = updatedResults,
+                        isCompleted = true
+                    )
+                )
+                sendEffect(PracticeEffect.QuizCompleted)
+                Timber.d("All quizzes completed for practice set: ${state.practiceSet?.name}")
+                return
+            } else {
+                // Move to next quiz
+                updateState(
+                    state.copy(
+                        quizResults = updatedResults,
+                        currentQuizIndex = state.currentQuizIndex + 1,
+                        userAnswer = "",
+                        startTime = System.currentTimeMillis()
+                    )
+                )
+            }
+
+            Timber.d("Answer submitted: ${if (isCorrect) "Correct" else "Incorrect"} - User answer: '${userAnswer}'")
         } else {
-            // All quizzes completed
-            updateState(
-                state.copy(
-                    isCompleted = true,
-                    showAnswer = false
+            // Just navigate to next quiz if already answered
+            val nextIndex = state.currentQuizIndex + 1
+            if (nextIndex < state.quizzes.size) {
+                updateState(
+                    state.copy(
+                        currentQuizIndex = nextIndex,
+                        userAnswer = "",
+                        startTime = System.currentTimeMillis()
+                    )
                 )
-            )
-            sendEffect(PracticeEffect.QuizCompleted)
-            Timber.d("All quizzes completed for practice set: ${state.practiceSet?.name}")
+            }
         }
     }
 
@@ -197,19 +199,10 @@ class PracticeViewModel(
                 state.copy(
                     currentQuizIndex = prevIndex,
                     userAnswer = previousResult?.userAnswer ?: "",
-                    showAnswer = previousResult != null,
                     startTime = System.currentTimeMillis()
                 )
             )
         }
-    }
-
-    private fun showCorrectAnswer() {
-        updateState(currentState().copy(showAnswer = true))
-    }
-
-    private fun hideAnswer() {
-        updateState(currentState().copy(showAnswer = false))
     }
 
     private fun showAllAnswers() {
@@ -226,7 +219,6 @@ class PracticeViewModel(
             state.copy(
                 currentQuizIndex = 0,
                 userAnswer = "",
-                showAnswer = false,
                 quizResults = emptyList(),
                 isCompleted = false,
                 showAllAnswers = false,

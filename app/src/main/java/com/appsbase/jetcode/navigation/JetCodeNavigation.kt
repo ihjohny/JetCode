@@ -69,6 +69,9 @@ fun JetCodeNavHost(
                 onNavigateBack = {
                     navController.popBackStack()
                 },
+                onFinishClick = {
+                    navController.popBackStack()
+                },
                 onPracticeClick = { practiceSetId ->
                     navController.navigate("${JetCodeDestinations.PRACTICE_ROUTE}/$practiceSetId")
                 },
@@ -77,7 +80,8 @@ fun JetCodeNavHost(
 
         // Practice screen
         composable("${JetCodeDestinations.PRACTICE_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
-            val practiceSetId = backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
+            val practiceSetId =
+                backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
             PracticeScreen(
                 practiceId = practiceSetId,
                 onPracticeComplete = {
