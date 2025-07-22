@@ -9,6 +9,7 @@ import com.appsbase.jetcode.feature.learning.presentation.skill_detail.SkillDeta
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListScreen
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailScreen
 import com.appsbase.jetcode.feature.onboarding.presentation.OnboardingScreen
+import com.appsbase.jetcode.feature.practice.presentation.PracticeScreen
 import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 
 /**
@@ -69,7 +70,21 @@ fun JetCodeNavHost(
                     navController.popBackStack()
                 },
                 onPracticeClick = { practiceSetId ->
+                    navController.navigate("${JetCodeDestinations.PRACTICE_ROUTE}/$practiceSetId")
+                },
+            )
+        }
 
+        // Practice screen
+        composable("${JetCodeDestinations.PRACTICE_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
+            val practiceSetId = backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
+            PracticeScreen(
+                practiceId = practiceSetId,
+                onPracticeComplete = {
+                    navController.popBackStack()
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 },
             )
         }

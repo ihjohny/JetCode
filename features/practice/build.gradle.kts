@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.bundles.kotlinx)
     implementation(libs.bundles.koin)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.timber)
 
     debugImplementation(libs.bundles.compose.debug)
 

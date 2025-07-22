@@ -19,7 +19,6 @@ fun DifficultyChip(
         Difficulty.BEGINNER -> JetCodeTheme.extendedColors.difficultyBeginner to "Beginner"
         Difficulty.INTERMEDIATE -> JetCodeTheme.extendedColors.difficultyIntermediate to "Intermediate"
         Difficulty.ADVANCED -> JetCodeTheme.extendedColors.difficultyAdvanced to "Advanced"
-        Difficulty.EXPERT -> JetCodeTheme.extendedColors.difficultyExpert to "Expert"
     }
 
     Surface(

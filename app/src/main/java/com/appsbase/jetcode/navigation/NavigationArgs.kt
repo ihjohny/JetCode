@@ -6,4 +6,5 @@ package com.appsbase.jetcode.navigation
 object NavigationArgs {
     const val SKILL_ID = "skillId"
     const val TOPIC_ID = "topicId"
+    const val PRACTICE_SET_ID = "practiceSetId"
 }

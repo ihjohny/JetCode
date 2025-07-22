@@ -4,9 +4,13 @@ import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.core.data.di.dataModule
 import com.appsbase.jetcode.core.data.repository.LearningRepositoryImpl
+import com.appsbase.jetcode.core.data.repository.PracticeRepositoryImpl
 import com.appsbase.jetcode.core.database.di.databaseModule
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
+import com.appsbase.jetcode.core.domain.repository.PracticeRepository
 import com.appsbase.jetcode.core.domain.usecase.GetMaterialsByIdsUseCase
+import com.appsbase.jetcode.core.domain.usecase.GetPracticeSetByIdUseCase
+import com.appsbase.jetcode.core.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetTopicByIdUseCase
@@ -15,6 +19,7 @@ import com.appsbase.jetcode.core.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
+import com.appsbase.jetcode.feature.practice.di.practiceModule
 import org.koin.dsl.module
 
 /**
@@ -33,7 +38,12 @@ val repositoryModule = module {
         )
     }
 
-    // UserProgressRepository will be implemented similarly
+    single<PracticeRepository> {
+        PracticeRepositoryImpl(
+            practiceDao = get(),
+            apiService = get(),
+        )
+    }
 }
 
 val useCaseModule = module {
@@ -73,14 +83,30 @@ val useCaseModule = module {
     }
 
     factory {
+        GetPracticeSetByIdUseCase(
+            practiceRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        GetQuizzesByIdsUseCase(
+            practiceRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
         SearchContentUseCase(
-            learningRepository = get(), dispatcherProvider = get()
+            learningRepository = get(),
+            dispatcherProvider = get(),
         )
     }
 
     factory {
         SyncContentUseCase(
             learningRepository = get(),
+            practiceRepository = get(),
         )
     }
 }
@@ -95,5 +121,6 @@ val appModules = listOf(
     dataModule,
     repositoryModule,
     useCaseModule,
-    learningModule
+    learningModule,
+    practiceModule,
 )
