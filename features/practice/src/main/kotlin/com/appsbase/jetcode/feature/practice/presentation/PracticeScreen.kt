@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -43,6 +46,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -61,6 +65,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
@@ -643,100 +649,95 @@ private fun CompletionSection(
     onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.padding(16.dp)
+    // Completion Card
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
-        // Completion Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
+        Column(
+            modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = "Completed",
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.onPrimary,
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "🎉 Practice Completed!",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Statistics
+            QuizStatisticsCard(
+                statistics = state.statistics, modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Action Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Completed",
-                    modifier = Modifier.size(80.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "🎉 Practice Completed!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Statistics
-                QuizStatisticsCard(
-                    statistics = state.statistics, modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Action Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                OutlinedButton(
+                    onClick = { onIntent(PracticeIntent.ShowAllAnswers) },
+                    modifier = Modifier.weight(1f)
                 ) {
-                    OutlinedButton(
-                        onClick = { onIntent(PracticeIntent.ShowAllAnswers) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("View Answers")
-                    }
-
-                    Button(
-                        onClick = { onIntent(PracticeIntent.RestartPractice) },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Restart")
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("View Answers")
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
-                    onClick = onComplete,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
+                    onClick = { onIntent(PracticeIntent.RestartPractice) },
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text("Complete Practice")
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Restart")
                 }
             }
-        }
 
-        // All Answers Section
-        if (state.showAllAnswers) {
-            Spacer(modifier = Modifier.height(16.dp))
-            AllAnswersSection(
-                quizResults = state.quizResults,
-                quizzes = state.quizzes,
-                onHideAnswers = { onIntent(PracticeIntent.HideAllAnswers) })
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onComplete,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Complete Practice")
+            }
         }
+    }
+
+    // All Answers Dialog
+    if (state.showAllAnswers) {
+        AllAnswersDialog(
+            quizResults = state.quizResults,
+            onDismiss = { onIntent(PracticeIntent.HideAllAnswers) })
     }
 }
 
@@ -803,44 +804,74 @@ private fun StatisticItem(
 }
 
 @Composable
-private fun AllAnswersSection(
+private fun AllAnswersDialog(
     quizResults: List<QuizResult>,
-    quizzes: List<Quiz>,
-    onHideAnswers: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
+    Dialog(
+        onDismissRequest = onDismiss, properties = DialogProperties(
+            dismissOnBackPress = true, dismissOnClickOutside = true, usePlatformDefaultWidth = false
+        )
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 8.dp
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(
-                    text = "All Answers & Explanations",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                IconButton(onClick = onHideAnswers) {
-                    Icon(
-                        imageVector = Icons.Default.Close, contentDescription = "Hide answers"
+                // Header with title and close button
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "All Answers & Explanations",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+
+                    IconButton(
+                        onClick = onDismiss, modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            quizResults.forEachIndexed { index, result ->
-                QuizAnswerItem(
-                    index = index + 1, quiz = result.quiz, quizResult = result
+                // Divider
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
                 )
 
-                if (index < quizResults.size - 1) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                // Scrollable content
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 20.dp)
+                ) {
+                    itemsIndexed(quizResults) { index, result ->
+                        QuizAnswerItem(
+                            index = index + 1, quiz = result.quiz, quizResult = result
+                        )
+                    }
                 }
             }
         }
