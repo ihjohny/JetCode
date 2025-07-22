@@ -139,12 +139,22 @@ class PracticeViewModel(
 
         val updatedResults = state.quizResults + quizResult
 
+        // Check if this was the last quiz
+        val isLastQuiz = state.currentQuizIndex == state.quizzes.size - 1
+
         updateState(
             state.copy(
                 quizResults = updatedResults,
-                showAnswer = true
+                showAnswer = true,
+                isCompleted = isLastQuiz // Set completion if this is the last quiz
             )
         )
+
+        // Send completion effect if this was the last quiz
+        if (isLastQuiz) {
+            sendEffect(PracticeEffect.QuizCompleted)
+            Timber.d("All quizzes completed for practice set: ${state.practiceSet?.name}")
+        }
 
         Timber.d("Answer submitted: ${if (isCorrect) "Correct" else "Incorrect"}")
     }

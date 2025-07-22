@@ -62,7 +62,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
 import com.appsbase.jetcode.core.ui.components.ErrorState
@@ -743,7 +742,8 @@ private fun CompletionSection(
 
 @Composable
 private fun QuizStatisticsCard(
-    statistics: QuizStatistics, modifier: Modifier = Modifier
+    statistics: QuizStatistics,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier, colors = CardDefaults.cardColors(
@@ -780,7 +780,9 @@ private fun QuizStatisticsCard(
 
 @Composable
 private fun StatisticItem(
-    label: String, value: String, icon: String
+    label: String,
+    value: String,
+    icon: String,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -802,7 +804,9 @@ private fun StatisticItem(
 
 @Composable
 private fun AllAnswersSection(
-    quizResults: List<QuizResult>, quizzes: List<Quiz>, onHideAnswers: () -> Unit
+    quizResults: List<QuizResult>,
+    quizzes: List<Quiz>,
+    onHideAnswers: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -845,7 +849,9 @@ private fun AllAnswersSection(
 
 @Composable
 private fun QuizAnswerItem(
-    index: Int, quiz: Quiz, quizResult: QuizResult
+    index: Int,
+    quiz: Quiz,
+    quizResult: QuizResult,
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -914,19 +920,22 @@ private fun PracticeTopAppBar(
     title: String,
     onNavigateBack: () -> Unit,
 ) {
-    TopAppBar(title = {
-        Text(
-            text = title,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }, navigationIcon = {
-        IconButton(onClick = onNavigateBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-        }
-    })
+        },
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                )
+            }
+        },
+    )
 }
