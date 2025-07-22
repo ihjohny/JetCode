@@ -11,5 +11,4 @@ data class PracticeSetEntity(
     val name: String,
     val description: String,
     val quizIds: List<String>,
-    val attributes: List<String>? = null,
 )

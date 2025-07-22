@@ -13,6 +13,4 @@ data class QuizEntity(
     val options: List<String>?,
     val correctAnswer: String,
     val explanation: String?,
-    val difficulty: String,
-    val attributes: List<String>? = null,
 )

@@ -360,13 +360,8 @@ private fun QuizCard(
                     .padding(24.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Quiz Type and Difficulty Badges
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    QuizTypeBadge(type = quiz.type)
-                    DifficultyBadge(difficulty = quiz.difficulty)
-                }
+                // Quiz Type
+                QuizTypeBadge(type = quiz.type)
 
                 Spacer(modifier = Modifier.height(16.dp))
 

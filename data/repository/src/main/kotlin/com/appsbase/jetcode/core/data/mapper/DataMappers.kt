@@ -77,7 +77,6 @@ fun PracticeSetEntity.toDomain(): PracticeSet = PracticeSet(
     name = name,
     description = description,
     quizIds = quizIds,
-    attributes = attributes,
 )
 
 fun PracticeSet.toEntity(): PracticeSetEntity = PracticeSetEntity(
@@ -85,7 +84,6 @@ fun PracticeSet.toEntity(): PracticeSetEntity = PracticeSetEntity(
     name = name,
     description = description,
     quizIds = quizIds,
-    attributes = attributes,
 )
 
 fun QuizEntity.toDomain(): Quiz = Quiz(
@@ -95,8 +93,6 @@ fun QuizEntity.toDomain(): Quiz = Quiz(
     options = options,
     correctAnswer = correctAnswer,
     explanation = explanation,
-    difficulty = Difficulty.valueOf(difficulty),
-    attributes = attributes,
 )
 
 fun Quiz.toEntity(): QuizEntity = QuizEntity(
@@ -106,6 +102,4 @@ fun Quiz.toEntity(): QuizEntity = QuizEntity(
     options = options,
     correctAnswer = correctAnswer,
     explanation = explanation,
-    difficulty = difficulty.name,
-    attributes = attributes,
 )

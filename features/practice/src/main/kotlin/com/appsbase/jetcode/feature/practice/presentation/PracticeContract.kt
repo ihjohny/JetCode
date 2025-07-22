@@ -3,7 +3,6 @@ package com.appsbase.jetcode.feature.practice.presentation
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
@@ -13,10 +12,7 @@ import com.appsbase.jetcode.core.domain.model.QuizType
  */
 
 data class QuizResult(
-    val quiz: Quiz,
-    val userAnswer: String,
-    val isCorrect: Boolean,
-    val timeTaken: Long = 0L
+    val quiz: Quiz, val userAnswer: String, val isCorrect: Boolean, val timeTaken: Long = 0L
 )
 
 data class QuizStatistics(
@@ -25,7 +21,6 @@ data class QuizStatistics(
     val wrongAnswers: Int,
     val averageTime: Long,
     val scorePercentage: Int,
-    val difficultyBreakdown: Map<Difficulty, Int>,
     val typeBreakdown: Map<QuizType, Int>
 ) {
     val accuracy: Float get() = if (totalQuizzes > 0) correctAnswers.toFloat() / totalQuizzes else 0f
@@ -48,27 +43,26 @@ data class PracticeState(
     val progressLabel get() = "${(currentQuizIndex + 1).coerceAtMost(quizzes.size)} of ${quizzes.size}"
     val progressValue get() = if (quizzes.isNotEmpty()) (currentQuizIndex + 1f) / quizzes.size else 0f
 
-    val statistics: QuizStatistics get() {
-        val correctCount = quizResults.count { it.isCorrect }
-        val avgTime = if (quizResults.isNotEmpty()) quizResults.map { it.timeTaken }.average().toLong() else 0L
-        val scorePercentage = if (quizResults.isNotEmpty()) (correctCount * 100) / quizResults.size else 0
+    val statistics: QuizStatistics
+        get() {
+            val correctCount = quizResults.count { it.isCorrect }
+            val avgTime = if (quizResults.isNotEmpty()) quizResults.map { it.timeTaken }.average()
+                .toLong() else 0L
+            val scorePercentage =
+                if (quizResults.isNotEmpty()) (correctCount * 100) / quizResults.size else 0
 
-        val difficultyBreakdown = quizResults.groupBy { it.quiz.difficulty }
-            .mapValues { it.value.count { result -> result.isCorrect } }
+            val typeBreakdown = quizResults.groupBy { it.quiz.type }
+                .mapValues { it.value.count { result -> result.isCorrect } }
 
-        val typeBreakdown = quizResults.groupBy { it.quiz.type }
-            .mapValues { it.value.count { result -> result.isCorrect } }
-
-        return QuizStatistics(
-            totalQuizzes = quizResults.size,
-            correctAnswers = correctCount,
-            wrongAnswers = quizResults.size - correctCount,
-            averageTime = avgTime,
-            scorePercentage = scorePercentage,
-            difficultyBreakdown = difficultyBreakdown,
-            typeBreakdown = typeBreakdown
-        )
-    }
+            return QuizStatistics(
+                totalQuizzes = quizResults.size,
+                correctAnswers = correctCount,
+                wrongAnswers = quizResults.size - correctCount,
+                averageTime = avgTime,
+                scorePercentage = scorePercentage,
+                typeBreakdown = typeBreakdown
+            )
+        }
 }
 
 sealed class PracticeIntent : UiIntent {

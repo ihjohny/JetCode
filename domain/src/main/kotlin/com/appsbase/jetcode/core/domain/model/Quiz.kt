@@ -15,6 +15,4 @@ data class Quiz(
     val options: List<String>?,
     val correctAnswer: String,
     val explanation: String?,
-    val difficulty: Difficulty,
-    val attributes: List<String>? = null,
 ) : Content()

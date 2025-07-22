@@ -8,5 +8,4 @@ data class PracticeSet(
     val name: String,
     val description: String,
     val quizIds: List<String>,
-    val attributes: List<String>? = null,
 ) : Content()

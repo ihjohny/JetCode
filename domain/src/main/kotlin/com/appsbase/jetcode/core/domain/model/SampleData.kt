@@ -34,24 +34,21 @@ object SampleData {
                 materialIds = listOf("var-val-material", "types-material"),
                 practiceSetId = "kotlin-fundamentals-practice",
                 duration = 35
-            ),
-            Topic(
+            ), Topic(
                 id = "functions-classes",
                 name = "Functions and Classes",
                 description = "Understanding functions and object-oriented programming in Kotlin",
                 materialIds = listOf("functions-material", "classes-material"),
                 practiceSetId = "oop-kotlin-practice",
                 duration = 55
-            ),
-            Topic(
+            ), Topic(
                 id = "compose-basics",
                 name = "Compose Basics",
                 description = "Introduction to Jetpack Compose fundamentals",
                 materialIds = listOf("compose-intro-material"),
                 practiceSetId = "jetpack-compose-practice",
                 duration = 20
-            ),
-            Topic(
+            ), Topic(
                 id = "compose-layouts",
                 name = "Compose Layouts",
                 description = "Building layouts with Jetpack Compose",
@@ -212,7 +209,6 @@ object SampleData {
                 options = listOf("var", "val", "const", "let"),
                 correctAnswer = "val",
                 explanation = "val is used for immutable variables that cannot be reassigned after initialization.",
-                difficulty = Difficulty.BEGINNER,
             ),
             Quiz(
                 id = "types-practice",
@@ -221,7 +217,6 @@ object SampleData {
                 options = listOf("String", "Int", "Long", "Double"),
                 correctAnswer = "Int",
                 explanation = "Kotlin infers the type as Int for whole numbers by default.",
-                difficulty = Difficulty.BEGINNER,
             ),
             Quiz(
                 id = "functions-practice",
@@ -230,7 +225,6 @@ object SampleData {
                 options = emptyList(),
                 correctAnswer = "fun add(a: Int, b: Int): Int { return a + b }",
                 explanation = "This function takes two Int parameters and returns their sum.",
-                difficulty = Difficulty.INTERMEDIATE,
             ),
             Quiz(
                 id = "classes-practice",
@@ -239,7 +233,6 @@ object SampleData {
                 options = emptyList(),
                 correctAnswer = "data class Student(val id: String, val name: String)",
                 explanation = "Data classes automatically generate equals(), hashCode(), toString(), and copy() methods.",
-                difficulty = Difficulty.INTERMEDIATE,
             ),
             Quiz(
                 id = "compose-intro-practice",
@@ -248,7 +241,6 @@ object SampleData {
                 options = listOf("@Component", "@Composable", "@UI", "@View"),
                 correctAnswer = "@Composable",
                 explanation = "@Composable annotation tells the Compose compiler that this function is intended to convert data into UI.",
-                difficulty = Difficulty.INTERMEDIATE,
             ),
             Quiz(
                 id = "layouts-practice",
@@ -257,7 +249,6 @@ object SampleData {
                 options = listOf("Row", "Column", "Box", "Stack"),
                 correctAnswer = "Column",
                 explanation = "Column arranges its children vertically, while Row arranges them horizontally.",
-                difficulty = Difficulty.INTERMEDIATE,
             ),
         )
     }
@@ -269,29 +260,27 @@ object SampleData {
                 name = "Kotlin Fundamentals Practice",
                 description = "Test your knowledge of Kotlin basics including variables, types, and functions",
                 quizIds = listOf("var-val-practice", "types-practice", "functions-practice"),
-                attributes = listOf("beginner", "kotlin", "fundamentals")
             ),
             PracticeSet(
                 id = "oop-kotlin-practice",
                 name = "Object-Oriented Programming in Kotlin",
                 description = "Practice questions on classes, data classes, and OOP concepts in Kotlin",
                 quizIds = listOf("classes-practice"),
-                attributes = listOf("intermediate", "kotlin", "oop")
             ),
             PracticeSet(
                 id = "jetpack-compose-practice",
                 name = "Jetpack Compose Essentials",
                 description = "Master the basics of Jetpack Compose UI development",
                 quizIds = listOf("compose-intro-practice", "layouts-practice"),
-                attributes = listOf("intermediate", "compose", "ui")
             ),
             PracticeSet(
                 id = "mixed-kotlin-practice",
                 name = "Mixed Kotlin Challenges",
                 description = "A comprehensive practice set covering various Kotlin topics",
-                quizIds = listOf("var-val-practice", "functions-practice", "compose-intro-practice"),
-                attributes = listOf("mixed", "kotlin", "comprehensive")
-            )
+                quizIds = listOf(
+                    "var-val-practice", "functions-practice", "compose-intro-practice"
+                ),
+            ),
         )
     }
 
