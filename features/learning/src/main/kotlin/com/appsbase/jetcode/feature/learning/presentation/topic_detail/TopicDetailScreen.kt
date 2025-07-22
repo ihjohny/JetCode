@@ -276,7 +276,8 @@ private fun MaterialFlashCardSection(
             if (currentIndex >= materials.size) {
                 // Completion View
                 CompletionCard(
-                    onPracticeClick = onPracticeClick, modifier = Modifier.fillMaxSize()
+                    onPracticeClick = onPracticeClick,
+                    modifier = Modifier.fillMaxSize(),
                 )
             } else {
                 val currentMaterial = materials[currentIndex]
@@ -519,7 +520,7 @@ private fun CompletionCard(
                 .fillMaxSize()
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,

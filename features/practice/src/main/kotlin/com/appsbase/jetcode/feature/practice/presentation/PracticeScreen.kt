@@ -133,14 +133,33 @@ fun PracticeScreen(
             }
 
             state.isCompleted -> {
-                CompletionSection(
-                    state = state,
-                    onIntent = viewModel::handleIntent,
-                    onComplete = onPracticeComplete,
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                )
+                ) {
+                    // Keep Practice Set Header visible even after completion
+                    state.practiceSet?.let { practiceSet ->
+                        PracticeHeaderCard(
+                            practiceSet = practiceSet,
+                            currentQuizIndex = state.currentQuizIndex,
+                            totalQuizzes = state.quizzes.size,
+                            progressValueLabel = state.progressLabel,
+                            progressValue = state.progressValue,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(top = 16.dp)
+                        )
+                    }
+
+                    // Completion Section
+                    CompletionSection(
+                        state = state,
+                        onIntent = viewModel::handleIntent,
+                        onComplete = onPracticeComplete,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
 
             else -> {
@@ -651,16 +670,18 @@ private fun CompletionSection(
 ) {
     // Completion Card
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = modifier.padding(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        ),
     ) {
         Column(
-            modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
@@ -699,10 +720,14 @@ private fun CompletionSection(
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("View Answers")
+                    Text(
+                        text = "View Answers",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
                 }
 
                 Button(
