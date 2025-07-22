@@ -451,31 +451,6 @@ private fun QuizTypeBadge(type: QuizType) {
 }
 
 @Composable
-private fun DifficultyBadge(difficulty: Difficulty) {
-    val (text, color) = when (difficulty) {
-        Difficulty.BEGINNER -> "Beginner" to MaterialTheme.colorScheme.primary
-        Difficulty.INTERMEDIATE -> "Intermediate" to MaterialTheme.colorScheme.tertiary
-        Difficulty.ADVANCED -> "Advanced" to MaterialTheme.colorScheme.error
-    }
-
-    Row(
-        modifier = Modifier
-            .background(
-                color.copy(alpha = 0.1f), RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium,
-            color = color,
-            fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
 private fun QuizInputRenderer(
     quiz: Quiz,
     userAnswer: String,
