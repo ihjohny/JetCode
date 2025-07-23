@@ -308,7 +308,7 @@ private fun CompletionScreen(
         }
 
         CompletionCard(
-            title = "🎉 Practice Completed!",
+            title = "🎉 Completed!",
             subtitle = "Great job! You've completed all the practice questions.",
             actionButtonText = "View Answers",
             onActionClick = { onIntent(PracticeIntent.ViewAnswers) },

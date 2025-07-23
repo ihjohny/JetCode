@@ -80,9 +80,8 @@ class SkillListViewModel(
             // First sync content from remote
             when (val syncResult = syncContentUseCase()) {
                 is Result.Success -> {
+                    updateState(currentState().copy(isSyncing = false))
                     Timber.Forest.d("Content synced successfully")
-                    // Then load updated skills
-                    loadSkillsAfterSync()
                 }
 
                 is Result.Error -> {
@@ -98,39 +97,6 @@ class SkillListViewModel(
                 is Result.Loading -> {
                     // Keep the refreshing state - loading is handled by the isRefreshing flag
                     Timber.Forest.d("Syncing content...")
-                }
-            }
-        }
-    }
-
-    private fun loadSkillsAfterSync() {
-        viewModelScope.launch {
-            getSkillsUseCase().collect { result ->
-                when (result) {
-                    is Result.Success -> {
-                        updateState(
-                            currentState().copy(
-                                isSyncing = false,
-                                skills = result.data,
-                                filteredSkills = filterSkills(
-                                    result.data, currentState().searchQuery
-                                )
-                            )
-                        )
-                    }
-
-                    is Result.Error -> {
-                        updateState(currentState().copy(isSyncing = false))
-                        val errorMessage = when (val exception = result.exception) {
-                            is AppError -> exception.getUserMessage()
-                            else -> exception.message ?: "An unexpected error occurred"
-                        }
-                        sendEffect(SkillListEffect.ShowError(errorMessage))
-                    }
-
-                    is Result.Loading -> {
-                        // Keep refreshing state
-                    }
                 }
             }
         }

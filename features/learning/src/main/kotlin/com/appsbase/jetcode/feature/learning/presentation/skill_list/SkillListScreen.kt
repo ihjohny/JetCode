@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,16 +19,15 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,9 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
+import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Skill
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
@@ -98,7 +98,8 @@ fun SkillListScreen(
         when {
             state.isLoading && state.skills.isEmpty() -> {
                 LoadingState(
-                    modifier = Modifier.fillMaxSize(), message = "Loading skills..."
+                    modifier = Modifier.fillMaxSize(),
+                    message = "Loading skills...",
                 )
             }
 
@@ -121,35 +122,41 @@ fun SkillListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LearningContent(
-    state: SkillListState, onIntent: (SkillListIntent) -> Unit, modifier: Modifier = Modifier
+    state: SkillListState,
+    onIntent: (SkillListIntent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(16.dp)
     ) {
         OutlinedTextField(
-            value = state.searchQuery, onValueChange = { query ->
-            onIntent(SkillListIntent.SearchSkills(query))
-        }, label = { Text("Search skills...") }, leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search, contentDescription = "Search"
-            )
-        }, modifier = Modifier
+            value = state.searchQuery,
+            onValueChange = { query ->
+                onIntent(SkillListIntent.SearchSkills(query))
+            },
+            label = { Text("Search skills...") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search, contentDescription = "Search"
+                )
+            },
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp), singleLine = true
+                .padding(bottom = 16.dp),
+            singleLine = true,
         )
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (state.isSyncing) {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
+        PullToRefreshBox(
+            modifier = Modifier.fillMaxSize(),
+            isRefreshing = state.isSyncing,
+            onRefresh = { onIntent(SkillListIntent.SyncSkills) },
+        ) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
+                contentPadding = PaddingValues(vertical = 8.dp),
             ) {
                 if (state.filteredSkills.isEmpty() && state.searchQuery.isNotEmpty()) {
                     item {
@@ -162,7 +169,7 @@ private fun LearningContent(
                             Text(
                                 text = "No skills found for \"${state.searchQuery}\"",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                             )
                         }
                     }
@@ -170,26 +177,11 @@ private fun LearningContent(
                     items(
                         items = state.filteredSkills, key = { it.id }) { skill ->
                         SkillCard(
-                            skill = skill, onClick = {
+                            skill = skill,
+                            onClick = {
                                 onIntent(SkillListIntent.SkillClicked(skill.id))
-                            })
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedButton(
-                        onClick = { onIntent(SkillListIntent.SyncSkills) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !state.isSyncing,
-                    ) {
-                        if (state.isSyncing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp), strokeWidth = 2.dp
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                        }
-                        Text(if (state.isSyncing) "Syncing..." else "Sync Content")
+                            },
+                        )
                     }
                 }
             }
@@ -263,5 +255,59 @@ private fun SkillCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SkillListScreenPreview() {
+    val sampleSkills = listOf(
+        Skill(
+            id = "1",
+            name = "Kotlin Fundamentals",
+            description = "Learn the basics of Kotlin programming language including variables, functions, and classes.",
+            difficulty = Difficulty.BEGINNER,
+            iconUrl = "https://example.com/kotlin-icon.png",
+            estimatedDuration = 120,
+        ),
+        Skill(
+            id = "2",
+            name = "Jetpack Compose",
+            description = "Master modern Android UI development with Jetpack Compose declarative toolkit.",
+            difficulty = Difficulty.INTERMEDIATE,
+            iconUrl = "https://example.com/compose-icon.png",
+            estimatedDuration = 240,
+        ),
+        Skill(
+            id = "3",
+            name = "Coroutines & Flow",
+            description = "Advanced asynchronous programming patterns in Kotlin for Android development.",
+            difficulty = Difficulty.ADVANCED,
+            iconUrl = "https://example.com/coroutines-icon.png",
+            estimatedDuration = 360,
+        ),
+        Skill(
+            id = "4",
+            name = "Room Database",
+            description = "Local data persistence using Room database with SQL queries and migrations.",
+            difficulty = Difficulty.INTERMEDIATE,
+            iconUrl = "https://example.com/room-icon.png",
+            estimatedDuration = 180,
+        ),
+    )
+
+    val sampleState = SkillListState(
+        skills = sampleSkills,
+        filteredSkills = sampleSkills,
+        searchQuery = "",
+        isLoading = false,
+        isSyncing = false,
+        error = null,
+    )
+
+    JetCodeTheme {
+        LearningContent(
+            state = sampleState, onIntent = { }, modifier = Modifier.fillMaxSize()
+        )
     }
 }

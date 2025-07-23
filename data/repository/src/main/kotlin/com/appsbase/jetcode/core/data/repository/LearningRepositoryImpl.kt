@@ -161,14 +161,14 @@ class LearningRepositoryImpl(
                     learningDao.insertMaterials(it.map { material -> material.toEntity() })
                     Timber.d("Materials synced successfully")
                 }
-                Timber.i("Content sync completed successfully")
+                Timber.i("Learning Content sync completed successfully")
                 Result.Success(Unit)
             } catch (e: Exception) {
-                Timber.e(e, "Error saving synced content to database")
+                Timber.e(e, "Error saving synced learning content to database")
                 Result.Error(AppError.DataError.DatabaseError)
             }
         } catch (e: Exception) {
-            Timber.e(e, "Error during content sync")
+            Timber.e(e, "Error during learning content sync")
             Result.Error(AppError.NetworkError.Unknown(e))
         }
     }

@@ -5,6 +5,7 @@ import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import com.appsbase.jetcode.core.domain.repository.PracticeRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 /**
  * Use case for syncing content from remote
@@ -16,12 +17,13 @@ class SyncContentUseCase(
     suspend operator fun invoke(): Result<Unit> = coroutineScope {
         val practiceSync = async { practiceRepository.syncPracticeContent() }
         val learningSync = async { learningRepository.syncLearningContent() }
+        val minDelayAsync = async { delay(1000) }
 
-        // Wait for both operations to complete
+        // Wait for both operations and minimum delay to complete
         val practiceResult = practiceSync.await()
         val learningResult = learningSync.await()
+        minDelayAsync.await() // Ensure minimum delay is respected
 
-        // Return error if any operation failed, otherwise success
         when {
             practiceResult is Result.Error -> practiceResult
             learningResult is Result.Error -> learningResult
