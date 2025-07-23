@@ -136,11 +136,10 @@ private fun PracticeContent(
     Column(modifier = modifier) {
         state.practiceSet?.let { practiceSet ->
             ProgressHeaderCard(
-                title = practiceSet.name,
-                description = practiceSet.description,
+                headerLabel = practiceSet.description,
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
 
@@ -230,7 +229,10 @@ private fun QuizTypeBadge(type: QuizType) {
         QuizType.FILL_BLANK -> "Fill Blank" to "✏️"
     }
 
-    TypeBadge(text = text, emoji = emoji)
+    TypeBadge(
+        text = text,
+        emoji = emoji,
+    )
 }
 
 @Composable
@@ -298,11 +300,10 @@ private fun CompletionScreen(
     Column(modifier = modifier) {
         state.practiceSet?.let { practiceSet ->
             ProgressHeaderCard(
-                title = practiceSet.name,
-                description = practiceSet.description,
+                headerLabel = practiceSet.description,
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
 
@@ -317,7 +318,7 @@ private fun CompletionScreen(
             additionalContent = {
                 Spacer(modifier = Modifier.height(24.dp))
                 StatisticsCard(state.statistics)
-            }
+            },
         )
 
         Row(

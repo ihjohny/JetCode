@@ -154,15 +154,14 @@ private fun TopicContentSection(
         // Topic Header Card
         state.topic?.let { topic ->
             ProgressHeaderCard(
-                title = topic.name,
-                description = topic.description,
+                headerLabel = topic.description,
                 progressLabel = state.progressValueLabel,
                 progressValue = if (state.materials.isNotEmpty())
                     (state.currentMaterialIndex + 1f) / state.materials.size else 0f,
                 extraInfo = "⏱️ ${topic.duration} min",
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp),
             )
         }
 
@@ -281,7 +280,10 @@ private fun MaterialTypeBadge(type: MaterialType) {
         MaterialType.VIDEO -> "Video" to "🎥"
     }
 
-    TypeBadge(text = text, emoji = emoji)
+    TypeBadge(
+        text = text,
+        emoji = emoji,
+    )
 }
 
 @Composable
