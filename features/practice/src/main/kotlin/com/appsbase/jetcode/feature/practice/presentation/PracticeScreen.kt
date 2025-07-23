@@ -621,7 +621,7 @@ private fun CompletionActionButtons(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = "Complete Practice",
+                text = "Finish",
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.width(4.dp))

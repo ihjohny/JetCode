@@ -69,12 +69,12 @@ internal fun AllAnswersDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "All Answers & Explanations",
+                        text = "All Answers",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-
+                    Spacer(modifier = Modifier.width(8.dp))
                     IconButton(
                         onClick = onDismiss, modifier = Modifier.size(32.dp)
                     ) {
