@@ -21,11 +21,12 @@ data class QuizResult(
 data class QuizStatistics(
     val totalQuizzes: Int,
     val correctAnswers: Int,
-    val wrongAnswers: Int,
     val averageTime: Long,
     val scorePercentage: Int,
     val typeBreakdown: Map<QuizType, Int>
-)
+) {
+    val wrongAnswers: Int get() = totalQuizzes - correctAnswers
+}
 
 data class PracticeState(
     val isLoading: Boolean = false,
@@ -36,8 +37,8 @@ data class PracticeState(
     val quizResults: List<QuizResult> = emptyList(),
     val isCompleted: Boolean = false,
     val showAllAnswers: Boolean = false,
-    val startTime: Long = 0L,
-    val error: String? = null
+    val error: String? = null,
+    val startTime: Long = System.currentTimeMillis()
 ) : UiState {
     val currentQuiz: Quiz? get() = quizzes.getOrNull(currentQuizIndex)
     val progressLabel get() = "${(currentQuizIndex + 1).coerceAtMost(quizzes.size)} of ${quizzes.size}"
@@ -46,10 +47,12 @@ data class PracticeState(
     val statistics: QuizStatistics
         get() {
             val correctCount = quizResults.count { it.isCorrect }
-            val avgTime = if (quizResults.isNotEmpty()) quizResults.map { it.timeTaken }.average()
-                .toLong() else 0L
-            val scorePercentage =
-                if (quizResults.isNotEmpty()) (correctCount * 100) / quizResults.size else 0
+            val avgTime = if (quizResults.isNotEmpty()) {
+                quizResults.map { it.timeTaken }.average().toLong()
+            } else 0L
+            val scorePercentage = if (quizResults.isNotEmpty()) {
+                (correctCount * 100) / quizResults.size
+            } else 0
 
             val typeBreakdown = quizResults.groupBy { it.quiz.type }
                 .mapValues { it.value.count { result -> result.isCorrect } }
@@ -57,7 +60,6 @@ data class PracticeState(
             return QuizStatistics(
                 totalQuizzes = quizResults.size,
                 correctAnswers = correctCount,
-                wrongAnswers = quizResults.size - correctCount,
                 averageTime = avgTime,
                 scorePercentage = scorePercentage,
                 typeBreakdown = typeBreakdown
@@ -70,8 +72,7 @@ sealed class PracticeIntent : UiIntent {
     data class AnswerChanged(val answer: String) : PracticeIntent()
     data object NextQuiz : PracticeIntent()
     data object PreviousQuiz : PracticeIntent()
-    data object ShowAllAnswers : PracticeIntent()
-    data object HideAllAnswers : PracticeIntent()
+    data object ToggleAllAnswers : PracticeIntent()
     data object RestartPractice : PracticeIntent()
     data class RetryClicked(val practiceSetId: String) : PracticeIntent()
 }

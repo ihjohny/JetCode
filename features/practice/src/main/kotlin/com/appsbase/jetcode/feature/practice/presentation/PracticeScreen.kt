@@ -100,83 +100,58 @@ fun PracticeScreen(
 
     Scaffold(
         topBar = {
-            PracticeTopAppBar(
-                title = state.practiceSet?.name ?: "Loading...",
-                onNavigateBack = onBackClick,
+            TopAppBar(
+                title = {
+                    Text(
+                        text = state.practiceSet?.name ?: "Loading...",
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                    }
+                },
             )
         },
     ) { paddingValues ->
         when {
-            state.isLoading -> {
-                LoadingState(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                )
-            }
+            state.isLoading -> LoadingState(Modifier
+                .fillMaxSize()
+                .padding(paddingValues))
 
-            !state.error.isNullOrEmpty() -> {
-                ErrorState(
-                    message = state.error ?: "Unknown error",
-                    onRetry = {
-                        viewModel.handleIntent(PracticeIntent.RetryClicked(practiceId))
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                )
-            }
+            !state.error.isNullOrEmpty() -> ErrorState(
+                message = state.error ?: "Unknown error",
+                onRetry = { viewModel.handleIntent(PracticeIntent.RetryClicked(practiceId)) },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            )
 
-            state.isCompleted -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                ) {
-                    state.practiceSet?.let { practiceSet ->
-                        PracticeHeaderCard(
-                            practiceSet = practiceSet,
-                            progressValueLabel = state.progressLabel,
-                            progressValue = state.progressValue,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .padding(top = 16.dp)
-                        )
-                    }
+            state.isCompleted -> CompletionScreen(
+                state = state,
+                onIntent = viewModel::handleIntent,
+                onComplete = onPracticeComplete,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
 
-                    CompletionSection(
-                        state = state,
-                        onIntent = viewModel::handleIntent,
-                        onViewAnswers = { viewModel.handleIntent(PracticeIntent.ShowAllAnswers) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 16.dp),
-                    )
-
-                    CompletionActionButtons(
-                        onComplete = onPracticeComplete,
-                        onRestart = { viewModel.handleIntent(PracticeIntent.RestartPractice) },
-                        modifier = Modifier.padding(16.dp),
-                    )
-                }
-            }
-
-            else -> {
-                PracticeContentSection(
-                    state = state,
-                    onIntent = viewModel::handleIntent,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                )
-            }
+            else -> PracticeContent(
+                state = state,
+                onIntent = viewModel::handleIntent,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
         }
     }
 }
 
 @Composable
-private fun PracticeContentSection(
+private fun PracticeContent(
     state: PracticeState,
     onIntent: (PracticeIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -185,18 +160,17 @@ private fun PracticeContentSection(
         state.practiceSet?.let { practiceSet ->
             PracticeHeaderCard(
                 practiceSet = practiceSet,
-                progressValueLabel = state.progressLabel,
+                progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
+                modifier = Modifier.padding(16.dp)
             )
         }
 
-        // Quiz Section
         if (state.quizzes.isNotEmpty()) {
-            QuizFlashCardSection(
-                state = state, onIntent = onIntent, modifier = Modifier.weight(1f)
+            QuizSection(
+                state = state,
+                onIntent = onIntent,
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -205,20 +179,16 @@ private fun PracticeContentSection(
 @Composable
 private fun PracticeHeaderCard(
     practiceSet: PracticeSet,
-    progressValueLabel: String,
+    progressLabel: String,
     progressValue: Float,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = practiceSet.description,
                 style = MaterialTheme.typography.bodyLarge,
@@ -227,25 +197,12 @@ private fun PracticeHeaderCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Progress",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = progressValueLabel,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
+            Text(
+                text = "Progress: $progressLabel",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -263,7 +220,7 @@ private fun PracticeHeaderCard(
 }
 
 @Composable
-private fun QuizFlashCardSection(
+private fun QuizSection(
     state: PracticeState,
     onIntent: (PracticeIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -275,14 +232,12 @@ private fun QuizFlashCardSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
             state.currentQuiz?.let { currentQuiz ->
                 QuizCard(
                     quiz = currentQuiz,
                     userAnswer = state.userAnswer,
-                    quizResult = state.quizResults.getOrNull(state.currentQuizIndex),
                     dragOffset = dragOffset,
                     onDragOffsetChange = { dragOffset = it },
                     onSwipeLeft = { onIntent(PracticeIntent.NextQuiz) },
@@ -293,7 +248,7 @@ private fun QuizFlashCardSection(
             }
         }
 
-        QuizNavigationControls(
+        NavigationControls(
             canGoPrevious = state.currentQuizIndex > 0,
             onPrevious = { onIntent(PracticeIntent.PreviousQuiz) },
             onNext = { onIntent(PracticeIntent.NextQuiz) },
@@ -306,7 +261,6 @@ private fun QuizFlashCardSection(
 private fun QuizCard(
     quiz: Quiz,
     userAnswer: String,
-    quizResult: QuizResult?,
     dragOffset: Float,
     onDragOffsetChange: (Float) -> Unit,
     onSwipeLeft: () -> Unit,
@@ -316,9 +270,7 @@ private fun QuizCard(
 ) {
     val animatedOffset by animateFloatAsState(
         targetValue = dragOffset,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow
-        ),
+        animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow),
         label = "quizCardOffset",
     )
 
@@ -339,7 +291,7 @@ private fun QuizCard(
                 }
             }
             .shadow(8.dp, RoundedCornerShape(16.dp)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(16.dp),
     ) {
         Box(
@@ -347,7 +299,7 @@ private fun QuizCard(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(
+                        listOf(
                             MaterialTheme.colorScheme.surface,
                             MaterialTheme.colorScheme.surfaceContainer
                         )
@@ -360,12 +312,9 @@ private fun QuizCard(
                     .padding(24.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Quiz Type
-                QuizTypeBadge(type = quiz.type)
-
+                QuizTypeBadge(quiz.type)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Quiz Question
                 Text(
                     text = quiz.question,
                     style = MaterialTheme.typography.headlineSmall,
@@ -375,10 +324,7 @@ private fun QuizCard(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Quiz Input based on type
-                QuizInputRenderer(
-                    quiz = quiz, userAnswer = userAnswer, onAnswerChanged = onAnswerChanged
-                )
+                QuizInput(quiz, userAnswer, onAnswerChanged)
             }
         }
     }
@@ -395,13 +341,11 @@ private fun QuizTypeBadge(type: QuizType) {
 
     Row(
         modifier = Modifier
-            .background(
-                MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp)
-            )
+            .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp))
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = emoji, style = MaterialTheme.typography.bodyMedium)
+        Text(emoji, style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = text,
@@ -412,7 +356,7 @@ private fun QuizTypeBadge(type: QuizType) {
 }
 
 @Composable
-private fun QuizInputRenderer(
+private fun QuizInput(
     quiz: Quiz,
     userAnswer: String,
     onAnswerChanged: (String) -> Unit,
@@ -420,28 +364,23 @@ private fun QuizInputRenderer(
     when (quiz.type) {
         QuizType.MCQ -> {
             quiz.options?.forEach { option ->
-                val isSelected = userAnswer == option
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            onAnswerChanged(option)
-                        }
+                        .clickable { onAnswerChanged(option) }
                         .background(
-                            if (isSelected) {
+                            if (userAnswer == option) {
                                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                            } else {
-                                MaterialTheme.colorScheme.surface
-                            }, RoundedCornerShape(8.dp)
+                            } else MaterialTheme.colorScheme.surface,
+                            RoundedCornerShape(8.dp)
                         )
-                        .padding(12.dp)) {
-                    RadioButton(
-                        selected = isSelected, onClick = null
-                    )
+                        .padding(12.dp)
+                ) {
+                    RadioButton(selected = userAnswer == option, onClick = null)
                     Text(
-                        text = option, modifier = Modifier
+                        text = option,
+                        modifier = Modifier
                             .padding(start = 8.dp)
                             .weight(1f)
                     )
@@ -450,26 +389,22 @@ private fun QuizInputRenderer(
             }
         }
 
-        QuizType.CODE_CHALLENGE, QuizType.OUTPUT_PREDICTION, QuizType.FILL_BLANK -> {
+        else -> {
+            val label = when (quiz.type) {
+                QuizType.CODE_CHALLENGE -> "Write your code here"
+                QuizType.OUTPUT_PREDICTION -> "Predict the output"
+                QuizType.FILL_BLANK -> "Fill in the blank"
+                else -> "Your answer"
+            }
+
             OutlinedTextField(
                 value = userAnswer,
                 onValueChange = onAnswerChanged,
-                label = {
-                    Text(
-                        when (quiz.type) {
-                            QuizType.CODE_CHALLENGE -> "Write your code here"
-                            QuizType.OUTPUT_PREDICTION -> "Predict the output"
-                            QuizType.FILL_BLANK -> "Fill in the blank"
-                            else -> "Your answer"
-                        }
-                    )
-                },
+                label = { Text(label) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = if (quiz.type == QuizType.CODE_CHALLENGE) 5 else 1,
                 textStyle = if (quiz.type == QuizType.CODE_CHALLENGE) {
-                    MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = FontFamily.Monospace
-                    )
+                    MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace)
                 } else {
                     MaterialTheme.typography.bodyMedium
                 }
@@ -479,7 +414,7 @@ private fun QuizInputRenderer(
 }
 
 @Composable
-private fun QuizNavigationControls(
+private fun NavigationControls(
     canGoPrevious: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
@@ -487,102 +422,120 @@ private fun QuizNavigationControls(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedButton(
-            onClick = onPrevious, enabled = canGoPrevious, modifier = Modifier.weight(1f)
+            onClick = onPrevious,
+            enabled = canGoPrevious,
+            modifier = Modifier.weight(1f)
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null, Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(4.dp))
             Text("Previous")
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
-
         Button(
             onClick = onNext,
-            enabled = true, // Always enabled - will submit answer regardless of selection
             modifier = Modifier.weight(1f)
         ) {
             Text("Next")
             Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, Modifier.size(20.dp))
         }
     }
 }
 
 @Composable
-private fun CompletionSection(
+private fun CompletionScreen(
     state: PracticeState,
     onIntent: (PracticeIntent) -> Unit,
-    onViewAnswers: () -> Unit,
+    onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-    ) {
-        Column(
+    Column(modifier = modifier) {
+        state.practiceSet?.let { practiceSet ->
+            PracticeHeaderCard(
+                practiceSet = practiceSet,
+                progressLabel = state.progressLabel,
+                progressValue = state.progressValue,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .weight(1f)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
         ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Completed",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.onPrimary,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "🎉 Practice Completed!",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Statistics
-            QuizStatisticsCard(
-                statistics = state.statistics, modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onViewAnswers,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    Icons.Default.CheckCircle,
+                    "Completed",
+                    modifier = Modifier.size(80.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
-                    text = "View Answers",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
+                    text = "🎉 Practice Completed!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                StatisticsCard(state.statistics)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = { onIntent(PracticeIntent.ToggleAllAnswers) },
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(Icons.Default.Info, null, Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("View Answers", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(
+                onClick = { onIntent(PracticeIntent.RestartPractice) },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(Icons.Default.Refresh, null, Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Restart")
+            }
+
+            Button(
+                onClick = onComplete,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text("Finish", color = MaterialTheme.colorScheme.onPrimary)
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }
@@ -591,59 +544,15 @@ private fun CompletionSection(
     if (state.showAllAnswers) {
         AllAnswersDialog(
             quizResults = state.quizResults,
-            onDismiss = { onIntent(PracticeIntent.HideAllAnswers) })
-    }
-}
-
-@Composable
-private fun CompletionActionButtons(
-    onComplete: () -> Unit,
-    onRestart: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        OutlinedButton(
-            onClick = onRestart, modifier = Modifier.weight(1f)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Restart")
-        }
-
-        Button(
-            onClick = onComplete,
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = "Finish",
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(16.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuizStatisticsCard(
-    statistics: QuizStatistics,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier, colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            onDismiss = { onIntent(PracticeIntent.ToggleAllAnswers) }
         )
+    }
+}
+
+@Composable
+private fun StatisticsCard(statistics: QuizStatistics) {
+    Card(
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -658,68 +567,27 @@ private fun QuizStatisticsCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatisticItem(
-                    label = "Score", value = "${statistics.scorePercentage}%", icon = "🎯"
-                )
-                StatisticItem(
-                    label = "Correct", value = "${statistics.correctAnswers}", icon = "✅"
-                )
-                StatisticItem(
-                    label = "Wrong", value = "${statistics.wrongAnswers}", icon = "❌"
-                )
+                StatisticItem("Score", "${statistics.scorePercentage}%", "🎯")
+                StatisticItem("Correct", "${statistics.correctAnswers}", "✅")
+                StatisticItem("Wrong", "${statistics.wrongAnswers}", "❌")
             }
         }
     }
 }
 
 @Composable
-private fun StatisticItem(
-    label: String,
-    value: String,
-    icon: String,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = icon, style = MaterialTheme.typography.headlineMedium
-        )
+private fun StatisticItem(label: String, value: String, icon: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(icon, style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(4.dp))
+        Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Text(
-            text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = label,
+            label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PracticeTopAppBar(
-    title: String,
-    onNavigateBack: () -> Unit,
-) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                )
-            }
-        },
-    )
 }

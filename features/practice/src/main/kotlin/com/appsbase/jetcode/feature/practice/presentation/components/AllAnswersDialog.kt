@@ -43,7 +43,8 @@ internal fun AllAnswersDialog(
     onDismiss: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = onDismiss, properties = DialogProperties(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
             usePlatformDefaultWidth = false,
@@ -58,40 +59,8 @@ internal fun AllAnswersDialog(
             color = MaterialTheme.colorScheme.surface,
             shadowElevation = 8.dp,
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "All Answers",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(
-                        onClick = onDismiss, modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
-                )
+            Column(modifier = Modifier.fillMaxSize()) {
+                DialogHeader(onDismiss = onDismiss)
 
                 LazyColumn(
                     modifier = Modifier
@@ -102,12 +71,49 @@ internal fun AllAnswersDialog(
                 ) {
                     itemsIndexed(quizResults) { index, result ->
                         QuizAnswerItem(
-                            index = index + 1, quiz = result.quiz, quizResult = result
+                            index = index + 1,
+                            quiz = result.quiz,
+                            quizResult = result
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DialogHeader(onDismiss: () -> Unit) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "All Answers",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            IconButton(onClick = onDismiss) {
+                Icon(
+                    Icons.Default.Close,
+                    "Close",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+        )
     }
 }
 
@@ -126,18 +132,15 @@ private fun QuizAnswerItem(
             }
         )
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "$index.",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Icon(
                     imageVector = if (quizResult.isCorrect) Icons.Default.CheckCircle else Icons.Default.Close,
                     contentDescription = null,
@@ -145,6 +148,7 @@ private fun QuizAnswerItem(
                     modifier = Modifier.size(16.dp),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Text(
                     text = quiz.question,
                     style = MaterialTheme.typography.bodyMedium,
@@ -154,26 +158,39 @@ private fun QuizAnswerItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "Your answer: ${quizResult.userAnswer}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            AnswerSection(
+                userAnswer = quizResult.userAnswer,
+                correctAnswer = quiz.correctAnswer,
+                explanation = quiz.explanation
             )
-
-            Text(
-                text = "Correct answer: ${quiz.correctAnswer}",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-            )
-
-            if (!quiz.explanation.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = quiz.explanation ?: "",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                )
-            }
         }
+    }
+}
+
+@Composable
+private fun AnswerSection(
+    userAnswer: String,
+    correctAnswer: String,
+    explanation: String?
+) {
+    Text(
+        text = "Your answer: $userAnswer",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+    )
+
+    Text(
+        text = "Correct answer: $correctAnswer",
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = FontWeight.Medium,
+    )
+
+    if (!explanation.isNullOrBlank()) {
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = explanation,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+        )
     }
 }
