@@ -28,7 +28,7 @@ class PracticeViewModel(
             is PracticeIntent.AnswerChanged -> updateAnswer(intent.answer)
             is PracticeIntent.NextQuiz -> nextQuiz()
             is PracticeIntent.PreviousQuiz -> previousQuiz()
-            is PracticeIntent.ToggleAllAnswers -> toggleAllAnswers()
+            is PracticeIntent.ViewAnswers -> viewAnswers()
             is PracticeIntent.RestartPractice -> restartPractice()
             is PracticeIntent.RetryClicked -> loadPracticeSet(intent.practiceSetId)
         }
@@ -41,11 +41,16 @@ class PracticeViewModel(
             getPracticeSetByIdUseCase(practiceSetId).collect { result ->
                 when (result) {
                     is Result.Success -> {
-                        updateState(currentState().copy(practiceSet = result.data, isLoading = false))
+                        updateState(
+                            currentState().copy(
+                                practiceSet = result.data, isLoading = false
+                            )
+                        )
                         loadQuizzes(result.data.quizIds)
                     }
+
                     is Result.Error -> handleError(result.exception)
-                    is Result.Loading -> { /* Already handled */ }
+                    is Result.Loading -> {}
                 }
             }
         }
@@ -59,8 +64,9 @@ class PracticeViewModel(
                         updateState(currentState().copy(quizzes = result.data))
                         Timber.d("Loaded ${result.data.size} quizzes")
                     }
+
                     is Result.Error -> handleError(result.exception)
-                    is Result.Loading -> { /* Handled by practice set loading */ }
+                    is Result.Loading -> {}
                 }
             }
         }
@@ -96,7 +102,7 @@ class PracticeViewModel(
         val userAnswer = state.userAnswer.trim()
         val isCorrect = checkAnswer(currentQuiz, userAnswer)
 
-        val quizResult = QuizResult(
+        val quizResult = PracticeState.QuizResult(
             quiz = currentQuiz,
             userAnswer = userAnswer.ifEmpty { "No answer" },
             isCorrect = isCorrect,
@@ -144,14 +150,13 @@ class PracticeViewModel(
             val previousResult = state.quizResults.getOrNull(prevIndex)
             updateState(
                 state.copy(
-                    currentQuizIndex = prevIndex,
-                    userAnswer = previousResult?.userAnswer ?: ""
+                    currentQuizIndex = prevIndex, userAnswer = previousResult?.userAnswer ?: ""
                 )
             )
         }
     }
 
-    private fun toggleAllAnswers() {
+    private fun viewAnswers() {
         updateState(currentState().copy(showAllAnswers = !currentState().showAllAnswers))
     }
 

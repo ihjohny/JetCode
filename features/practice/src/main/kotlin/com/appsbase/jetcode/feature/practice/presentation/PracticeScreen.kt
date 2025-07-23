@@ -496,7 +496,7 @@ private fun CompletionScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { onIntent(PracticeIntent.ToggleAllAnswers) },
+                    onClick = { onIntent(PracticeIntent.ViewAnswers) },
                     modifier = Modifier.fillMaxWidth(0.8f),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
@@ -540,13 +540,12 @@ private fun CompletionScreen(
 
     if (state.showAllAnswers) {
         AllAnswersDialog(
-            quizResults = state.quizResults,
-            onDismiss = { onIntent(PracticeIntent.ToggleAllAnswers) })
+            quizResults = state.quizResults, onDismiss = { onIntent(PracticeIntent.ViewAnswers) })
     }
 }
 
 @Composable
-private fun StatisticsCard(statistics: QuizStatistics) {
+private fun StatisticsCard(statistics: PracticeState.QuizStatistics) {
     Card(
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
     ) {
@@ -654,7 +653,7 @@ private fun PracticeScreenCompletedPreview() {
         )
 
         val sampleResults = listOf(
-            QuizResult(sampleQuiz1, "A function", true), QuizResult(
+            PracticeState.QuizResult(sampleQuiz1, "A function", true), PracticeState.QuizResult(
                 sampleQuiz2,
                 "fun calculate(x: Int, operation: (Int) -> Int): Int = operation(x)",
                 true
@@ -668,7 +667,10 @@ private fun PracticeScreenCompletedPreview() {
                 currentQuizIndex = 2,
                 quizResults = sampleResults,
                 isCompleted = true
-            ), onIntent = {}, onComplete = {}, modifier = Modifier.fillMaxSize()
+            ),
+            onIntent = {},
+            onComplete = {},
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
