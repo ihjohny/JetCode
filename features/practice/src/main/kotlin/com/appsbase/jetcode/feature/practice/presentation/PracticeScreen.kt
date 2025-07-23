@@ -59,9 +59,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
@@ -118,9 +120,11 @@ fun PracticeScreen(
         },
     ) { paddingValues ->
         when {
-            state.isLoading -> LoadingState(Modifier
-                .fillMaxSize()
-                .padding(paddingValues))
+            state.isLoading -> LoadingState(
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
 
             !state.error.isNullOrEmpty() -> ErrorState(
                 message = state.error ?: "Unknown error",
@@ -168,9 +172,7 @@ private fun PracticeContent(
 
         if (state.quizzes.isNotEmpty()) {
             QuizSection(
-                state = state,
-                onIntent = onIntent,
-                modifier = Modifier.weight(1f)
+                state = state, onIntent = onIntent, modifier = Modifier.weight(1f)
             )
         }
     }
@@ -232,7 +234,7 @@ private fun QuizSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             state.currentQuiz?.let { currentQuiz ->
                 QuizCard(
@@ -341,7 +343,9 @@ private fun QuizTypeBadge(type: QuizType) {
 
     Row(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp))
+            .background(
+                MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp)
+            )
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -372,15 +376,12 @@ private fun QuizInput(
                         .background(
                             if (userAnswer == option) {
                                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                            } else MaterialTheme.colorScheme.surface,
-                            RoundedCornerShape(8.dp)
+                            } else MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp)
                         )
-                        .padding(12.dp)
-                ) {
+                        .padding(12.dp)) {
                     RadioButton(selected = userAnswer == option, onClick = null)
                     Text(
-                        text = option,
-                        modifier = Modifier
+                        text = option, modifier = Modifier
                             .padding(start = 8.dp)
                             .weight(1f)
                     )
@@ -421,13 +422,10 @@ private fun NavigationControls(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedButton(
-            onClick = onPrevious,
-            enabled = canGoPrevious,
-            modifier = Modifier.weight(1f)
+            onClick = onPrevious, enabled = canGoPrevious, modifier = Modifier.weight(1f)
         ) {
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null, Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(4.dp))
@@ -435,8 +433,7 @@ private fun NavigationControls(
         }
 
         Button(
-            onClick = onNext,
-            modifier = Modifier.weight(1f)
+            onClick = onNext, modifier = Modifier.weight(1f)
         ) {
             Text("Next")
             Spacer(modifier = Modifier.width(4.dp))
@@ -465,7 +462,7 @@ private fun CompletionScreen(
         Card(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
         ) {
@@ -544,8 +541,7 @@ private fun CompletionScreen(
     if (state.showAllAnswers) {
         AllAnswersDialog(
             quizResults = state.quizResults,
-            onDismiss = { onIntent(PracticeIntent.ToggleAllAnswers) }
-        )
+            onDismiss = { onIntent(PracticeIntent.ToggleAllAnswers) })
     }
 }
 
@@ -567,8 +563,7 @@ private fun StatisticsCard(statistics: QuizStatistics) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StatisticItem("Score", "${statistics.scorePercentage}%", "🎯")
                 StatisticItem("Correct", "${statistics.correctAnswers}", "✅")
@@ -588,6 +583,92 @@ private fun StatisticItem(label: String, value: String, icon: String) {
             label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+    }
+}
+
+// Preview composable
+@Preview(showBackground = true, name = "Practice Screen - MCQ Quiz")
+@Composable
+private fun PracticeScreenMCQPreview() {
+    JetCodeTheme {
+        val samplePracticeSet = PracticeSet(
+            id = "1",
+            name = "Kotlin Basics",
+            description = "Learn the fundamentals of Kotlin programming language including variables, functions, and control structures.",
+            quizIds = listOf("q1", "q2", "q3")
+        )
+
+        val sampleQuiz = Quiz(
+            id = "q1",
+            type = QuizType.MCQ,
+            question = "Which of the following is the correct way to declare a variable in Kotlin?",
+            options = listOf(
+                "var name: String = \"John\"",
+                "String name = \"John\"",
+                "variable name = \"John\"",
+                "def name = \"John\""
+            ),
+            correctAnswer = "var name: String = \"John\"",
+            explanation = "In Kotlin, variables are declared using 'var' for mutable variables or 'val' for immutable variables."
+        )
+
+        PracticeContent(
+            state = PracticeState(
+                practiceSet = samplePracticeSet,
+                quizzes = listOf(sampleQuiz),
+                currentQuizIndex = 0,
+                userAnswer = ""
+            ), onIntent = {}, modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Practice Screen - Completed")
+@Composable
+private fun PracticeScreenCompletedPreview() {
+    JetCodeTheme {
+        val samplePracticeSet = PracticeSet(
+            id = "3",
+            name = "Kotlin Advanced",
+            description = "Advanced Kotlin concepts including lambdas, higher-order functions, and coroutines.",
+            quizIds = listOf("q1", "q2", "q3")
+        )
+
+        val sampleQuiz1 = Quiz(
+            id = "q1",
+            type = QuizType.MCQ,
+            question = "What is a lambda expression?",
+            options = listOf("A function", "A variable", "A class", "An interface"),
+            correctAnswer = "A function",
+            explanation = "Lambda expressions are anonymous functions."
+        )
+
+        val sampleQuiz2 = Quiz(
+            id = "q2",
+            type = QuizType.CODE_CHALLENGE,
+            question = "Write a higher-order function",
+            options = null,
+            correctAnswer = "fun calculate(x: Int, operation: (Int) -> Int): Int = operation(x)",
+            explanation = "Higher-order functions take functions as parameters."
+        )
+
+        val sampleResults = listOf(
+            QuizResult(sampleQuiz1, "A function", true), QuizResult(
+                sampleQuiz2,
+                "fun calculate(x: Int, operation: (Int) -> Int): Int = operation(x)",
+                true
+            )
+        )
+
+        CompletionScreen(
+            state = PracticeState(
+                practiceSet = samplePracticeSet,
+                quizzes = listOf(sampleQuiz1, sampleQuiz2),
+                currentQuizIndex = 2,
+                quizResults = sampleResults,
+                isCompleted = true
+            ), onIntent = {}, onComplete = {}, modifier = Modifier.fillMaxSize()
         )
     }
 }
