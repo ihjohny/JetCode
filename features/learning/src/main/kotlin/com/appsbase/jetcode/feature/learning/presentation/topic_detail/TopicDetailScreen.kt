@@ -1,78 +1,54 @@
 package com.appsbase.jetcode.feature.learning.presentation.topic_detail
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.MaterialType
 import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.core.ui.components.CommonTopAppBar
+import com.appsbase.jetcode.core.ui.components.CompletionCard
+import com.appsbase.jetcode.core.ui.components.DropdownMenuItem
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
+import com.appsbase.jetcode.core.ui.components.NavigationControls
+import com.appsbase.jetcode.core.ui.components.ProgressHeaderCard
+import com.appsbase.jetcode.core.ui.components.SwipeableCard
+import com.appsbase.jetcode.core.ui.components.TypeBadge
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.roundToInt
 
 /**
  * Screen for displaying topic details with materials
@@ -102,16 +78,23 @@ fun TopicDetailScreen(
         viewModel.handleIntent(TopicDetailIntent.LoadTopic(topicId))
     }
 
+    val dropdownMenuItems = listOf(
+        DropdownMenuItem(
+            text = "Start Practice",
+            onClick = {
+                state.topic?.practiceSetId?.let { practiceSetId ->
+                    onPracticeClick(practiceSetId)
+                }
+            }
+        )
+    )
+
     Scaffold(
         topBar = {
-            TopicDetailTopAppBar(
+            CommonTopAppBar(
                 title = state.topic?.name ?: "Loading...",
                 onNavigateBack = onNavigateBack,
-                onPracticeClick = {
-                    state.topic?.practiceSetId?.let { practiceSetId ->
-                        onPracticeClick(practiceSetId)
-                    }
-                },
+                dropdownMenuItems = dropdownMenuItems
             )
         },
     ) { paddingValues ->
@@ -170,11 +153,13 @@ private fun TopicContentSection(
     Column(modifier = modifier) {
         // Topic Header Card
         state.topic?.let { topic ->
-            TopicHeaderCard(
-                topic = topic,
-                currentMaterialIndex = state.currentMaterialIndex,
-                totalMaterials = state.materials.size,
-                progressValueLabel = state.progressValueLabel,
+            ProgressHeaderCard(
+                title = topic.name,
+                description = topic.description,
+                progressLabel = state.progressValueLabel,
+                progressValue = if (state.materials.isNotEmpty())
+                    (state.currentMaterialIndex + 1f) / state.materials.size else 0f,
+                extraInfo = "⏱️ ${topic.duration} min",
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
@@ -191,75 +176,6 @@ private fun TopicContentSection(
                 onPracticeClick = onPracticeClick,
                 onFinishClick = onFinishClick,
                 modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun TopicHeaderCard(
-    topic: Topic,
-    currentMaterialIndex: Int,
-    totalMaterials: Int,
-    progressValueLabel: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = topic.description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Progress Section
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Progress",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = progressValueLabel,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-
-                Text(
-                    text = "⏱️ ${topic.duration} min",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Progress Bar
-            LinearProgressIndicator(
-                progress = { if (totalMaterials > 0) (currentMaterialIndex + 1f) / totalMaterials else 0f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)
             )
         }
     }
@@ -289,111 +205,69 @@ private fun MaterialFlashCardSection(
             if (currentIndex >= materials.size) {
                 // Completion View
                 CompletionCard(
-                    onPracticeClick = onPracticeClick,
+                    title = "🎉 Well Done!",
+                    subtitle = "You've completed all materials for this topic. Ready to practice what you've learned?",
+                    actionButtonText = "Start Practice",
+                    onActionClick = onPracticeClick,
                     modifier = Modifier.fillMaxSize(),
                 )
             } else {
                 val currentMaterial = materials[currentIndex]
 
-                MaterialCard(
-                    material = currentMaterial,
+                SwipeableCard(
                     dragOffset = dragOffset,
                     onDragOffsetChange = { dragOffset = it },
                     onSwipeLeft = onNext,
                     onSwipeRight = onPrevious,
                     modifier = Modifier.fillMaxSize()
-                )
+                ) {
+                    MaterialContent(
+                        material = currentMaterial,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp)
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
             }
         }
 
         // Navigation Controls
         NavigationControls(
             canGoPrevious = currentIndex > 0,
-            canGoNext = currentIndex < materials.size,
-            isLastMaterial = currentIndex == materials.size - 1,
-            isCompletionState = currentIndex >= materials.size,
             onPrevious = onPrevious,
             onNext = onNext,
-            onFinish = onFinishClick,
+            nextButtonText = "Next",
+            showFinishButton = currentIndex >= materials.size,
+            onFinish = if (currentIndex >= materials.size) onFinishClick else null,
             modifier = Modifier.padding(16.dp),
         )
     }
 }
 
 @Composable
-private fun MaterialCard(
+private fun MaterialContent(
     material: Material,
-    dragOffset: Float,
-    onDragOffsetChange: (Float) -> Unit,
-    onSwipeLeft: () -> Unit,
-    onSwipeRight: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val animatedOffset by animateFloatAsState(
-        targetValue = dragOffset,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow
-        ),
-        label = "cardOffset",
-    )
+    Column(modifier = modifier) {
+        // Material Type Badge
+        MaterialTypeBadge(type = material.type)
 
-    Card(
-        modifier = modifier
-            .offset { IntOffset(animatedOffset.roundToInt(), 0) }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        when {
-                            dragOffset > 300 -> onSwipeRight()
-                            dragOffset < -300 -> onSwipeLeft()
-                        }
-                        onDragOffsetChange(0f)
-                    },
-                ) { _, dragAmount ->
-                    onDragOffsetChange(dragOffset + dragAmount)
-                }
-            }
-            .shadow(8.dp, RoundedCornerShape(16.dp)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-                )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                // Material Type Badge
-                MaterialTypeBadge(type = material.type)
+        Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(16.dp))
+        // Material Title
+        Text(
+            text = material.title,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
 
-                // Material Title
-                Text(
-                    text = material.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        Spacer(modifier = Modifier.height(20.dp))
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Material Content based on type
-                MaterialContentRenderer(material = material)
-            }
-        }
+        // Material Content based on type
+        MaterialContentRenderer(material = material)
     }
 }
 
@@ -407,24 +281,7 @@ private fun MaterialTypeBadge(type: MaterialType) {
         MaterialType.VIDEO -> "Video" to "🎥"
     }
 
-    Row(
-        modifier = Modifier
-            .background(
-                MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = emoji, style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSecondary
-        )
-    }
+    TypeBadge(text = text, emoji = emoji)
 }
 
 @Composable
@@ -516,197 +373,6 @@ private fun MaterialContentRenderer(material: Material) {
             }
         }
     }
-}
-
-@Composable
-private fun CompletionCard(
-    onPracticeClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Completed",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.onPrimary,
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "🎉 Well Done!",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "You've completed all materials for this topic. Ready to practice what you've learned?",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onPracticeClick,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Start Practice",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun NavigationControls(
-    canGoPrevious: Boolean,
-    canGoNext: Boolean,
-    isLastMaterial: Boolean,
-    isCompletionState: Boolean,
-    onPrevious: () -> Unit,
-    onNext: () -> Unit,
-    onFinish: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedButton(
-            onClick = onPrevious, enabled = canGoPrevious, modifier = Modifier.weight(1f)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Previous")
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        when {
-            isCompletionState -> {
-                Button(
-                    onClick = onFinish,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text("Finish")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-
-            else -> {
-                Button(
-                    onClick = onNext,
-                    enabled = canGoNext || isLastMaterial,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text("Next")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopicDetailTopAppBar(
-    title: String,
-    onNavigateBack: () -> Unit,
-    onPracticeClick: () -> Unit,
-) {
-    var showDropdownMenu by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                )
-            }
-        },
-        actions = {
-            Box {
-                IconButton(onClick = { showDropdownMenu = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                    )
-                }
-
-                DropdownMenu(
-                    expanded = showDropdownMenu,
-                    onDismissRequest = { showDropdownMenu = false },
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text("Start Practice")
-                        },
-                        onClick = {
-                            showDropdownMenu = false
-                            onPracticeClick()
-                        },
-                    )
-                }
-            }
-        },
-    )
 }
 
 // Preview section

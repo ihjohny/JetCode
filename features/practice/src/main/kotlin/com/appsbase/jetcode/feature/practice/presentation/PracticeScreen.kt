@@ -1,11 +1,7 @@
 package com.appsbase.jetcode.feature.practice.presentation
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,28 +17,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,26 +37,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
 import com.appsbase.jetcode.core.domain.model.QuizType
+import com.appsbase.jetcode.core.ui.components.CommonTopAppBar
+import com.appsbase.jetcode.core.ui.components.CompletionCard
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
+import com.appsbase.jetcode.core.ui.components.NavigationControls
+import com.appsbase.jetcode.core.ui.components.ProgressHeaderCard
+import com.appsbase.jetcode.core.ui.components.SwipeableCard
+import com.appsbase.jetcode.core.ui.components.TypeBadge
 import com.appsbase.jetcode.feature.practice.presentation.components.AllAnswersDialog
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.roundToInt
 
 /**
  * Practice Screen - Interactive coding challenges and exercises
@@ -102,20 +86,9 @@ fun PracticeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = state.practiceSet?.name ?: "Loading...",
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
-                    }
-                },
+            CommonTopAppBar(
+                title = state.practiceSet?.name ?: "Loading...",
+                onNavigateBack = onBackClick
             )
         },
     ) { paddingValues ->
@@ -162,8 +135,9 @@ private fun PracticeContent(
 ) {
     Column(modifier = modifier) {
         state.practiceSet?.let { practiceSet ->
-            PracticeHeaderCard(
-                practiceSet = practiceSet,
+            ProgressHeaderCard(
+                title = practiceSet.name,
+                description = practiceSet.description,
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
                 modifier = Modifier.padding(16.dp)
@@ -173,49 +147,6 @@ private fun PracticeContent(
         if (state.quizzes.isNotEmpty()) {
             QuizSection(
                 state = state, onIntent = onIntent, modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PracticeHeaderCard(
-    practiceSet: PracticeSet,
-    progressLabel: String,
-    progressValue: Float,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = practiceSet.description,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Progress: $progressLabel",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            LinearProgressIndicator(
-                progress = { progressValue },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)
             )
         }
     }
@@ -237,16 +168,23 @@ private fun QuizSection(
                 .padding(horizontal = 16.dp)
         ) {
             state.currentQuiz?.let { currentQuiz ->
-                QuizCard(
-                    quiz = currentQuiz,
-                    userAnswer = state.userAnswer,
+                SwipeableCard(
                     dragOffset = dragOffset,
                     onDragOffsetChange = { dragOffset = it },
                     onSwipeLeft = { onIntent(PracticeIntent.NextQuiz) },
                     onSwipeRight = { onIntent(PracticeIntent.PreviousQuiz) },
-                    onAnswerChanged = { onIntent(PracticeIntent.AnswerChanged(it)) },
                     modifier = Modifier.fillMaxSize()
-                )
+                ) {
+                    QuizContent(
+                        quiz = currentQuiz,
+                        userAnswer = state.userAnswer,
+                        onAnswerChanged = { onIntent(PracticeIntent.AnswerChanged(it)) },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp)
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
             }
         }
 
@@ -260,75 +198,26 @@ private fun QuizSection(
 }
 
 @Composable
-private fun QuizCard(
+private fun QuizContent(
     quiz: Quiz,
     userAnswer: String,
-    dragOffset: Float,
-    onDragOffsetChange: (Float) -> Unit,
-    onSwipeLeft: () -> Unit,
-    onSwipeRight: () -> Unit,
     onAnswerChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val animatedOffset by animateFloatAsState(
-        targetValue = dragOffset,
-        animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow),
-        label = "quizCardOffset",
-    )
+    Column(modifier = modifier) {
+        QuizTypeBadge(quiz.type)
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Card(
-        modifier = modifier
-            .offset { IntOffset(animatedOffset.roundToInt(), 0) }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        when {
-                            dragOffset > 300 -> onSwipeRight()
-                            dragOffset < -300 -> onSwipeLeft()
-                        }
-                        onDragOffsetChange(0f)
-                    },
-                ) { _, dragAmount ->
-                    onDragOffsetChange(dragOffset + dragAmount)
-                }
-            }
-            .shadow(8.dp, RoundedCornerShape(16.dp)),
-        elevation = CardDefaults.cardElevation(0.dp),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.surface,
-                            MaterialTheme.colorScheme.surfaceContainer
-                        )
-                    )
-                )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                QuizTypeBadge(quiz.type)
-                Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = quiz.question,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
 
-                Text(
-                    text = quiz.question,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        Spacer(modifier = Modifier.height(24.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                QuizInput(quiz, userAnswer, onAnswerChanged)
-            }
-        }
+        QuizInput(quiz, userAnswer, onAnswerChanged)
     }
 }
 
@@ -341,22 +230,7 @@ private fun QuizTypeBadge(type: QuizType) {
         QuizType.FILL_BLANK -> "Fill Blank" to "✏️"
     }
 
-    Row(
-        modifier = Modifier
-            .background(
-                MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(20.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(emoji, style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-    }
+    TypeBadge(text = text, emoji = emoji)
 }
 
 @Composable
@@ -415,34 +289,6 @@ private fun QuizInput(
 }
 
 @Composable
-private fun NavigationControls(
-    canGoPrevious: Boolean,
-    onPrevious: () -> Unit,
-    onNext: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        OutlinedButton(
-            onClick = onPrevious, enabled = canGoPrevious, modifier = Modifier.weight(1f)
-        ) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, null, Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Previous")
-        }
-
-        Button(
-            onClick = onNext, modifier = Modifier.weight(1f)
-        ) {
-            Text("Next")
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, Modifier.size(20.dp))
-        }
-    }
-}
-
-@Composable
 private fun CompletionScreen(
     state: PracticeState,
     onIntent: (PracticeIntent) -> Unit,
@@ -451,61 +297,28 @@ private fun CompletionScreen(
 ) {
     Column(modifier = modifier) {
         state.practiceSet?.let { practiceSet ->
-            PracticeHeaderCard(
-                practiceSet = practiceSet,
+            ProgressHeaderCard(
+                title = practiceSet.name,
+                description = practiceSet.description,
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
                 modifier = Modifier.padding(16.dp)
             )
         }
 
-        Card(
+        CompletionCard(
+            title = "🎉 Practice Completed!",
+            subtitle = "Great job! You've completed all the practice questions.",
+            actionButtonText = "View Answers",
+            onActionClick = { onIntent(PracticeIntent.ViewAnswers) },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Icon(
-                    Icons.Default.CheckCircle,
-                    "Completed",
-                    modifier = Modifier.size(80.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
-
+            additionalContent = {
                 Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "🎉 Practice Completed!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 StatisticsCard(state.statistics)
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = { onIntent(PracticeIntent.ViewAnswers) },
-                    modifier = Modifier.fillMaxWidth(0.8f),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-                ) {
-                    Icon(Icons.Default.Info, null, Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("View Answers", fontWeight = FontWeight.Bold)
-                }
             }
-        }
+        )
 
         Row(
             modifier = Modifier
@@ -527,13 +340,6 @@ private fun CompletionScreen(
                 modifier = Modifier.weight(1f),
             ) {
                 Text("Finish", color = MaterialTheme.colorScheme.onPrimary)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.Done,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(16.dp),
-                )
             }
         }
     }

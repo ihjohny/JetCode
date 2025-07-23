@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,9 +14,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,11 +36,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
+import com.appsbase.jetcode.core.domain.model.Skill
+import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
-import com.appsbase.jetcode.core.ui.components.SkillCard
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -185,6 +192,75 @@ private fun LearningContent(
                         Text(if (state.isSyncing) "Syncing..." else "Sync Content")
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SkillCard(
+    skill: Skill, onClick: () -> Unit, modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = skill.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = skill.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                DifficultyChip(difficulty = skill.difficulty)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LinearProgressIndicator(
+                    progress = { .33f },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(6.dp),
+                    color = JetCodeTheme.extendedColors.progressInProgress,
+                    trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "33%",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
             }
         }
     }
