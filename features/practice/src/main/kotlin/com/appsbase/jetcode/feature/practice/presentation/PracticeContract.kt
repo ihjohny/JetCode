@@ -5,7 +5,6 @@ import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.model.QuizType
 
 /**
  * MVI contracts for Practice screen
@@ -34,9 +33,7 @@ data class PracticeState(
     data class QuizStatistics(
         val totalQuizzes: Int,
         val correctAnswers: Int,
-        val averageTime: Long,
         val scorePercentage: Int,
-        val typeBreakdown: Map<QuizType, Int>
     ) {
         val wrongAnswers: Int get() = totalQuizzes - correctAnswers
     }
@@ -48,22 +45,14 @@ data class PracticeState(
     val statistics: QuizStatistics
         get() {
             val correctCount = quizResults.count { it.isCorrect }
-            val avgTime = if (quizResults.isNotEmpty()) {
-                quizResults.map { it.timeTaken }.average().toLong()
-            } else 0L
             val scorePercentage = if (quizResults.isNotEmpty()) {
                 (correctCount * 100) / quizResults.size
             } else 0
 
-            val typeBreakdown = quizResults.groupBy { it.quiz.type }
-                .mapValues { it.value.count { result -> result.isCorrect } }
-
             return QuizStatistics(
                 totalQuizzes = quizResults.size,
                 correctAnswers = correctCount,
-                averageTime = avgTime,
                 scorePercentage = scorePercentage,
-                typeBreakdown = typeBreakdown
             )
         }
 }

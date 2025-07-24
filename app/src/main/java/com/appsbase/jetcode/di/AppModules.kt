@@ -20,6 +20,7 @@ import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
+import com.appsbase.jetcode.sync.SyncManager
 import org.koin.dsl.module
 
 /**
@@ -111,6 +112,14 @@ val useCaseModule = module {
     }
 }
 
+val syncModule = module {
+    single {
+        SyncManager(
+            syncContentUseCase = get()
+        )
+    }
+}
+
 /**
  * All app modules for easy registration
  */
@@ -121,6 +130,7 @@ val appModules = listOf(
     dataModule,
     repositoryModule,
     useCaseModule,
+    syncModule,
     learningModule,
     practiceModule,
 )

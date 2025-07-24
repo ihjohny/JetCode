@@ -2,6 +2,8 @@ package com.appsbase.jetcode
 
 import android.app.Application
 import com.appsbase.jetcode.di.appModules
+import com.appsbase.jetcode.sync.SyncManager
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -13,6 +15,8 @@ import timber.log.Timber
  * Initializes Koin DI, Timber logging, and other app-wide components
  */
 class JetCodeApplication : Application() {
+
+    private val syncManager: SyncManager by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -29,6 +33,14 @@ class JetCodeApplication : Application() {
             modules(appModules)
         }
 
+        // Initialize background sync manager
+        syncManager.initialize()
+
         Timber.d("JetCode Application initialized")
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        syncManager.destroy()
     }
 }
