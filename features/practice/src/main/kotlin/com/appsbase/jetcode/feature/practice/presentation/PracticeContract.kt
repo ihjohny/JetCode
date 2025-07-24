@@ -5,6 +5,7 @@ import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz
+import com.appsbase.jetcode.core.domain.model.QuizType
 
 /**
  * MVI contracts for Practice screen
@@ -20,15 +21,24 @@ data class PracticeState(
     val isCompleted: Boolean = false,
     val showAllAnswers: Boolean = false,
     val error: String? = null,
-    val startTime: Long = System.currentTimeMillis()
+    val startTime: Long = System.currentTimeMillis(),
 ) : UiState {
 
     data class QuizResult(
         val quiz: Quiz,
         val userAnswer: String,
-        val isCorrect: Boolean,
-        val timeTaken: Long = 0L,
-    )
+    ) {
+        val isCorrect: Boolean
+            get() {
+                val userAnswer = userAnswer.trim()
+                if (userAnswer.isEmpty()) return false
+
+                return when (quiz.type) {
+                    QuizType.MCQ -> userAnswer == quiz.correctAnswer
+                    else -> userAnswer.equals(quiz.correctAnswer.trim(), ignoreCase = true)
+                }
+            }
+    }
 
     data class QuizStatistics(
         val totalQuizzes: Int,

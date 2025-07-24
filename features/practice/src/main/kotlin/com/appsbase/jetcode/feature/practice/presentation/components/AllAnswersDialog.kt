@@ -243,26 +243,18 @@ private fun AllAnswersDialogPreview() {
             PracticeState.QuizResult(
                 quiz = sampleQuiz1,
                 userAnswer = "var name: String = \"John\"",
-                isCorrect = true,
-                timeTaken = 15000L,
             ),
             PracticeState.QuizResult(
                 quiz = sampleQuiz2,
                 userAnswer = "fun sum(a: Int, b: Int) = a + b",
-                isCorrect = false,
-                timeTaken = 45000L,
             ),
             PracticeState.QuizResult(
                 quiz = sampleQuiz3,
                 userAnswer = "15",
-                isCorrect = true,
-                timeTaken = 8000L,
             ),
             PracticeState.QuizResult(
                 quiz = sampleQuiz4,
                 userAnswer = "filter",
-                isCorrect = false,
-                timeTaken = 25000L,
             ),
         )
 

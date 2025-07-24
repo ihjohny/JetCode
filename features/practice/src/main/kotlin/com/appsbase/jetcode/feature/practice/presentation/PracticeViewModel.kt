@@ -6,7 +6,6 @@ import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.model.QuizType
 import com.appsbase.jetcode.core.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.core.domain.usecase.GetQuizzesByIdsUseCase
 import kotlinx.coroutines.launch
@@ -100,13 +99,10 @@ class PracticeViewModel(
 
     private fun submitAnswer(currentQuiz: Quiz, state: PracticeState) {
         val userAnswer = state.userAnswer.trim()
-        val isCorrect = checkAnswer(currentQuiz, userAnswer)
 
         val quizResult = PracticeState.QuizResult(
             quiz = currentQuiz,
             userAnswer = userAnswer.ifEmpty { "No answer" },
-            isCorrect = isCorrect,
-            timeTaken = System.currentTimeMillis() - state.startTime
         )
 
         val updatedResults = state.quizResults + quizResult
@@ -123,15 +119,6 @@ class PracticeViewModel(
                     userAnswer = ""
                 )
             )
-        }
-    }
-
-    private fun checkAnswer(quiz: Quiz, userAnswer: String): Boolean {
-        if (userAnswer.isEmpty()) return false
-
-        return when (quiz.type) {
-            QuizType.MCQ -> userAnswer == quiz.correctAnswer
-            else -> userAnswer.equals(quiz.correctAnswer.trim(), ignoreCase = true)
         }
     }
 
@@ -167,7 +154,8 @@ class PracticeViewModel(
                 userAnswer = "",
                 quizResults = emptyList(),
                 isCompleted = false,
-                showAllAnswers = false
+                showAllAnswers = false,
+                startTime = System.currentTimeMillis(),
             )
         )
     }

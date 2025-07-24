@@ -460,11 +460,11 @@ private fun PracticeScreenCompletedPreview() {
         )
 
         val sampleResults = listOf(
-            PracticeState.QuizResult(sampleQuiz1, "A function", true), PracticeState.QuizResult(
+            PracticeState.QuizResult(sampleQuiz1, "A function"),
+            PracticeState.QuizResult(
                 sampleQuiz2,
                 "fun calculate(x: Int, operation: (Int) -> Int): Int = operation(x)",
-                true
-            )
+            ),
         )
 
         CompletionScreen(
