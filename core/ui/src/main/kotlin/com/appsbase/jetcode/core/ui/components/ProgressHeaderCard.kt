@@ -29,7 +29,7 @@ fun ProgressHeaderCard(
     progressLabel: String,
     progressValue: Float,
     modifier: Modifier = Modifier,
-    extraInfo: String? = null,
+    extraInfo: (@Composable () -> Unit)? = null,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -68,13 +68,7 @@ fun ProgressHeaderCard(
                     )
                 }
 
-                extraInfo?.let { info ->
-                    Text(
-                        text = info,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
+                extraInfo?.invoke()
             }
 
             Spacer(modifier = Modifier.height(12.dp))

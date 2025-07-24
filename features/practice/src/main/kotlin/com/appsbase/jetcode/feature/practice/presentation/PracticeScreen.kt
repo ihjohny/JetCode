@@ -53,6 +53,7 @@ import com.appsbase.jetcode.core.ui.components.LoadingState
 import com.appsbase.jetcode.core.ui.components.NavigationControls
 import com.appsbase.jetcode.core.ui.components.ProgressHeaderCard
 import com.appsbase.jetcode.core.ui.components.SwipeableCard
+import com.appsbase.jetcode.core.ui.components.TimerChip
 import com.appsbase.jetcode.core.ui.components.TypeBadge
 import com.appsbase.jetcode.feature.practice.presentation.components.AllAnswersDialog
 import org.koin.androidx.compose.koinViewModel
@@ -140,6 +141,12 @@ private fun PracticeContent(
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
                 modifier = Modifier.padding(16.dp),
+                extraInfo = {
+                    TimerChip(
+                        timeMilliseconds = state.startTime,
+                        isCountDown = true,
+                    )
+                }
             )
         }
 
@@ -304,6 +311,11 @@ private fun CompletionScreen(
                 progressLabel = state.progressLabel,
                 progressValue = state.progressValue,
                 modifier = Modifier.padding(16.dp),
+                extraInfo = {
+                    TimerChip(
+                        timeMilliseconds = state.totalTimeMillis,
+                    )
+                }
             )
         }
 
@@ -357,7 +369,7 @@ private fun StatisticsCard(statistics: PracticeState.QuizStatistics) {
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -366,14 +378,16 @@ private fun StatisticsCard(statistics: PracticeState.QuizStatistics) {
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 StatisticItem("Score", "${statistics.scorePercentage}%", "🎯")
                 StatisticItem("Correct", "${statistics.correctAnswers}", "✅")
                 StatisticItem("Wrong", "${statistics.wrongAnswers}", "❌")
+                StatisticItem("Avg Time", statistics.formattedAverageTime, "⏱️")
             }
         }
     }

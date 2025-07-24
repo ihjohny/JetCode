@@ -158,7 +158,13 @@ private fun TopicContentSection(
                 progressLabel = state.progressValueLabel,
                 progressValue = if (state.materials.isNotEmpty())
                     (state.currentMaterialIndex + 1f) / state.materials.size else 0f,
-                extraInfo = "⏱️ ${topic.duration} min",
+                extraInfo = {
+                    Text(
+                        text = "⏱️ ${topic.duration} min",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp),

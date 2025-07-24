@@ -99,10 +99,12 @@ class PracticeViewModel(
 
     private fun submitAnswer(currentQuiz: Quiz, state: PracticeState) {
         val userAnswer = state.userAnswer.trim()
+        val timeTaken = System.currentTimeMillis() - state.currentQuizStartTime
 
         val quizResult = PracticeState.QuizResult(
             quiz = currentQuiz,
             userAnswer = userAnswer.ifEmpty { "No answer" },
+            timeTakenMillis = timeTaken,
         )
 
         val updatedResults = state.quizResults + quizResult
@@ -116,7 +118,8 @@ class PracticeViewModel(
                 state.copy(
                     quizResults = updatedResults,
                     currentQuizIndex = state.currentQuizIndex + 1,
-                    userAnswer = ""
+                    userAnswer = "",
+                    currentQuizStartTime = System.currentTimeMillis()
                 )
             )
         }
@@ -125,7 +128,13 @@ class PracticeViewModel(
     private fun navigateToNextQuiz(state: PracticeState) {
         val nextIndex = state.currentQuizIndex + 1
         if (nextIndex < state.quizzes.size) {
-            updateState(state.copy(currentQuizIndex = nextIndex, userAnswer = ""))
+            updateState(
+                state.copy(
+                    currentQuizIndex = nextIndex,
+                    userAnswer = "",
+                    currentQuizStartTime = System.currentTimeMillis()
+                )
+            )
         }
     }
 
@@ -137,7 +146,9 @@ class PracticeViewModel(
             val previousResult = state.quizResults.getOrNull(prevIndex)
             updateState(
                 state.copy(
-                    currentQuizIndex = prevIndex, userAnswer = previousResult?.userAnswer ?: ""
+                    currentQuizIndex = prevIndex,
+                    userAnswer = previousResult?.userAnswer ?: "",
+                    currentQuizStartTime = System.currentTimeMillis()
                 )
             )
         }
@@ -156,6 +167,7 @@ class PracticeViewModel(
                 isCompleted = false,
                 showAllAnswers = false,
                 startTime = System.currentTimeMillis(),
+                currentQuizStartTime = System.currentTimeMillis(),
             )
         )
     }
