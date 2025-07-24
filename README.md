@@ -1,96 +1,82 @@
-# 🚀 JetCode - Modern Android Development Boilerplate
-
+# 📱 JetCode - Interactive Kotlin & Android Learning Platform
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.0.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
 
-A modern, production-ready Android application template showcasing **Clean Architecture** with **MVI pattern**, **Jetpack Compose**, and modern Android development best practices. Built as a learning platform that dynamically loads JSON-based educational content.
+An **Interactive Learning Mobile Application** for mastering **Kotlin** and **Android Development** through curated flashcard-style content, comprehensive quizzes, and progress tracking. Built with modern Android development practices using **Clean Architecture**, **MVI pattern**, and **Jetpack Compose**.
 
-## 📱 Screenshots
+### 🧪 Quality Standards
 
-| Home Screen | Learning Module | Practice | Profile |
-|-------------|-----------------|----------|---------|
-| ![Home](docs/screenshots/1.png) | ![Learning](docs/screenshots/2.png) | ![Practice](docs/screenshots/3.png) | ![Profile](docs/screenshots/4.png) |
+- Run `./gradlew ktlintCheck` for formatting
+|------------|------------------|---------------|----------------|
+| ![Onboarding](docs/screenshots/1.png) | ![Skills](docs/screenshots/2.png) | ![Skill Detail](docs/screenshots/3.png) | ![Topic](docs/screenshots/4.png) |
 
-## ✨ Basic Features
+| Practice Quiz | Quiz Results | Statistics | Profile & Settings |
+|---------------|--------------|------------|-------------------|
+| ![Practice](docs/screenshots/5.png) | ![Results](docs/screenshots/6.png) | ![Stats](docs/screenshots/7.png) | ![Profile](docs/screenshots/8.png) |
 
-### 🎯 Core Functionality
-- **Learning Platform**: Dynamic JSON-based lesson content loading from GitHub
-- **Skill Management**: Hierarchical structure (Skill → Topic → Lesson → Material)
-- **Content Types**: 
-  - 📝 Notes (Text/Markdown)
-  - 💻 Code examples (Kotlin/Compose)
-  - 🖼️ Images and visual content
-  - 🎥 Video materials
-- **Practice System**: 
-  - Multiple Choice Questions (MCQs)
-  - Code challenges
-  - Output prediction exercises
-- **User Profile**: Progress tracking and personalization
-- **Offline Support**: Local caching with Room database
-- **Background Sync**: Automatic content updates via WorkManager
+## ✨ Core Features
 
-### 🎨 UI/UX Features
-- **Modern Design**: Material Design 3 with Jetpack Compose
-- **Theme Support**: Light/Dark themes with multiple brand colors
-- **Responsive Layout**: Adaptive UI for different screen sizes
-- **Smooth Navigation**: Jetpack Navigation 3 with deep linking
-- **Accessibility**: Full accessibility support
+### 🎯 Interactive Learning System
+- **JetBrains** for Kotlin language and tooling
+- **Open Source Community** for amazing libraries and inspiration
+- **Diverse Material Types**: 
+  - 📝 **TEXT**: Summarized knowledge in flashcard format
+  - 📄 **MARKDOWN**: Formatted technical documentation
+  - 💻 **CODE**: Interactive Kotlin/Android code examples
+  - 🖼️ **IMAGE**: Visual diagrams and illustrations
+  - 🎥 **VIDEO**: Tutorial and demonstration content
+- **Curated Content**: Focus on Kotlin and Android application development
 
-## 🛠️ Setup Guide
+### 🧠 Comprehensive Practice System
+⭐ **Star this repository if it helped you learn Kotlin & Android!**
+  - 📊 **MCQ**: Multiple Choice Questions
+Built with ❤️ for the Android development community
+  - ✏️ **FILL_BLANK**: Code completion challenges
+- **Difficulty-Based Practice**: Adaptive difficulty levels
+- **Timed Quizzes**: Built-in timer for skill assessment
+- **Detailed Results**: Complete answers with explanations
+- **Standalone Practice Bundles**: Independent quiz collections
 
-### Prerequisites
-- **Android Studio**: Arctic Fox or newer
-- **JDK**: 11 or higher
-- **Android SDK**: API 24+ (Android 7.0)
-- **Gradle**: 8.11.0
+### 📊 Progress Tracking & Analytics
+- **Skill Progress**: Visual progress indicators for each skill
+- **Topic Completion**: Track materials completed per topic
+- **Learning Statistics**: Comprehensive learning analytics
+- **Quiz Performance**: Detailed quiz activity and results history
+- **Achievement System**: Progress milestones and achievements
 
-### 🚀 Getting Started
+### 🎨 Modern User Experience
+- **Material Design 3**: Latest design system implementation
+- **Dynamic Theming**: Multiple color schemes with system preference
+- **Dark/Light Mode**: Seamless theme switching
+- **Responsive Design**: Optimized for various screen sizes
+- **Smooth Navigation**: Intuitive app flow and transitions
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/jetcode.git
-   cd jetcode
-   ```
+## 🏗️ Content Architecture
 
-2. **Open in Android Studio**
-   - Launch Android Studio
-   - Select "Open an existing project"
-   - Navigate to the cloned directory and select it
-
-3. **Sync the project**
-   - Android Studio will automatically start syncing
-   - Wait for the Gradle sync to complete
-
-4. **Configure API endpoints** (Optional)
-   - Update `local.properties` with your configuration:
-   ```properties
-   # Add your custom configurations here
-   api.base.url="https://your-api-endpoint.com"
-   ```
-
-5. **Run the application**
-   - Select your device/emulator
-   - Click the "Run" button or use `Ctrl+R` (Windows/Linux) / `Cmd+R` (Mac)
-
-### 🔧 Build Variants
-```bash
-# Debug build
-./gradlew assembleDebug
-
-# Release build
-./gradlew assembleRelease
-
-# Run tests
-./gradlew test
-
-# Run UI tests
-./gradlew connectedAndroidTest
+### 📚 Learning Hierarchy
+```
+🎯 Skills (Kotlin & Android Development)
+├── 📖 Topics (Specific areas like "Coroutines", "Compose UI")
+│   ├── 📄 Materials (Text, Code, Video, Images)
+│   └── 🧩 Practice Bundle (Topic-specific quizzes)
+└── 📊 Progress Tracking (Completion percentage)
 ```
 
-## 🏗️ Architecture
+### 🧩 Quiz System
+```
+🎮 Practice Bundles
+├── 📝 MCQ Questions
+├── 💻 Code Challenges  
+├── 🔮 Output Prediction
+├── ✏️ Fill in the Blanks
+├── ⏱️ Timer System
+└── 📊 Results & Explanations
+```
 
-### 📐 Clean Architecture Overview
+## 🛠️ Technical Implementation
+
+### 🏗️ Architecture Overview
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                     │
@@ -115,101 +101,149 @@ A modern, production-ready Android application template showcasing **Clean Archi
 ```
 
 ### 🧩 Modular Structure
-
 ```
 📦 JetCode/
 ├── 📱 app/                          # Main application module
 ├── 🎯 features/                     # Feature modules
-│   ├── learning/                    # Learning feature
-│   ├── onboarding/                  # User onboarding
-│   ├── practice/                    # Practice exercises
-│   └── profile/                     # User profile
+│   ├── learning/                    # Skills, Topics, Materials
+│   ├── onboarding/                  # User onboarding flow
+│   ├── practice/                    # Quiz and practice system
+│   └── profile/                     # User profile & statistics
 ├── 🏗️ core/                        # Core shared modules
-│   ├── analytics/                   # Analytics framework
+│   ├── analytics/                   # Learning analytics
 │   ├── common/                      # Shared utilities
-│   ├── designsystem/                # Design system & theming
-│   ├── network/                     # Network layer
+│   ├── designsystem/                # Material Design 3 theming
+│   ├── network/                     # API communication
 │   └── ui/                          # Shared UI components
 ├── 💾 data/                         # Data layer modules
-│   ├── database/                    # Local database (Room)
-│   └── repository/                  # Repository implementations
-└── 🏛️ domain/                       # Business logic
+│   ├── database/                    # Local caching (Room)
+│   └── repository/                  # Data management
+└── 🏛️ domain/                       # Business logic & models
 ```
 
-### 🔄 MVI Pattern Implementation
-
+### 📋 Domain Models
 ```kotlin
-// State Management Flow
-UI Event → ViewModel → Use Case → Repository → Data Source
-    ↑                                                ↓
-UI State ← State Reduction ← Business Logic ← API Response
-```
+// Core content hierarchy
+Skill → Topic → Material
+     → PracticeSet → Quiz
 
-**Key Components:**
-- **State**: Immutable data class representing UI state
-- **Event**: User interactions and system events
-- **Effect**: Side effects like navigation, snackbars
-- **Reducer**: Pure functions for state transformation
+// Material types: TEXT, MARKDOWN, CODE, IMAGE, VIDEO
+// Quiz types: MCQ, CODE_CHALLENGE, OUTPUT_PREDICTION, FILL_BLANK
+// Difficulty levels: Beginner, Intermediate, Advanced
+```
 
 ## 🔧 Technologies & Libraries
 
 ### 🏗️ Architecture & Pattern
-- **🏛️ Clean Architecture**: Separation of concerns with clear boundaries
-- **🔄 MVI Pattern**: Unidirectional data flow for predictable state management
-- **🧩 Multi-module**: Scalable modular architecture
-- **💉 Koin**: Lightweight dependency injection
+- **🏛️ Clean Architecture**: Clear separation of concerns
+- **🔄 MVI Pattern**: Unidirectional data flow
+- **🧩 Multi-module**: Scalable architecture
+- **💉 Koin**: Dependency injection
 
 ### 🎨 UI & Design
-- **🎨 Jetpack Compose**: Modern declarative UI toolkit
-- **🧭 Navigation Compose**: Type-safe navigation with deep linking
-- **🎨 Material Design 3**: Latest Material Design system
-- **🌙 Theme Support**: Dynamic theming with light/dark modes
-- **🖼️ Coil**: Efficient image loading for Compose
+- **🎨 Jetpack Compose**: Modern declarative UI
+- **🧭 Navigation Compose**: Type-safe navigation
+- **🎨 Material Design 3**: Latest design system
+- **🌙 Dynamic Theming**: Color schemes & dark/light mode
+- **🖼️ Coil**: Efficient image loading
 
 ### 💾 Data & Storage
-- **🏠 Room Database**: Local data persistence with SQLite
-- **💾 DataStore**: Modern preferences management
-- **🌐 Ktor Client**: Powerful HTTP client for API communication
-- **📄 Kotlinx Serialization**: Type-safe JSON serialization
+- **🏠 Room Database**: Local data persistence
+- **💾 DataStore**: User preferences management
+- **🌐 Ktor Client**: HTTP client for content loading
+- **📄 Kotlinx Serialization**: Type-safe JSON handling
 
 ### ⚡ Async & Background
 - **🔄 Kotlin Coroutines**: Asynchronous programming
-- **🔄 Kotlin Flow**: Reactive streams for data flow
-- **⚙️ WorkManager**: Reliable background task execution
+- **🔄 Kotlin Flow**: Reactive data streams
+- **⚙️ WorkManager**: Background content sync
 
-### 🧪 Testing
+### 🧪 Testing & Quality
 - **🧪 JUnit 4**: Unit testing framework
-- **🎭 MockK**: Mocking library for Kotlin
-- **🧪 Compose Testing**: UI testing for Jetpack Compose
-- **🧪 Coroutines Test**: Testing coroutines and flows
+- **🎭 MockK**: Kotlin mocking library
+- **🧪 Compose Testing**: UI testing
+- **🔍 Detekt**: Static code analysis
+- **🎨 Ktlint**: Code formatting
 
-### 🔧 Development Tools
-- **🔍 Detekt**: Static code analysis for Kotlin
-- **🎨 Ktlint**: Kotlin linting and code formatting
-- **📝 Timber**: Flexible logging library
-- **📊 Analytics Ready**: Structured analytics framework
+## 🚀 Getting Started
 
-### 📦 Version Catalog
-All dependencies are managed through Gradle Version Catalog (`gradle/libs.versions.toml`) for:
-- **Centralized version management**
-- **Type-safe dependency declarations**
-- **Easy maintenance and updates**
+### Prerequisites
+- **Android Studio**: Flamingo or newer
+- **JDK**: 11 or higher
+- **Android SDK**: API 24+ (Android 7.0)
+- **Gradle**: 8.11.0
 
-### 🔧 Key Dependencies
-| Category | Library | Version |
-|----------|---------|---------|
-| **Kotlin** | Kotlin | 2.0.21 |
-| **Android** | AGP | 8.11.0 |
-| **Compose** | Compose BOM | 2024.09.00 |
-| **Navigation** | Navigation Compose | 2.8.0 |
-| **DI** | Koin | 3.5.6 |
-| **Networking** | Ktor | 2.3.12 |
-| **Database** | Room | 2.6.1 |
-| **Testing** | MockK | 1.13.12 |
+### 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/jetcode.git
+   cd jetcode
+   ```
+
+2. **Open in Android Studio**
+   - Launch Android Studio
+   - Select "Open an existing project"
+   - Navigate to the cloned directory
+
+3. **Sync and build**
+   ```bash
+   ./gradlew build
+   ```
+
+4. **Run the application**
+   - Select your device/emulator
+   - Click "Run" or use `Ctrl+R` (Windows/Linux) / `Cmd+R` (Mac)
+
+### 🔧 Build Commands
+```bash
+# Debug build
+./gradlew assembleDebug
+
+# Release build
+./gradlew assembleRelease
+
+# Run tests
+./gradlew test
+
+# Code quality checks
+./gradlew detekt ktlintCheck
+```
+
+## 🎯 App Flow & Navigation
+
+### 📱 User Journey
+1. **Onboarding**: Introduction to the learning platform
+2. **Skills Dashboard**: Browse available Kotlin/Android skills
+3. **Skill Details**: View topics within selected skill
+4. **Topic Learning**: Study materials (text, code, videos)
+5. **Practice Quiz**: Test knowledge with various quiz types
+6. **Results & Progress**: Review performance and track progress
+7. **Profile**: View statistics and customize settings
+
+### 🧭 Navigation Structure
+```
+Onboarding → Skills List → Skill Detail → Topic Detail → Practice
+                ↓              ↓             ↓           ↓
+            Profile ←──────────────────────────────── Results
+```
+
+## 📊 Key Dependencies
+
+| Category | Library | Version | Purpose |
+|----------|---------|---------|---------|
+| **Kotlin** | Kotlin | 2.0.21 | Programming language |
+| **Build** | AGP | 8.11.0 | Android Gradle Plugin |
+| **UI** | Compose BOM | 2024.09.00 | UI toolkit |
+| **Navigation** | Navigation Compose | 2.8.0 | App navigation |
+| **DI** | Koin | 3.5.6 | Dependency injection |
+| **Network** | Ktor | 2.3.12 | HTTP client |
+| **Database** | Room | 2.6.1 | Local storage |
+| **Testing** | MockK | 1.13.12 | Testing framework |
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+We welcome contributions! Please follow these steps:
 
 ### 📋 Development Workflow
 1. Fork the repository
