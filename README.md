@@ -1,25 +1,22 @@
 # 📱 JetCode - Interactive Kotlin & Android Learning Platform
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
 
 An **Interactive Learning Mobile Application** for mastering **Kotlin** and **Android Development** through curated flashcard-style content, comprehensive quizzes, and progress tracking. Built with modern Android development practices using **Clean Architecture**, **MVI pattern**, and **Jetpack Compose**.
 
-### 🧪 Quality Standards
+## 📱 Screenshots
 
-- Run `./gradlew ktlintCheck` for formatting
+| Onboarding | Skills Dashboard | Skill Detail | Topic Learning |
 |------------|------------------|---------------|----------------|
 | ![Onboarding](docs/screenshots/1.png) | ![Skills](docs/screenshots/2.png) | ![Skill Detail](docs/screenshots/3.png) | ![Topic](docs/screenshots/4.png) |
 
-| Practice Quiz | Quiz Results | Statistics | Profile & Settings |
-|---------------|--------------|------------|-------------------|
+| Topic Completed | Practice Quiz | Result Statistics | Profile & Settings |
+|-----------------|---------------|-------------------|-------------------|
 | ![Practice](docs/screenshots/5.png) | ![Results](docs/screenshots/6.png) | ![Stats](docs/screenshots/7.png) | ![Profile](docs/screenshots/8.png) |
 
 ## ✨ Core Features
 
 ### 🎯 Interactive Learning System
-- **JetBrains** for Kotlin language and tooling
-- **Open Source Community** for amazing libraries and inspiration
 - **Diverse Material Types**: 
   - 📝 **TEXT**: Summarized knowledge in flashcard format
   - 📄 **MARKDOWN**: Formatted technical documentation
@@ -29,10 +26,8 @@ An **Interactive Learning Mobile Application** for mastering **Kotlin** and **An
 - **Curated Content**: Focus on Kotlin and Android application development
 
 ### 🧠 Comprehensive Practice System
-⭐ **Star this repository if it helped you learn Kotlin & Android!**
-  - 📊 **MCQ**: Multiple Choice Questions
-Built with ❤️ for the Android development community
-  - ✏️ **FILL_BLANK**: Code completion challenges
+- 📊 **MCQ**: Multiple Choice Questions
+- ✏️ **FILL_BLANK**: Code completion challenges
 - **Difficulty-Based Practice**: Adaptive difficulty levels
 - **Timed Quizzes**: Built-in timer for skill assessment
 - **Detailed Results**: Complete answers with explanations
@@ -261,12 +256,6 @@ We welcome contributions! Please follow these steps:
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Google** for Android and Jetpack libraries
-- **JetBrains** for Kotlin and amazing tooling
-- **Open Source Community** for incredible libraries and inspiration
 
 ## 📞 Support
 
