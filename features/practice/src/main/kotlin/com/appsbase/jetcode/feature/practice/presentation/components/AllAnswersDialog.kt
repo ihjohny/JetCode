@@ -93,7 +93,7 @@ private fun DialogHeader(onDismiss: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 16.dp,
+                    horizontal = 20.dp,
                     vertical = 12.dp,
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
