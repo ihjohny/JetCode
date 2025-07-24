@@ -92,7 +92,10 @@ private fun DialogHeader(onDismiss: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 12.dp,
+                ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -117,6 +120,51 @@ private fun DialogHeader(onDismiss: () -> Unit) {
                 .fillMaxWidth()
                 .height(1.dp)
                 .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+        )
+    }
+}
+
+@Composable
+private fun QuizTimeChip(
+    timeText: String,
+    isCorrect: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(
+                if (isCorrect) {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                } else {
+                    MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                }
+            )
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Timer,
+            contentDescription = "Time taken",
+            modifier = Modifier.size(14.dp),
+            tint = if (isCorrect) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.error
+            }
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = timeText,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+            ),
+            fontWeight = FontWeight.Medium,
+            color = if (isCorrect) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.error
+            }
         )
     }
 }
@@ -164,43 +212,10 @@ private fun QuizAnswerItem(
                 }
 
                 // Time taken chip
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(
-                            if (quizResult.isCorrect) {
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                            } else {
-                                MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
-                            }
-                        )
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Timer,
-                        contentDescription = "Time taken",
-                        modifier = Modifier.size(14.dp),
-                        tint = if (quizResult.isCorrect) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.error
-                        }
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = quizResult.formattedTime,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-                        ),
-                        fontWeight = FontWeight.Medium,
-                        color = if (quizResult.isCorrect) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.error
-                        }
-                    )
-                }
+                QuizTimeChip(
+                    timeText = quizResult.formattedTime,
+                    isCorrect = quizResult.isCorrect
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
