@@ -1,12 +1,12 @@
-package com.appsbase.jetcode.core.database.dao
+package com.appsbase.jetcode.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.appsbase.jetcode.core.database.entity.MaterialEntity
-import com.appsbase.jetcode.core.database.entity.SkillEntity
-import com.appsbase.jetcode.core.database.entity.TopicEntity
+import com.appsbase.jetcode.data.database.entity.MaterialEntity
+import com.appsbase.jetcode.data.database.entity.SkillEntity
+import com.appsbase.jetcode.data.database.entity.TopicEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,10 +1,10 @@
 package com.appsbase.jetcode.core.data.mapper
 
-import com.appsbase.jetcode.core.database.entity.MaterialEntity
-import com.appsbase.jetcode.core.database.entity.PracticeSetEntity
-import com.appsbase.jetcode.core.database.entity.QuizEntity
-import com.appsbase.jetcode.core.database.entity.SkillEntity
-import com.appsbase.jetcode.core.database.entity.TopicEntity
+import com.appsbase.jetcode.data.database.entity.MaterialEntity
+import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
+import com.appsbase.jetcode.data.database.entity.QuizEntity
+import com.appsbase.jetcode.data.database.entity.SkillEntity
+import com.appsbase.jetcode.data.database.entity.TopicEntity
 import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.MaterialType

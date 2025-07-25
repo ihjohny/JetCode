@@ -5,7 +5,7 @@ import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.core.data.di.dataModule
 import com.appsbase.jetcode.core.data.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.core.data.repository.PracticeRepositoryImpl
-import com.appsbase.jetcode.core.database.di.databaseModule
+import com.appsbase.jetcode.data.database.di.databaseModule
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import com.appsbase.jetcode.core.domain.repository.PracticeRepository
 import com.appsbase.jetcode.core.domain.usecase.GetMaterialsByIdsUseCase

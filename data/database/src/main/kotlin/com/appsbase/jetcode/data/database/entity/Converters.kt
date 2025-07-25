@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.database.entity
+package com.appsbase.jetcode.data.database.entity
 
 import androidx.room.TypeConverter
 import kotlinx.serialization.encodeToString

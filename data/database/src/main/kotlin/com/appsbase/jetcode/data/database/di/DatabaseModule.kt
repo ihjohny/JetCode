@@ -1,6 +1,6 @@
-package com.appsbase.jetcode.core.database.di
+package com.appsbase.jetcode.data.database.di
 
-import com.appsbase.jetcode.core.database.JetCodeDatabase
+import com.appsbase.jetcode.data.database.JetCodeDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

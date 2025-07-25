@@ -6,7 +6,7 @@ import com.appsbase.jetcode.core.common.util.fetchContent
 import com.appsbase.jetcode.core.data.mapper.toDomain
 import com.appsbase.jetcode.core.data.mapper.toEntity
 import com.appsbase.jetcode.core.data.remote.LearningApiService
-import com.appsbase.jetcode.core.database.dao.LearningDao
+import com.appsbase.jetcode.data.database.dao.LearningDao
 import com.appsbase.jetcode.core.domain.model.Content
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.Skill

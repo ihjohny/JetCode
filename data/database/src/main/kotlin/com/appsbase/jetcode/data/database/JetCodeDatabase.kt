@@ -1,18 +1,18 @@
-package com.appsbase.jetcode.core.database
+package com.appsbase.jetcode.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.appsbase.jetcode.core.database.dao.LearningDao
-import com.appsbase.jetcode.core.database.dao.PracticeDao
-import com.appsbase.jetcode.core.database.entity.Converters
-import com.appsbase.jetcode.core.database.entity.MaterialEntity
-import com.appsbase.jetcode.core.database.entity.PracticeSetEntity
-import com.appsbase.jetcode.core.database.entity.QuizEntity
-import com.appsbase.jetcode.core.database.entity.SkillEntity
-import com.appsbase.jetcode.core.database.entity.TopicEntity
+import com.appsbase.jetcode.data.database.dao.LearningDao
+import com.appsbase.jetcode.data.database.dao.PracticeDao
+import com.appsbase.jetcode.data.database.entity.Converters
+import com.appsbase.jetcode.data.database.entity.MaterialEntity
+import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
+import com.appsbase.jetcode.data.database.entity.QuizEntity
+import com.appsbase.jetcode.data.database.entity.SkillEntity
+import com.appsbase.jetcode.data.database.entity.TopicEntity
 
 @Database(
     entities = [
