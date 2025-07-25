@@ -35,6 +35,7 @@ include(":domain")
 // Data modules
 include(":data:repository")
 include(":data:database")
+include(":data:preferences")
 include(":data:remote")
 
 // Feature modules

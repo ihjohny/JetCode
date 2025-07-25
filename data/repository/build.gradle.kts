@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":domain"))
     implementation(project(":data:database"))
+    implementation(project(":data:preferences"))
     implementation(project(":data:remote"))
 
     implementation(libs.bundles.kotlinx)

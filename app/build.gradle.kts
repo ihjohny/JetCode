@@ -66,6 +66,7 @@ dependencies {
 
     // Data modules
     implementation(project(":data:database"))
+    implementation(project(":data:preferences"))
     implementation(project(":data:remote"))
     implementation(project(":data:repository"))
 

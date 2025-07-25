@@ -4,6 +4,7 @@ import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.data.database.di.databaseModule
+import com.appsbase.jetcode.data.preferences.di.preferencesModule
 import com.appsbase.jetcode.data.remote.di.apiServiceModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
@@ -35,6 +36,13 @@ val repositoryModule = module {
     single<LearningRepository> {
         LearningRepositoryImpl(
             learningDao = get(),
+            apiService = get(),
+        )
+    }
+
+    single<PracticeRepository> {
+        PracticeRepositoryImpl(
+            practiceDao = get(),
             apiService = get(),
         )
     }
@@ -127,6 +135,7 @@ val appModules = listOf(
     coreModule,
     networkModule,
     databaseModule,
+    preferencesModule,
     apiServiceModule,
     repositoryModule,
     useCaseModule,
