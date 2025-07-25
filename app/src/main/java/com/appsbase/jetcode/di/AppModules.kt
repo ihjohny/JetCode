@@ -1,6 +1,5 @@
 package com.appsbase.jetcode.di
 
-import PreferencesRepositoryImpl
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.data.database.di.databaseModule
@@ -8,10 +7,13 @@ import com.appsbase.jetcode.data.preferences.di.preferencesModule
 import com.appsbase.jetcode.data.remote.di.remoteModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
+import com.appsbase.jetcode.data.repository.repository.PreferencesRepositoryImpl
 import com.appsbase.jetcode.domain.repository.LearningRepository
 import com.appsbase.jetcode.domain.repository.PracticeRepository
 import com.appsbase.jetcode.domain.repository.PreferencesRepository
+import com.appsbase.jetcode.domain.usecase.CompleteOnboardingUseCase
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
+import com.appsbase.jetcode.domain.usecase.GetOnboardingStatusUseCase
 import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
@@ -22,7 +24,9 @@ import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
+import com.appsbase.jetcode.main.MainViewModel
 import com.appsbase.jetcode.sync.SyncManager
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 /**
@@ -31,6 +35,13 @@ import org.koin.dsl.module
 
 val coreModule = module {
     single<DispatcherProvider> { DefaultDispatcherProvider() }
+
+    viewModel {
+        MainViewModel(
+            getOnboardingStatusUseCase = get(),
+            completeOnboardingUseCase = get(),
+        )
+    }
 }
 
 val repositoryModule = module {
@@ -116,6 +127,20 @@ val useCaseModule = module {
         SyncContentUseCase(
             learningRepository = get(),
             practiceRepository = get(),
+        )
+    }
+
+    factory {
+        GetOnboardingStatusUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        CompleteOnboardingUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
         )
     }
 }

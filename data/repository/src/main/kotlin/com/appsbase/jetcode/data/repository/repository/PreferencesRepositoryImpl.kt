@@ -1,3 +1,4 @@
+package com.appsbase.jetcode.data.repository.repository
 
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError

@@ -19,6 +19,7 @@ import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 fun JetCodeNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = JetCodeDestinations.ONBOARDING_ROUTE,
+    onOnboardingComplete: () -> Unit = {},
 ) {
     NavHost(
         navController = navController,
@@ -28,6 +29,7 @@ fun JetCodeNavHost(
         composable(JetCodeDestinations.ONBOARDING_ROUTE) {
             OnboardingScreen(
                 onOnboardingComplete = {
+                    onOnboardingComplete()
                     navController.navigate(JetCodeDestinations.SKILL_LIST_ROUTE) {
                         popUpTo(JetCodeDestinations.ONBOARDING_ROUTE) { inclusive = true }
                     }
