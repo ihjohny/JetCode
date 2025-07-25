@@ -10,12 +10,12 @@ import timber.log.Timber
  * Handles data from local preferences storage
  */
 class PreferencesRepositoryImpl(
-    private val preferencesDataSource: PreferencesDataStore,
+    private val preferencesDataStore: PreferencesDataStore,
 ) : PreferencesRepository {
 
     override suspend fun getShouldShowOnboarding(): Result<Boolean> {
         return try {
-            val shouldShow = preferencesDataSource.getShouldShowOnboarding()
+            val shouldShow = preferencesDataStore.getShouldShowOnboarding()
             Result.Success(shouldShow)
         } catch (e: Exception) {
             Timber.e(e, "Error getting onboarding preference")
@@ -25,7 +25,7 @@ class PreferencesRepositoryImpl(
 
     override suspend fun setShouldShowOnboarding(shouldShow: Boolean): Result<Unit> {
         return try {
-            preferencesDataSource.setShouldShowOnboarding(shouldShow)
+            preferencesDataStore.setShouldShowOnboarding(shouldShow)
             Result.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e, "Error setting onboarding preference")
@@ -35,7 +35,7 @@ class PreferencesRepositoryImpl(
 
     override suspend fun clearAll(): Result<Unit> {
         return try {
-            preferencesDataSource.clearAll()
+            preferencesDataStore.clearAll()
             Result.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e, "Error clearing all preferences")

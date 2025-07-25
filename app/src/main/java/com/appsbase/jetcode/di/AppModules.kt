@@ -1,5 +1,6 @@
 package com.appsbase.jetcode.di
 
+import PreferencesRepositoryImpl
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.data.database.di.databaseModule
@@ -9,6 +10,7 @@ import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
 import com.appsbase.jetcode.domain.repository.LearningRepository
 import com.appsbase.jetcode.domain.repository.PracticeRepository
+import com.appsbase.jetcode.domain.repository.PreferencesRepository
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
@@ -46,10 +48,9 @@ val repositoryModule = module {
         )
     }
 
-    single<PracticeRepository> {
-        PracticeRepositoryImpl(
-            practiceDao = get(),
-            apiService = get(),
+    single<PreferencesRepository> {
+        PreferencesRepositoryImpl(
+            preferencesDataStore = get(),
         )
     }
 }
