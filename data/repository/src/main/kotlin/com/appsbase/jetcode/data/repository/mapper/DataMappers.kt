@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.data.mapper
+package com.appsbase.jetcode.data.repository.mapper
 
 import com.appsbase.jetcode.data.database.entity.MaterialEntity
 import com.appsbase.jetcode.data.database.entity.PracticeSetEntity

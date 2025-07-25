@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.data.remote
+package com.appsbase.jetcode.data.repository.remote
 
 import com.appsbase.jetcode.domain.model.Material
 import com.appsbase.jetcode.domain.model.SampleData
