@@ -3,7 +3,7 @@ package com.appsbase.jetcode.feature.learning.presentation.skill_list
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.core.domain.model.Skill
+import com.appsbase.jetcode.domain.model.Skill
 
 /**
  * MVI contracts for Learning Dashboard

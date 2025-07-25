@@ -3,9 +3,9 @@ package com.appsbase.jetcode.feature.practice.presentation
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.core.domain.model.PracticeSet
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.model.QuizType
+import com.appsbase.jetcode.domain.model.PracticeSet
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.model.QuizType
 
 /**
  * MVI contracts for Practice screen

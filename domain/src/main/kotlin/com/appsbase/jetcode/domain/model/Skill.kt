@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.domain.model
+package com.appsbase.jetcode.domain.model
 
 import kotlinx.serialization.Serializable
 

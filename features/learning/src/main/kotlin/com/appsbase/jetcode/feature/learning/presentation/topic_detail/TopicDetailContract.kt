@@ -3,8 +3,8 @@ package com.appsbase.jetcode.feature.learning.presentation.topic_detail
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.domain.model.Material
+import com.appsbase.jetcode.domain.model.Topic
 
 /**
  * MVI contracts for Topic Detail screen

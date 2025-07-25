@@ -5,9 +5,9 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
-import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
+import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

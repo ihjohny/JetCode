@@ -5,14 +5,14 @@ import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
 import com.appsbase.jetcode.data.database.entity.QuizEntity
 import com.appsbase.jetcode.data.database.entity.SkillEntity
 import com.appsbase.jetcode.data.database.entity.TopicEntity
-import com.appsbase.jetcode.core.domain.model.Difficulty
-import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.MaterialType
-import com.appsbase.jetcode.core.domain.model.PracticeSet
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.model.QuizType
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.Material
+import com.appsbase.jetcode.domain.model.MaterialType
+import com.appsbase.jetcode.domain.model.PracticeSet
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.model.QuizType
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.Topic
 
 /**
  * Mappers to convert between database entities and domain models

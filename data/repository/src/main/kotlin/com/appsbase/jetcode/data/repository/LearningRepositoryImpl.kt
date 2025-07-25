@@ -7,11 +7,11 @@ import com.appsbase.jetcode.data.mapper.toDomain
 import com.appsbase.jetcode.data.mapper.toEntity
 import com.appsbase.jetcode.data.remote.LearningApiService
 import com.appsbase.jetcode.data.database.dao.LearningDao
-import com.appsbase.jetcode.core.domain.model.Content
-import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.model.Topic
-import com.appsbase.jetcode.core.domain.repository.LearningRepository
+import com.appsbase.jetcode.domain.model.Content
+import com.appsbase.jetcode.domain.model.Material
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.Topic
+import com.appsbase.jetcode.domain.repository.LearningRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine

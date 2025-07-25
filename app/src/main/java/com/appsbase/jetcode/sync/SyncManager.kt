@@ -4,7 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -1,9 +1,9 @@
-package com.appsbase.jetcode.core.domain.usecase
+package com.appsbase.jetcode.domain.usecase
 
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.repository.PracticeRepository
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.repository.PracticeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 

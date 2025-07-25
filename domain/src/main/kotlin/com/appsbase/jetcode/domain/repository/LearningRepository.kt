@@ -1,10 +1,10 @@
-package com.appsbase.jetcode.core.domain.repository
+package com.appsbase.jetcode.domain.repository
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.model.Content
-import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.domain.model.Content
+import com.appsbase.jetcode.domain.model.Material
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.Topic
 import kotlinx.coroutines.flow.Flow
 
 /**

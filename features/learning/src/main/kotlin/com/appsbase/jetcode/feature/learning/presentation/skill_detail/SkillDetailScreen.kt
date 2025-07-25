@@ -32,10 +32,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.appsbase.jetcode.core.domain.model.Difficulty
-import com.appsbase.jetcode.core.domain.model.SampleData
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.SampleData
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.Topic
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState

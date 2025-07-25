@@ -5,8 +5,8 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
-import com.appsbase.jetcode.core.domain.usecase.GetSkillByIdUseCase
-import com.appsbase.jetcode.core.domain.usecase.GetTopicsByIdsUseCase
+import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

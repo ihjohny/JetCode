@@ -7,10 +7,10 @@ import com.appsbase.jetcode.data.mapper.toDomain
 import com.appsbase.jetcode.data.mapper.toEntity
 import com.appsbase.jetcode.data.remote.PracticeApiService
 import com.appsbase.jetcode.data.database.dao.PracticeDao
-import com.appsbase.jetcode.core.domain.model.Content
-import com.appsbase.jetcode.core.domain.model.PracticeSet
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.repository.PracticeRepository
+import com.appsbase.jetcode.domain.model.Content
+import com.appsbase.jetcode.domain.model.PracticeSet
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.repository.PracticeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf

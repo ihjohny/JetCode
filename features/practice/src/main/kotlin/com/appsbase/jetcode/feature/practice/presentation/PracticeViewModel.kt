@@ -5,9 +5,9 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.usecase.GetPracticeSetByIdUseCase
-import com.appsbase.jetcode.core.domain.usecase.GetQuizzesByIdsUseCase
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

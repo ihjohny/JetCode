@@ -36,9 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
-import com.appsbase.jetcode.core.domain.model.Material
-import com.appsbase.jetcode.core.domain.model.MaterialType
-import com.appsbase.jetcode.core.domain.model.Topic
+import com.appsbase.jetcode.domain.model.Material
+import com.appsbase.jetcode.domain.model.MaterialType
+import com.appsbase.jetcode.domain.model.Topic
 import com.appsbase.jetcode.core.ui.components.CommonTopAppBar
 import com.appsbase.jetcode.core.ui.components.CompletionCard
 import com.appsbase.jetcode.core.ui.components.DropdownMenuItem

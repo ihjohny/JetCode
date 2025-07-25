@@ -1,8 +1,8 @@
-package com.appsbase.jetcode.core.domain.usecase
+package com.appsbase.jetcode.domain.usecase
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.repository.LearningRepository
-import com.appsbase.jetcode.core.domain.repository.PracticeRepository
+import com.appsbase.jetcode.domain.repository.LearningRepository
+import com.appsbase.jetcode.domain.repository.PracticeRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay

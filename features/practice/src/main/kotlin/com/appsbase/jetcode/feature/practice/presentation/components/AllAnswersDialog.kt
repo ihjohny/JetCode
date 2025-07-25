@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
-import com.appsbase.jetcode.core.domain.model.Quiz
-import com.appsbase.jetcode.core.domain.model.QuizType
+import com.appsbase.jetcode.domain.model.Quiz
+import com.appsbase.jetcode.domain.model.QuizType
 import com.appsbase.jetcode.feature.practice.presentation.PracticeState
 
 @Composable

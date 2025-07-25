@@ -1,7 +1,7 @@
 package com.appsbase.jetcode.data.remote
 
-import com.appsbase.jetcode.core.domain.model.PracticeSet
-import com.appsbase.jetcode.core.domain.model.Quiz
+import com.appsbase.jetcode.domain.model.PracticeSet
+import com.appsbase.jetcode.domain.model.Quiz
 
 /**
  * API service for fetching practice content from API

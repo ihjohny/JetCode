@@ -1,10 +1,10 @@
 package com.appsbase.jetcode.feature.learning.presentation.dashboard
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.model.Difficulty
-import com.appsbase.jetcode.core.domain.model.Skill
-import com.appsbase.jetcode.core.domain.usecase.GetSkillsUseCase
-import com.appsbase.jetcode.core.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
+import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListIntent
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListViewModel
 import io.mockk.coEvery

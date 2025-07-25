@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.appsbase.jetcode.core.domain.model.Difficulty
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
+import com.appsbase.jetcode.domain.model.Difficulty
 
 @Composable
 fun DifficultyChip(

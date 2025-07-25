@@ -1,9 +1,9 @@
-package com.appsbase.jetcode.core.domain.repository
+package com.appsbase.jetcode.domain.repository
 
 import com.appsbase.jetcode.core.common.Result
-import com.appsbase.jetcode.core.domain.model.Content
-import com.appsbase.jetcode.core.domain.model.PracticeSet
-import com.appsbase.jetcode.core.domain.model.Quiz
+import com.appsbase.jetcode.domain.model.Content
+import com.appsbase.jetcode.domain.model.PracticeSet
+import com.appsbase.jetcode.domain.model.Quiz
 import kotlinx.coroutines.flow.Flow
 
 /**
