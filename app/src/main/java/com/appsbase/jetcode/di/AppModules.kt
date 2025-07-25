@@ -2,10 +2,9 @@ package com.appsbase.jetcode.di
 
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
-import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.data.database.di.databaseModule
 import com.appsbase.jetcode.data.preferences.di.preferencesModule
-import com.appsbase.jetcode.data.remote.di.apiServiceModule
+import com.appsbase.jetcode.data.remote.di.remoteModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
 import com.appsbase.jetcode.domain.repository.LearningRepository
@@ -133,10 +132,9 @@ val syncModule = module {
  */
 val appModules = listOf(
     coreModule,
-    networkModule,
     databaseModule,
     preferencesModule,
-    apiServiceModule,
+    remoteModule,
     repositoryModule,
     useCaseModule,
     syncModule,

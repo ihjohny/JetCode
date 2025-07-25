@@ -1,6 +1,6 @@
 package com.appsbase.jetcode.data.remote.api_service
 
-import com.appsbase.jetcode.core.network.Constants.GITHUB_CONTENT_BASE
+import com.appsbase.jetcode.data.remote.network.Constants.GITHUB_CONTENT_BASE
 import com.appsbase.jetcode.domain.model.Material
 import com.appsbase.jetcode.domain.model.SampleData
 import com.appsbase.jetcode.domain.model.Skill

@@ -59,7 +59,6 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:analytics"))
-    implementation(project(":core:network"))
 
     // Domain module
     implementation(project(":domain"))

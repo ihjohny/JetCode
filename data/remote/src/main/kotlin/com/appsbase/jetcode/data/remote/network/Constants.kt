@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.network
+package com.appsbase.jetcode.data.remote.network
 
 object Constants {
     const val BASE_URL = "https://api.github.com/"

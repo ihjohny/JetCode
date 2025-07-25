@@ -27,7 +27,6 @@ include(":core:common")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:analytics")
-include(":core:network")
 
 // Domain module
 include(":domain")

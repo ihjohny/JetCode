@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.network
+package com.appsbase.jetcode.data.remote.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android

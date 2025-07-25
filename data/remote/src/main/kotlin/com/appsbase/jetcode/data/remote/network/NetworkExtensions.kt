@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.network
+package com.appsbase.jetcode.data.remote.network
 
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
@@ -9,6 +9,8 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 /**
  * Extension functions for handling network responses safely
@@ -49,8 +51,8 @@ inline fun <reified T> safeNetworkCall(
     } catch (e: Exception) {
         Timber.e(e, "Network call exception")
         val error = when (e) {
-            is java.net.UnknownHostException -> AppError.NetworkError.NoConnection
-            is java.net.SocketTimeoutException -> AppError.NetworkError.Timeout
+            is UnknownHostException -> AppError.NetworkError.NoConnection
+            is SocketTimeoutException -> AppError.NetworkError.Timeout
             else -> AppError.NetworkError.Unknown(e)
         }
         emit(Result.Error(error))
