@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.data.remote
+package com.appsbase.jetcode.data.remote
 
 import com.appsbase.jetcode.core.domain.model.PracticeSet
 import com.appsbase.jetcode.core.domain.model.Quiz

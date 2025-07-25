@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.core.data.remote
+package com.appsbase.jetcode.data.remote
 
 import com.appsbase.jetcode.core.domain.model.Material
 import com.appsbase.jetcode.core.domain.model.Skill

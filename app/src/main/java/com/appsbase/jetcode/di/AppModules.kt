@@ -2,9 +2,9 @@ package com.appsbase.jetcode.di
 
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
-import com.appsbase.jetcode.core.data.di.dataModule
-import com.appsbase.jetcode.core.data.repository.LearningRepositoryImpl
-import com.appsbase.jetcode.core.data.repository.PracticeRepositoryImpl
+import com.appsbase.jetcode.data.di.dataModule
+import com.appsbase.jetcode.data.repository.LearningRepositoryImpl
+import com.appsbase.jetcode.data.repository.PracticeRepositoryImpl
 import com.appsbase.jetcode.data.database.di.databaseModule
 import com.appsbase.jetcode.core.domain.repository.LearningRepository
 import com.appsbase.jetcode.core.domain.repository.PracticeRepository

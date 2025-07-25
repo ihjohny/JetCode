@@ -1,11 +1,11 @@
-package com.appsbase.jetcode.core.data.repository
+package com.appsbase.jetcode.data.repository
 
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.util.fetchContent
-import com.appsbase.jetcode.core.data.mapper.toDomain
-import com.appsbase.jetcode.core.data.mapper.toEntity
-import com.appsbase.jetcode.core.data.remote.PracticeApiService
+import com.appsbase.jetcode.data.mapper.toDomain
+import com.appsbase.jetcode.data.mapper.toEntity
+import com.appsbase.jetcode.data.remote.PracticeApiService
 import com.appsbase.jetcode.data.database.dao.PracticeDao
 import com.appsbase.jetcode.core.domain.model.Content
 import com.appsbase.jetcode.core.domain.model.PracticeSet
