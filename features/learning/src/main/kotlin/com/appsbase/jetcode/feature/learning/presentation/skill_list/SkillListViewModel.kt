@@ -8,6 +8,7 @@ import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.domain.model.Skill
 import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListEffect.ShowError
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -39,17 +40,13 @@ class SkillListViewModel(
         viewModelScope.launch {
             getSkillsUseCase().collect { result ->
                 when (result) {
-                    is Result.Loading -> {
-                        updateState(currentState().copy(isLoading = true))
-                    }
-
                     is Result.Success -> {
                         updateState(
                             currentState().copy(
                                 isLoading = false,
                                 skills = result.data,
                                 filteredSkills = result.data,
-                                error = null
+                                error = null,
                             )
                         )
                         Timber.Forest.d("Skills loaded successfully: ${result.data.size} skills")
@@ -62,40 +59,39 @@ class SkillListViewModel(
                         }
                         updateState(
                             currentState().copy(
-                                isLoading = false, error = errorMessage
+                                isLoading = false,
+                                error = errorMessage,
                             )
                         )
-                        sendEffect(SkillListEffect.ShowError(errorMessage))
+                        sendEffect(ShowError(errorMessage))
                         Timber.Forest.e(result.exception, "Error loading skills")
                     }
+
+                    Result.Loading -> {}
                 }
             }
         }
     }
 
     private fun syncSkills() {
-        updateState(currentState().copy(isSyncing = true))
+        updateState(currentState().copy(isLoading = true))
 
         viewModelScope.launch {
-            // First sync content from remote
             when (val syncResult = syncContentUseCase()) {
                 is Result.Success -> {
-                    updateState(currentState().copy(isSyncing = false))
+                    updateState(currentState().copy(isLoading = false))
                     Timber.Forest.d("Content synced successfully")
                 }
-
                 is Result.Error -> {
-                    updateState(currentState().copy(isSyncing = false))
+                    updateState(currentState().copy(isLoading = false))
                     val errorMessage = when (val exception = syncResult.exception) {
                         is AppError -> exception.getUserMessage()
                         else -> exception.message ?: "An unexpected error occurred"
                     }
-                    sendEffect(SkillListEffect.ShowError("Sync failed: $errorMessage"))
+                    sendEffect(ShowError("Sync failed: $errorMessage"))
                     Timber.Forest.e(syncResult.exception, "Error syncing content")
                 }
-
                 is Result.Loading -> {
-                    // Keep the refreshing state - loading is handled by the isRefreshing flag
                     Timber.Forest.d("Syncing content...")
                 }
             }

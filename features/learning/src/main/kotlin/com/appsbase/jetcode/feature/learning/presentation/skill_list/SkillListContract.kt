@@ -15,7 +15,6 @@ data class SkillListState(
     val searchQuery: String = "",
     val filteredSkills: List<Skill> = emptyList(),
     val error: String? = null,
-    val isSyncing: Boolean = false,
 ) : UiState
 
 sealed class SkillListIntent : UiIntent {

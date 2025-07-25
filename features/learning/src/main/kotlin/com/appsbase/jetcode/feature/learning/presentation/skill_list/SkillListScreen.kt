@@ -39,11 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
-import com.appsbase.jetcode.domain.model.Difficulty
-import com.appsbase.jetcode.domain.model.Skill
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
-import com.appsbase.jetcode.core.ui.components.LoadingState
+import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.Skill
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -59,7 +58,6 @@ fun SkillListScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // Handle side effects
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -81,28 +79,24 @@ fun SkillListScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        TopAppBar(title = {
-            Text(
-                text = "JetCode Learning", fontWeight = FontWeight.Bold
-            )
-        }, actions = {
-            IconButton(
-                onClick = { viewModel.handleIntent(SkillListIntent.ProfileClicked) },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person, contentDescription = "Profile"
+        TopAppBar(
+            title = {
+                Text(
+                    text = "JetCode Learning", fontWeight = FontWeight.Bold
                 )
-            }
-        })
+            },
+            actions = {
+                IconButton(
+                    onClick = { viewModel.handleIntent(SkillListIntent.ProfileClicked) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person, contentDescription = "Profile"
+                    )
+                }
+            },
+        )
 
         when {
-            state.isLoading && state.skills.isEmpty() -> {
-                LoadingState(
-                    modifier = Modifier.fillMaxSize(),
-                    message = "Loading skills...",
-                )
-            }
-
             state.error != null && state.skills.isEmpty() -> {
                 ErrorState(
                     message = state.error ?: "Unknown error",
@@ -151,7 +145,7 @@ private fun LearningContent(
 
         PullToRefreshBox(
             modifier = Modifier.fillMaxSize(),
-            isRefreshing = state.isSyncing,
+            isRefreshing = state.isLoading,
             onRefresh = { onIntent(SkillListIntent.SyncSkills) },
         ) {
             LazyColumn(
@@ -301,13 +295,13 @@ private fun SkillListScreenPreview() {
         filteredSkills = sampleSkills,
         searchQuery = "",
         isLoading = false,
-        isSyncing = false,
         error = null,
     )
 
     JetCodeTheme {
         LearningContent(
-            state = sampleState, onIntent = { }, modifier = Modifier.fillMaxSize()
+            state = sampleState, onIntent = { },
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
