@@ -29,10 +29,13 @@ include(":core:designsystem")
 include(":core:analytics")
 include(":core:network")
 
-// Data modules
+// Domain module
 include(":domain")
+
+// Data modules
 include(":data:repository")
 include(":data:database")
+include(":data:remote")
 
 // Feature modules
 include(":features:onboarding")

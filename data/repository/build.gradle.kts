@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.appsbase.jetcode.core.data"
+    namespace = "com.appsbase.jetcode.data.repository"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -18,8 +18,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -37,16 +36,12 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":domain"))
-    implementation(project(":core:network"))
     implementation(project(":data:database"))
+    implementation(project(":data:remote"))
 
     implementation(libs.bundles.kotlinx)
     implementation(libs.bundles.koin)
-    implementation(libs.bundles.ktor)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.timber)
 
     testImplementation(libs.bundles.testing)
-    testImplementation(libs.androidx.work.testing)
 }

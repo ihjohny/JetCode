@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.appsbase.jetcode.core.database"
+    namespace = "com.appsbase.jetcode.data.database"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

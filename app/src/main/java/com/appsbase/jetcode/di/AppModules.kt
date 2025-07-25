@@ -2,10 +2,11 @@ package com.appsbase.jetcode.di
 
 import com.appsbase.jetcode.core.common.util.DefaultDispatcherProvider
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
-import com.appsbase.jetcode.data.repository.di.dataModule
+import com.appsbase.jetcode.core.network.di.networkModule
+import com.appsbase.jetcode.data.database.di.databaseModule
+import com.appsbase.jetcode.data.remote.di.apiServiceModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
-import com.appsbase.jetcode.data.database.di.databaseModule
 import com.appsbase.jetcode.domain.repository.LearningRepository
 import com.appsbase.jetcode.domain.repository.PracticeRepository
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
@@ -17,7 +18,6 @@ import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
-import com.appsbase.jetcode.core.network.di.networkModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
 import com.appsbase.jetcode.sync.SyncManager
@@ -127,7 +127,7 @@ val appModules = listOf(
     coreModule,
     networkModule,
     databaseModule,
-    dataModule,
+    apiServiceModule,
     repositoryModule,
     useCaseModule,
     syncModule,

@@ -61,9 +61,12 @@ dependencies {
     implementation(project(":core:analytics"))
     implementation(project(":core:network"))
 
-    // Data modules
+    // Domain module
     implementation(project(":domain"))
+
+    // Data modules
     implementation(project(":data:database"))
+    implementation(project(":data:remote"))
     implementation(project(":data:repository"))
 
     // Feature modules
