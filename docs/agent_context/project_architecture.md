@@ -1,3 +1,30 @@
+# JetCode Project Architecture
+
+## Overview
+
+JetCode is an Android application for coding education and practice built using modern Android development practices. The project follows **Clean Architecture** principles with a multi-module structure, implementing **MVI (Model-View-Intent)** pattern for UI state management and **MVVM** for presentation layer architecture.
+
+## Project Structure
+
+```
+JetCode/
+├── app/                    # Main application module
+├── core/                   # Core shared modules
+│   ├── analytics/          # Analytics and tracking
+│   ├── common/            # Common utilities and base classes
+│   ├── designsystem/      # Design system and theming
+│   └── ui/                # Reusable UI components
+├── data/                   # Data layer modules
+│   ├── database/          # Local database (Room)
+│   ├── preferences/       # User preferences (DataStore)
+│   ├── remote/            # Network layer (Ktor)
+│   └── repository/        # Repository implementations
+├── domain/                 # Business logic and use cases
+└── features/              # Feature-specific modules
+    ├── learning/          # Learning content features
+    ├── onboarding/        # User onboarding
+    ├── practice/          # Practice and quizzes
+    └── profile/           # User profile
 ```
 
 ## Technology Stack
@@ -38,6 +65,100 @@ graph TD
     C --> E
 ```
 
+## Architecture Layers
+
+### 1. Domain Layer (`domain/`)
+**Pure Kotlin module** containing business logic, independent of Android framework.
+
+#### Components:
+- **Models**: Core business entities (`Skill`, `Topic`, `Material`, `Quiz`, `PracticeSet`)
+- **Repository Interfaces**: Abstract contracts for data access
+- **Use Cases**: Single-responsibility business operations
+- **Common Types**: `Result<T>` wrapper, error handling
+
+#### Key Patterns:
+```kotlin
+// Domain models inherit from abstract Content class for polymorphism
+abstract class Content
+
+data class Skill(...) : Content()
+data class Topic(...) : Content()
+data class Material(...) : Content()
+```
+
+#### Use Case Pattern:
+```kotlin
+class GetSkillsUseCase(
+    private val learningRepository: LearningRepository,
+    private val dispatcherProvider: DispatcherProvider
+) {
+    operator fun invoke(): Flow<Result<List<Skill>>>
+}
+```
+
+### 2. Data Layer (`data/`)
+Implements domain repository interfaces and manages data sources.
+
+#### Modules:
+- **`database/`**: Room database with DAOs and entities
+- **`remote/`**: Ktor HTTP client and API services
+- **`preferences/`**: DataStore for user preferences
+- **`repository/`**: Repository pattern implementations
+
+#### Repository Pattern:
+```kotlin
+// Repository implementation handles both local and remote data
+class LearningRepositoryImpl(
+    private val learningDao: LearningDao,
+    private val apiService: LearningApiService,
+) : LearningRepository {
+    // Implements offline-first strategy
+    // Maps between entities and domain models
+}
+```
+
+#### Data Mapping Strategy:
+- **Entities** ↔ **Domain Models** via extension functions
+- Separate concerns: database entities vs business models
+- Type-safe serialization with kotlinx.serialization
+
+### 3. Presentation Layer (`features/`)
+Feature-based modularization with MVI pattern.
+
+#### MVI Architecture:
+```kotlin
+// Base MVI ViewModel
+abstract class BaseViewModel<State : UiState, Intent : UiIntent, Effect : UiEffect>(
+    initialState: State
+) : ViewModel() {
+    // Unidirectional data flow
+    // State management with StateFlow
+    // Side effects with Channel
+}
+```
+
+#### Feature Structure:
+```
+features/learning/
+├── data/           # Feature-specific data (if any)
+├── domain/         # Feature-specific use cases
+└── presentation/   # UI layer
+    ├── skill_list/     # Screen-specific packages
+    │   ├── SkillListScreen.kt
+    │   ├── SkillListViewModel.kt
+    │   └── SkillListContract.kt
+    └── skill_detail/
+```
+
+### 4. Core Layer (`core/`)
+Shared utilities and foundational components.
+
+#### Modules:
+- **`common/`**: Base classes, utilities, Result wrapper, MVI interfaces
+- **`designsystem/`**: Theme, colors, typography, component styles
+- **`ui/`**: Reusable Compose components
+- **`analytics/`**: Event tracking and analytics
+
 ## Data Flow Architecture
 
 ### Offline-First Strategy:
@@ -52,6 +173,47 @@ graph TD
 User Intent → ViewModel → Use Case → Repository → Database/API
                 ↓
 UI State ← ViewModel ← Result<T> ← Repository ← Data Source
+```
+
+## Key Design Patterns
+
+### 1. MVI (Model-View-Intent)
+```kotlin
+// Contract definition
+interface SkillListContract {
+    data class State(...) : UiState
+    sealed class Intent : UiIntent
+    sealed class Effect : UiEffect
+}
+
+// ViewModel implementation
+class SkillListViewModel : BaseViewModel<State, Intent, Effect>() {
+    override fun handleIntent(intent: Intent) {
+        // Process user intents
+    }
+}
+```
+
+### 2. Repository Pattern
+- **Interface Segregation**: Separate repository interfaces for different domains
+- **Offline-First**: Local database as single source of truth
+- **Data Synchronization**: Background sync with remote APIs
+
+### 3. Use Case Pattern
+- **Single Responsibility**: Each use case handles one business operation
+- **Dependency Injection**: Use cases receive dependencies via constructor
+- **Coroutines Integration**: Async operations with proper error handling
+
+### 4. Dependency Injection (Koin)
+```kotlin
+val repositoryModule = module {
+    single<LearningRepository> {
+        LearningRepositoryImpl(
+            learningDao = get(),
+            apiService = get(),
+        )
+    }
+}
 ```
 
 ## Naming Conventions
@@ -174,164 +336,3 @@ SkillListScreen(
 - **Plugin architecture**: Support for third-party integrations
 
 This architecture document serves as the foundation for maintaining consistency and quality in the JetCode project. All development should align with these principles and patterns.
-# JetCode Project Architecture
-
-## Overview
-
-JetCode is an Android application for coding education and practice built using modern Android development practices. The project follows **Clean Architecture** principles with a multi-module structure, implementing **MVI (Model-View-Intent)** pattern for UI state management and **MVVM** for presentation layer architecture.
-
-## Project Structure
-
-```
-JetCode/
-├── app/                    # Main application module
-├── core/                   # Core shared modules
-│   ├── analytics/          # Analytics and tracking
-│   ├── common/            # Common utilities and base classes
-│   ├── designsystem/      # Design system and theming
-│   └── ui/                # Reusable UI components
-├── data/                   # Data layer modules
-│   ├── database/          # Local database (Room)
-│   ├── preferences/       # User preferences (DataStore)
-│   ├── remote/            # Network layer (Ktor)
-│   └── repository/        # Repository implementations
-├── domain/                 # Business logic and use cases
-└── features/              # Feature-specific modules
-    ├── learning/          # Learning content features
-    ├── onboarding/        # User onboarding
-    ├── practice/          # Practice and quizzes
-    └── profile/           # User profile
-```
-
-## Architecture Layers
-
-### 1. Domain Layer (`domain/`)
-**Pure Kotlin module** containing business logic, independent of Android framework.
-
-#### Components:
-- **Models**: Core business entities (`Skill`, `Topic`, `Material`, `Quiz`, `PracticeSet`)
-- **Repository Interfaces**: Abstract contracts for data access
-- **Use Cases**: Single-responsibility business operations
-- **Common Types**: `Result<T>` wrapper, error handling
-
-#### Key Patterns:
-```kotlin
-// Domain models inherit from abstract Content class for polymorphism
-abstract class Content
-
-data class Skill(...) : Content()
-data class Topic(...) : Content()
-data class Material(...) : Content()
-```
-
-#### Use Case Pattern:
-```kotlin
-class GetSkillsUseCase(
-    private val learningRepository: LearningRepository,
-    private val dispatcherProvider: DispatcherProvider
-) {
-    operator fun invoke(): Flow<Result<List<Skill>>>
-}
-```
-
-### 2. Data Layer (`data/`)
-Implements domain repository interfaces and manages data sources.
-
-#### Modules:
-- **`database/`**: Room database with DAOs and entities
-- **`remote/`**: Ktor HTTP client and API services
-- **`preferences/`**: DataStore for user preferences
-- **`repository/`**: Repository pattern implementations
-
-#### Repository Pattern:
-```kotlin
-// Repository implementation handles both local and remote data
-class LearningRepositoryImpl(
-    private val learningDao: LearningDao,
-    private val apiService: LearningApiService,
-) : LearningRepository {
-    // Implements offline-first strategy
-    // Maps between entities and domain models
-}
-```
-
-#### Data Mapping Strategy:
-- **Entities** ↔ **Domain Models** via extension functions
-- Separate concerns: database entities vs business models
-- Type-safe serialization with kotlinx.serialization
-
-### 3. Presentation Layer (`features/`)
-Feature-based modularization with MVI pattern.
-
-#### MVI Architecture:
-```kotlin
-// Base MVI ViewModel
-abstract class BaseViewModel<State : UiState, Intent : UiIntent, Effect : UiEffect>(
-    initialState: State
-) : ViewModel() {
-    // Unidirectional data flow
-    // State management with StateFlow
-    // Side effects with Channel
-}
-```
-
-#### Feature Structure:
-```
-features/learning/
-├── data/           # Feature-specific data (if any)
-├── domain/         # Feature-specific use cases
-└── presentation/   # UI layer
-    ├── skill_list/     # Screen-specific packages
-    │   ├── SkillListScreen.kt
-    │   ├── SkillListViewModel.kt
-    │   └── SkillListContract.kt
-    └── skill_detail/
-```
-
-### 4. Core Layer (`core/`)
-Shared utilities and foundational components.
-
-#### Modules:
-- **`common/`**: Base classes, utilities, Result wrapper, MVI interfaces
-- **`designsystem/`**: Theme, colors, typography, component styles
-- **`ui/`**: Reusable Compose components
-- **`analytics/`**: Event tracking and analytics
-
-## Key Design Patterns
-
-### 1. MVI (Model-View-Intent)
-```kotlin
-// Contract definition
-interface SkillListContract {
-    data class State(...) : UiState
-    sealed class Intent : UiIntent
-    sealed class Effect : UiEffect
-}
-
-// ViewModel implementation
-class SkillListViewModel : BaseViewModel<State, Intent, Effect>() {
-    override fun handleIntent(intent: Intent) {
-        // Process user intents
-    }
-}
-```
-
-### 2. Repository Pattern
-- **Interface Segregation**: Separate repository interfaces for different domains
-- **Offline-First**: Local database as single source of truth
-- **Data Synchronization**: Background sync with remote APIs
-
-### 3. Use Case Pattern
-- **Single Responsibility**: Each use case handles one business operation
-- **Dependency Injection**: Use cases receive dependencies via constructor
-- **Coroutines Integration**: Async operations with proper error handling
-
-### 4. Dependency Injection (Koin)
-```kotlin
-val repositoryModule = module {
-    single<LearningRepository> {
-        LearningRepositoryImpl(
-            learningDao = get(),
-            apiService = get(),
-        )
-    }
