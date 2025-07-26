@@ -9,6 +9,7 @@ import com.appsbase.jetcode.domain.model.Skill
 import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListEffect.ShowError
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -77,6 +78,12 @@ class SkillListViewModel(
         updateState(currentState().copy(isLoading = true))
 
         viewModelScope.launch {
+            /**
+             * Simulate a short delay to fix pull-to-refresh update issue.
+             * See: https://proandroiddev.com/at-the-mountains-of-madness-with-jetpack-compose-09d3625597ad
+             */
+            delay(100)
+
             when (val syncResult = syncContentUseCase()) {
                 is Result.Success -> {
                     updateState(currentState().copy(isLoading = false))
