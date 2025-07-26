@@ -156,8 +156,7 @@ private fun TopicContentSection(
             ProgressHeaderCard(
                 headerLabel = topic.description,
                 progressLabel = state.progressValueLabel,
-                progressValue = if (state.materials.isNotEmpty())
-                    (state.currentMaterialIndex + 1f) / state.materials.size else 0f,
+                progressValue = state.progressValue,
                 extraInfo = {
                     Text(
                         text = "⏱️ ${topic.duration} min",

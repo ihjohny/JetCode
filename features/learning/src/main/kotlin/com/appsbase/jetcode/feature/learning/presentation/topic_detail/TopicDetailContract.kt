@@ -17,7 +17,15 @@ data class TopicDetailState(
     val currentMaterialIndex: Int = 0,
     val error: String? = null
 ) : UiState {
-    val progressValueLabel get() = "${(currentMaterialIndex + 1).coerceAtMost(materials.size)} of ${materials.size}"
+    val progressValue get() = if (materials.isNotEmpty()) (currentMaterialIndex + 1f) / materials.size else 0f
+    val progressValueLabel: String
+        get() {
+            return if (currentMaterialIndex == materials.size) {
+                "Completed"
+            } else {
+                "${(currentMaterialIndex + 1).coerceAtMost(materials.size)} of ${materials.size}"
+            }
+        }
 }
 
 sealed class TopicDetailIntent : UiIntent {
