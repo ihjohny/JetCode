@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(libs.bundles.kotlinx)
     implementation(libs.bundles.koin)
+    implementation(libs.timber)
 
     testImplementation(libs.bundles.testing)
 }

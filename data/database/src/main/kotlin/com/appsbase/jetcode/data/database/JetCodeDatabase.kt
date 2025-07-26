@@ -7,12 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.appsbase.jetcode.data.database.dao.LearningDao
 import com.appsbase.jetcode.data.database.dao.PracticeDao
+import com.appsbase.jetcode.data.database.dao.ProgressDao
 import com.appsbase.jetcode.data.database.entity.Converters
 import com.appsbase.jetcode.data.database.entity.MaterialEntity
 import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
 import com.appsbase.jetcode.data.database.entity.QuizEntity
 import com.appsbase.jetcode.data.database.entity.SkillEntity
 import com.appsbase.jetcode.data.database.entity.TopicEntity
+import com.appsbase.jetcode.data.database.entity.TopicProgressEntity
 
 @Database(
     entities = [
@@ -21,6 +23,7 @@ import com.appsbase.jetcode.data.database.entity.TopicEntity
         MaterialEntity::class,
         PracticeSetEntity::class,
         QuizEntity::class,
+        TopicProgressEntity::class,
     ],
     version = 1,
     exportSchema = false,
@@ -30,6 +33,7 @@ abstract class JetCodeDatabase : RoomDatabase() {
 
     abstract fun learningDao(): LearningDao
     abstract fun practiceDao(): PracticeDao
+    abstract fun progressDao(): ProgressDao
 
     companion object {
         const val DATABASE_NAME = "jetcode_database"
@@ -39,7 +43,7 @@ abstract class JetCodeDatabase : RoomDatabase() {
                 context.applicationContext,
                 JetCodeDatabase::class.java,
                 DATABASE_NAME,
-            ).fallbackToDestructiveMigration().build()
+            ).fallbackToDestructiveMigration(false).build()
         }
     }
 }

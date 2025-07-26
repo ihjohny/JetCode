@@ -8,9 +8,11 @@ import com.appsbase.jetcode.data.remote.di.remoteModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PreferencesRepositoryImpl
+import com.appsbase.jetcode.data.repository.repository.ProgressRepositoryImpl
 import com.appsbase.jetcode.domain.repository.LearningRepository
 import com.appsbase.jetcode.domain.repository.PracticeRepository
 import com.appsbase.jetcode.domain.repository.PreferencesRepository
+import com.appsbase.jetcode.domain.repository.ProgressRepository
 import com.appsbase.jetcode.domain.usecase.CompleteOnboardingUseCase
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetOnboardingStatusUseCase
@@ -19,9 +21,11 @@ import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
+import com.appsbase.jetcode.domain.usecase.UpdateTopicProgressUseCase
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
 import com.appsbase.jetcode.main.MainViewModel
@@ -64,9 +68,29 @@ val repositoryModule = module {
             preferencesDataStore = get(),
         )
     }
+
+    single<ProgressRepository> {
+        ProgressRepositoryImpl(
+            progressDao = get(),
+        )
+    }
 }
 
 val useCaseModule = module {
+    factory {
+        GetOnboardingStatusUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        CompleteOnboardingUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
     factory {
         GetSkillsUseCase(
             learningRepository = get(),
@@ -131,15 +155,16 @@ val useCaseModule = module {
     }
 
     factory {
-        GetOnboardingStatusUseCase(
-            preferencesRepository = get(),
+        GetTopicProgressUseCase(
+            progressRepository = get(),
             dispatcherProvider = get(),
         )
     }
 
     factory {
-        CompleteOnboardingUseCase(
-            preferencesRepository = get(),
+        UpdateTopicProgressUseCase(
+            progressRepository = get(),
+            getTopicProgressUseCase = get(),
             dispatcherProvider = get(),
         )
     }

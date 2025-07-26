@@ -224,14 +224,14 @@ private fun MaterialFlashCardSection(
                     onDragOffsetChange = { dragOffset = it },
                     onSwipeLeft = onNext,
                     onSwipeRight = onPrevious,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     MaterialContent(
                         material = currentMaterial,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(24.dp)
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(rememberScrollState()),
                     )
                 }
             }

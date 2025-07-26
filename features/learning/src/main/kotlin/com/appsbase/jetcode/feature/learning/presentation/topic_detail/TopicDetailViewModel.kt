@@ -7,7 +7,10 @@ import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
+import com.appsbase.jetcode.domain.usecase.UpdateTopicProgressUseCase
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowError
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -17,6 +20,8 @@ import timber.log.Timber
 class TopicDetailViewModel(
     private val getTopicByIdUseCase: GetTopicByIdUseCase,
     private val getMaterialsForTopicUseCase: GetMaterialsByIdsUseCase,
+    private val getTopicProgressUseCase: GetTopicProgressUseCase,
+    private val updateTopicProgressUseCase: UpdateTopicProgressUseCase,
 ) : BaseViewModel<TopicDetailState, TopicDetailIntent, TopicDetailEffect>(
     initialState = TopicDetailState()
 ) {
@@ -87,6 +92,7 @@ class TopicDetailViewModel(
                                 materials = materialsResult.data
                             )
                         )
+                        restoreOnProgressedIndex()
                         Timber.d("Materials loaded successfully: ${materialsResult.data.size} items")
                     }
 
@@ -106,6 +112,36 @@ class TopicDetailViewModel(
         }
     }
 
+    private fun restoreOnProgressedIndex() {
+        viewModelScope.launch {
+            val topicId = currentState().topic?.id ?: return@launch
+            getTopicProgressUseCase(topicId).first().let {
+                when (it) {
+                    is Result.Success -> {
+                        val progress = it.data
+                        if (progress != null) {
+                            updateState(
+                                currentState().copy(
+                                    currentMaterialIndex = progress.currentMaterialIndex,
+                                )
+                            )
+                            Timber.d("Progress restore successfully: $topicId, index: ${progress.currentMaterialIndex}")
+                        } else {
+                            Timber.d("No progress found for topic $topicId, starting from index 0")
+                            updateState(currentState().copy(currentMaterialIndex = 0))
+                        }
+                    }
+
+                    is Result.Error -> {
+                        Timber.e("Error restoring progress for topic $topicId: ${it.exception.message}")
+                    }
+
+                    is Result.Loading -> {}
+                }
+            }
+        }
+    }
+
     private fun nextMaterial() {
         val state = currentState()
         val nextIndex = state.currentMaterialIndex + 1
@@ -116,6 +152,7 @@ class TopicDetailViewModel(
             updateState(state.copy(currentMaterialIndex = nextIndex))
             Timber.d("All materials completed for topic: ${state.topic?.name}")
         }
+        updateProgress(updatedMaterialIndex = nextIndex)
     }
 
     private fun previousMaterial() {
@@ -128,5 +165,18 @@ class TopicDetailViewModel(
 
     private fun retryLoading(topicId: String) {
         loadTopic(topicId)
+    }
+
+    private fun updateProgress(updatedMaterialIndex: Int) {
+        val mTopicId = currentState().topic?.id
+        if (mTopicId.isNullOrEmpty()) return
+        if (updatedMaterialIndex < 0 || updatedMaterialIndex > currentState().materials.size) return
+
+        viewModelScope.launch {
+            updateTopicProgressUseCase(
+                topicId = mTopicId,
+                updatedMaterialIndex = updatedMaterialIndex,
+            )
+        }
     }
 }

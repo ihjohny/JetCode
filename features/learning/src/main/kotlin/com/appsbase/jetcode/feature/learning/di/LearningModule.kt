@@ -28,6 +28,8 @@ val learningModule = module {
         TopicDetailViewModel(
             getTopicByIdUseCase = get(),
             getMaterialsForTopicUseCase = get(),
+            getTopicProgressUseCase = get(),
+            updateTopicProgressUseCase = get(),
         )
     }
 }

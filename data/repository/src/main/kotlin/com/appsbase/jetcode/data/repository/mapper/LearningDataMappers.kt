@@ -1,16 +1,11 @@
 package com.appsbase.jetcode.data.repository.mapper
 
 import com.appsbase.jetcode.data.database.entity.MaterialEntity
-import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
-import com.appsbase.jetcode.data.database.entity.QuizEntity
 import com.appsbase.jetcode.data.database.entity.SkillEntity
 import com.appsbase.jetcode.data.database.entity.TopicEntity
 import com.appsbase.jetcode.domain.model.Difficulty
 import com.appsbase.jetcode.domain.model.Material
 import com.appsbase.jetcode.domain.model.MaterialType
-import com.appsbase.jetcode.domain.model.PracticeSet
-import com.appsbase.jetcode.domain.model.Quiz
-import com.appsbase.jetcode.domain.model.QuizType
 import com.appsbase.jetcode.domain.model.Skill
 import com.appsbase.jetcode.domain.model.Topic
 
@@ -70,36 +65,4 @@ fun Material.toEntity(): MaterialEntity = MaterialEntity(
     title = title,
     content = content,
     metadata = metadata,
-)
-
-fun PracticeSetEntity.toDomain(): PracticeSet = PracticeSet(
-    id = id,
-    name = name,
-    description = description,
-    quizIds = quizIds,
-)
-
-fun PracticeSet.toEntity(): PracticeSetEntity = PracticeSetEntity(
-    id = id,
-    name = name,
-    description = description,
-    quizIds = quizIds,
-)
-
-fun QuizEntity.toDomain(): Quiz = Quiz(
-    id = id,
-    type = QuizType.valueOf(type),
-    question = question,
-    options = options,
-    correctAnswer = correctAnswer,
-    explanation = explanation,
-)
-
-fun Quiz.toEntity(): QuizEntity = QuizEntity(
-    id = id,
-    type = type.name,
-    question = question,
-    options = options,
-    correctAnswer = correctAnswer,
-    explanation = explanation,
 )
