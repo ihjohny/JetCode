@@ -119,8 +119,10 @@ class TopicDetailViewModel(
                             )
                             Timber.d("Progress restore successfully: $topicId, index: ${progress.currentMaterialIndex}")
                         } else {
-                            Timber.d("No progress found for topic $topicId, starting from index 0")
-                            updateState(currentState().copy(currentMaterialIndex = 0))
+                            val index = 0
+                            Timber.d("No progress found for topic $topicId, starting from index $index")
+                            updateState(currentState().copy(currentMaterialIndex = index))
+                            saveProgress(updatedMaterialIndex = index)
                         }
                     }
 
@@ -142,7 +144,7 @@ class TopicDetailViewModel(
             updateState(state.copy(currentMaterialIndex = nextIndex))
             Timber.d("All materials completed for topic: ${state.topic?.name}")
         }
-        updateProgress(updatedMaterialIndex = nextIndex)
+        saveProgress(updatedMaterialIndex = nextIndex)
     }
 
     private fun previousMaterial() {
@@ -157,7 +159,7 @@ class TopicDetailViewModel(
         loadTopic(topicId)
     }
 
-    private fun updateProgress(updatedMaterialIndex: Int) {
+    private fun saveProgress(updatedMaterialIndex: Int) {
         val mTopicId = currentState().topic?.id
         if (mTopicId.isNullOrEmpty()) return
         if (updatedMaterialIndex < 0 || updatedMaterialIndex > currentState().materials.size) return

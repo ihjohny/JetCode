@@ -79,7 +79,7 @@ class SkillDetailViewModel(
                             val progress = progressResult.data.find { it.topicId == topic.id }
                             SkillDetailState.UserTopic(
                                 topic = topic,
-                                currentMaterialIndex = progress?.currentMaterialIndex ?: 0
+                                currentMaterialIndex = progress?.currentMaterialIndex ?: NoProgress
                             )
                         }
                         Result.Success(userTopics)

@@ -39,7 +39,7 @@ class UpdateTopicProgressUseCase(
                         )
                         progressRepository.upsertProgress(updatedProgress)
                     } else {
-                        // No existing progress, create initial progress at index 0
+                        // No existing progress, create initial progress
                         val userId = DummyUserId
                         val progressId = "${userId}_${topicId}"
                         val newProgress = TopicProgress(

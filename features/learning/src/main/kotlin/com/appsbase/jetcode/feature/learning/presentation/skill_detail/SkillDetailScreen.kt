@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
@@ -316,13 +317,15 @@ private fun TopicCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LinearProgressIndicator(
-                progress = { userTopic.progressValue },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp),
-                color = MaterialTheme.colorScheme.primary,
-            )
+            if (userTopic.progressValue > 0F) {
+                LinearProgressIndicator(
+                    progress = { userTopic.progressValue },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
     }
 }
@@ -365,7 +368,8 @@ private val mockStateWithData = SkillDetailState(
     skill = mockSkill,
     userTopics = SampleData.getSampleTopics().map {
         SkillDetailState.UserTopic(
-            topic = it, currentMaterialIndex = 1
+            topic = it,
+            currentMaterialIndex = 1,
         )
     },
     error = null,
@@ -374,7 +378,7 @@ private val mockStateWithData = SkillDetailState(
 @Preview(showBackground = true)
 @Composable
 private fun SkillDetailContentPreview() {
-    MaterialTheme {
+    JetCodeTheme {
         SkillDetailContent(
             state = mockStateWithData,
             onTopicClick = {},
