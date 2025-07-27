@@ -13,13 +13,13 @@ interface ProgressDao {
     suspend fun upsertProgress(progress: TopicProgressEntity)
 
     @Query("SELECT * FROM topic_progress WHERE topicId = :topicId AND userId = :userId LIMIT 1")
-    fun getProgressByTopicAndUser(
+    fun getTopicProgressById(
         topicId: String,
         userId: String,
     ): Flow<TopicProgressEntity?>
 
     @Query("SELECT * FROM topic_progress WHERE topicId IN (:topicIds) AND userId = :userId")
-    fun getProgressByTopicsIdsAndUser(
+    fun getTopicsProgressByIds(
         topicIds: List<String>,
         userId: String,
     ): Flow<List<TopicProgressEntity>>

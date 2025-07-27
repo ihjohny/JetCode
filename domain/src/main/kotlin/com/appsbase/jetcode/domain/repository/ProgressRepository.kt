@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProgressRepository {
     suspend fun upsertProgress(progress: TopicProgress): Result<Unit>
 
-    fun getProgressByTopicAndUser(topicId: String, userId: String): Flow<Result<TopicProgress?>>
+    fun getTopicProgressById(topicId: String, userId: String): Flow<Result<TopicProgress?>>
 
-    fun getProgressByTopicsIdsAndUser(topicIds: List<String>, userId: String): Flow<Result<List<TopicProgress>>>
+    fun getTopicsProgressByIds(topicIds: List<String>, userId: String): Flow<Result<List<TopicProgress>>>
 }

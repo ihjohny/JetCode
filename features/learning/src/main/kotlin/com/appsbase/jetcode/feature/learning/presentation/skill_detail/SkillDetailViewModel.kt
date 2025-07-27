@@ -18,7 +18,7 @@ import timber.log.Timber
 class SkillDetailViewModel(
     private val getSkillByIdUseCase: GetSkillByIdUseCase,
     private val getTopicsByIdsUseCase: GetTopicsByIdsUseCase,
-    private val getTopicsProgressByIdsUseCase: GetTopicsProgressByIdsUseCase
+    private val getTopicsProgressByIdsUseCase: GetTopicsProgressByIdsUseCase,
 ) : BaseViewModel<SkillDetailState, SkillDetailIntent, SkillDetailEffect>(
     initialState = SkillDetailState()
 ) {
@@ -44,7 +44,7 @@ class SkillDetailViewModel(
                                 isLoading = false,
                             )
                         )
-                        loadTopics(topicIds = skillResult.data.topicIds)
+                        loadTopicsWithProgress(topicIds = skillResult.data.topicIds)
                         Timber.d("Skill loaded successfully: ${skillResult.data.name}")
                     }
 
@@ -67,14 +67,16 @@ class SkillDetailViewModel(
         }
     }
 
-    private fun loadTopics(topicIds: List<String>) {
+    private fun loadTopicsWithProgress(topicIds: List<String>) {
         viewModelScope.launch {
             combine(
                 getTopicsByIdsUseCase(topicIds = topicIds),
                 getTopicsProgressByIdsUseCase(topicIds = topicIds)
             ) { topicsResult, progressResult ->
-                when {
-                    topicsResult is Result.Success && progressResult is Result.Success -> {
+                when (topicsResult) {
+                    is Result.Success -> {
+                        val progressResult =
+                            progressResult as? Result.Success ?: Result.Success(emptyList())
                         val userTopics = topicsResult.data.map { topic ->
                             val progress = progressResult.data.find { it.topicId == topic.id }
                             SkillDetailState.UserTopic(
@@ -85,34 +87,17 @@ class SkillDetailViewModel(
                         Result.Success(userTopics)
                     }
 
-                    topicsResult is Result.Error -> topicsResult
-                    progressResult is Result.Error -> {
-                        // If topics loaded but progress failed, still show topics with default progress
-                        if (topicsResult is Result.Success) {
-                            val userTopics = topicsResult.data.map { topic ->
-                                SkillDetailState.UserTopic(
-                                    topic = topic, currentMaterialIndex = 0
-                                )
-                            }
-                            Result.Success(userTopics)
-                        } else {
-                            progressResult
-                        }
-                    }
-
-                    else -> {
-                        Result.Error(Exception("Unexpected state in topics loading"))
-                    }
+                    is Result.Error -> topicsResult
                 }
             }.collect { combinedResult ->
                 when (combinedResult) {
                     is Result.Success -> {
                         updateState(currentState().copy(userTopics = combinedResult.data))
-                        Timber.d("Topics and progress loaded successfully: ${combinedResult.data.size} topics")
+                        Timber.d("Topics loaded successfully: ${combinedResult.data.size} topics")
                     }
 
                     is Result.Error -> {
-                        Timber.e(combinedResult.exception, "Error loading topics or progress")
+                        Timber.e(combinedResult.exception, "Error loading topics")
                     }
                 }
             }

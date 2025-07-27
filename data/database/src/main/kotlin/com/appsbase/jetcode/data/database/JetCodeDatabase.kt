@@ -13,6 +13,7 @@ import com.appsbase.jetcode.data.database.entity.MaterialEntity
 import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
 import com.appsbase.jetcode.data.database.entity.QuizEntity
 import com.appsbase.jetcode.data.database.entity.SkillEntity
+import com.appsbase.jetcode.data.database.entity.SkillProgressEntity
 import com.appsbase.jetcode.data.database.entity.TopicEntity
 import com.appsbase.jetcode.data.database.entity.TopicProgressEntity
 
@@ -24,6 +25,7 @@ import com.appsbase.jetcode.data.database.entity.TopicProgressEntity
         PracticeSetEntity::class,
         QuizEntity::class,
         TopicProgressEntity::class,
+        SkillProgressEntity::class,
     ],
     version = 1,
     exportSchema = false,

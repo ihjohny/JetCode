@@ -17,7 +17,7 @@ class GetTopicsProgressByIdsUseCase(
     operator fun invoke(
         topicIds: List<String>,
     ): Flow<Result<List<TopicProgress>>> {
-        return progressRepository.getProgressByTopicsIdsAndUser(
+        return progressRepository.getTopicsProgressByIds(
             topicIds = topicIds,
             userId = DummyUserId,
         ).flowOn(dispatcherProvider.io)

@@ -33,11 +33,11 @@ class ProgressRepositoryImpl(
         }
     }
 
-    override fun getProgressByTopicAndUser(
+    override fun getTopicProgressById(
         topicId: String,
         userId: String,
     ): Flow<Result<TopicProgress?>> {
-        return progressDao.getProgressByTopicAndUser(
+        return progressDao.getTopicProgressById(
             topicId = topicId,
             userId = userId,
         ).map { entity ->
@@ -54,11 +54,11 @@ class ProgressRepositoryImpl(
         }
     }
 
-    override fun getProgressByTopicsIdsAndUser(
+    override fun getTopicsProgressByIds(
         topicIds: List<String>,
         userId: String,
     ): Flow<Result<List<TopicProgress>>> {
-        return progressDao.getProgressByTopicsIdsAndUser(
+        return progressDao.getTopicsProgressByIds(
             topicIds = topicIds,
             userId = userId,
         ).map { entities ->
