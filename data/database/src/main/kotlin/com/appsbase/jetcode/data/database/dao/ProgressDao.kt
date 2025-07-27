@@ -17,4 +17,10 @@ interface ProgressDao {
         topicId: String,
         userId: String,
     ): Flow<TopicProgressEntity?>
+
+    @Query("SELECT * FROM topic_progress WHERE topicId IN (:topicIds) AND userId = :userId")
+    fun getProgressByTopicsIdsAndUser(
+        topicIds: List<String>,
+        userId: String,
+    ): Flow<List<TopicProgressEntity>>
 }

@@ -53,4 +53,29 @@ class ProgressRepositoryImpl(
             emit(Result.Error(AppError.DataError.DatabaseError))
         }
     }
+
+    override fun getProgressByTopicsIdsAndUser(
+        topicIds: List<String>,
+        userId: String,
+    ): Flow<Result<List<TopicProgress>>> {
+        return progressDao.getProgressByTopicsIdsAndUser(
+            topicIds = topicIds,
+            userId = userId,
+        ).map { entities ->
+            try {
+                val progressList = entities.map { it.toDomain() }
+                Result.Success(progressList)
+            } catch (e: Exception) {
+                Timber.e(
+                    e, "Error mapping progress list to domain for topics: $topicIds, user: $userId"
+                )
+                Result.Error(AppError.DataError.ParseError(e))
+            }
+        }.catch { e ->
+            Timber.e(
+                e, "Error getting progress list from database for topics: $topicIds, user: $userId"
+            )
+            emit(Result.Error(AppError.DataError.DatabaseError))
+        }
+    }
 }
