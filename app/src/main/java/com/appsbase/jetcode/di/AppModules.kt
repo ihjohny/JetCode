@@ -23,6 +23,7 @@ import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
+import com.appsbase.jetcode.domain.usecase.GetTopicsProgressByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.domain.usecase.UpdateTopicProgressUseCase
@@ -156,6 +157,13 @@ val useCaseModule = module {
 
     factory {
         GetTopicProgressUseCase(
+            progressRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        GetTopicsProgressByIdsUseCase(
             progressRepository = get(),
             dispatcherProvider = get(),
         )

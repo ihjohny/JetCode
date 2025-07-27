@@ -32,13 +32,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.appsbase.jetcode.domain.model.Difficulty
-import com.appsbase.jetcode.domain.model.SampleData
-import com.appsbase.jetcode.domain.model.Skill
-import com.appsbase.jetcode.domain.model.Topic
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
+import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.SampleData
+import com.appsbase.jetcode.domain.model.Skill
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -209,7 +208,7 @@ private fun SkillDetailContent(
                         )
                         InfoChip(
                             label = "Topics",
-                            value = "${state.topics.size}",
+                            value = "${state.userTopics?.size}",
                         )
                         InfoChip(
                             label = "Status", value = if (false) "Completed" else "In Progress"
@@ -227,7 +226,7 @@ private fun SkillDetailContent(
             )
         }
 
-        if (state.topics.isEmpty()) {
+        if (state.userTopics.isNullOrEmpty()) {
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -249,12 +248,12 @@ private fun SkillDetailContent(
             }
         } else {
             items(
-                items = state.topics,
-                key = { it.id },
-            ) { topic ->
+                items = state.userTopics,
+                key = { it.topic.id },
+            ) { userTopic ->
                 TopicCard(
-                    topic = topic,
-                    onClick = { onTopicClick(topic.id) },
+                    userTopic = userTopic,
+                    onClick = { onTopicClick(userTopic.topic.id) },
                 )
             }
         }
@@ -263,7 +262,7 @@ private fun SkillDetailContent(
 
 @Composable
 private fun TopicCard(
-    topic: Topic,
+    userTopic: SkillDetailState.UserTopic,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -282,7 +281,7 @@ private fun TopicCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = topic.name,
+                        text = userTopic.topic.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium,
                     )
@@ -290,7 +289,7 @@ private fun TopicCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = topic.description,
+                        text = userTopic.topic.description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     )
@@ -318,7 +317,7 @@ private fun TopicCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             LinearProgressIndicator(
-                progress = { .33f },
+                progress = { userTopic.progressValue },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp),
@@ -364,7 +363,11 @@ private val mockSkill = Skill(
 private val mockStateWithData = SkillDetailState(
     isLoading = false,
     skill = mockSkill,
-    topics = SampleData.getSampleTopics(),
+    userTopics = SampleData.getSampleTopics().map {
+        SkillDetailState.UserTopic(
+            topic = it, currentMaterialIndex = 1
+        )
+    },
     error = null,
 )
 
@@ -374,18 +377,6 @@ private fun SkillDetailContentPreview() {
     MaterialTheme {
         SkillDetailContent(
             state = mockStateWithData,
-            onTopicClick = {},
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SkillDetailContentEmptyTopicsPreview() {
-    MaterialTheme {
-        SkillDetailContent(
-            state = mockStateWithData.copy(topics = emptyList()),
             onTopicClick = {},
             modifier = Modifier.fillMaxSize(),
         )
