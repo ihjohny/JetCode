@@ -45,12 +45,9 @@ class SyncManager(
                     is Result.Success -> {
                         Timber.d("Background content sync completed successfully")
                     }
+
                     is Result.Error -> {
                         Timber.w("Background content sync failed: ${result.exception.message}")
-                    }
-                    is Result.Loading -> {
-                        // Should not happen in this context
-                        Timber.w("Unexpected loading state during sync")
                     }
                 }
             } catch (e: Exception) {

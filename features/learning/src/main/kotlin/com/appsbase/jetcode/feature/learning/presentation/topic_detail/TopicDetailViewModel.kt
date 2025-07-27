@@ -73,10 +73,6 @@ class TopicDetailViewModel(
                         sendEffect(ShowError(errorMessage))
                         Timber.e("Error loading topic: $errorMessage")
                     }
-
-                    Result.Loading -> {
-
-                    }
                 }
             }
         }
@@ -102,10 +98,6 @@ class TopicDetailViewModel(
                             else -> exception.message ?: "Failed to load materials"
                         }
                         Timber.e("Error loading materials: $errorMessage")
-                    }
-
-                    is Result.Loading -> {
-
                     }
                 }
             }
@@ -135,8 +127,6 @@ class TopicDetailViewModel(
                     is Result.Error -> {
                         Timber.e("Error restoring progress for topic $topicId: ${it.exception.message}")
                     }
-
-                    is Result.Loading -> {}
                 }
             }
         }

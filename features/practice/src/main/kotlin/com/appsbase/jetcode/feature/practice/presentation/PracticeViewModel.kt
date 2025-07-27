@@ -49,7 +49,6 @@ class PracticeViewModel(
                     }
 
                     is Result.Error -> handleError(result.exception)
-                    is Result.Loading -> {}
                 }
             }
         }
@@ -65,7 +64,6 @@ class PracticeViewModel(
                     }
 
                     is Result.Error -> handleError(result.exception)
-                    is Result.Loading -> {}
                 }
             }
         }

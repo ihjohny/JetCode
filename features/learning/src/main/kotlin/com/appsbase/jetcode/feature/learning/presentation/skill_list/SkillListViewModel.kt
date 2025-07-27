@@ -67,8 +67,6 @@ class SkillListViewModel(
                         sendEffect(ShowError(errorMessage))
                         Timber.Forest.e(result.exception, "Error loading skills")
                     }
-
-                    Result.Loading -> {}
                 }
             }
         }
@@ -89,6 +87,7 @@ class SkillListViewModel(
                     updateState(currentState().copy(isLoading = false))
                     Timber.Forest.d("Content synced successfully")
                 }
+
                 is Result.Error -> {
                     updateState(currentState().copy(isLoading = false))
                     val errorMessage = when (val exception = syncResult.exception) {
@@ -97,9 +96,6 @@ class SkillListViewModel(
                     }
                     sendEffect(ShowError("Sync failed: $errorMessage"))
                     Timber.Forest.e(syncResult.exception, "Error syncing content")
-                }
-                is Result.Loading -> {
-                    Timber.Forest.d("Syncing content...")
                 }
             }
         }

@@ -37,10 +37,6 @@ class SkillDetailViewModel(
         viewModelScope.launch {
             getSkillByIdUseCase(skillId).collect { skillResult ->
                 when (skillResult) {
-                    is Result.Loading -> {
-                        updateState(currentState().copy(isLoading = true))
-                    }
-
                     is Result.Success -> {
                         updateState(
                             currentState().copy(
@@ -88,14 +84,14 @@ class SkillDetailViewModel(
                         }
                         Result.Success(userTopics)
                     }
+
                     topicsResult is Result.Error -> topicsResult
                     progressResult is Result.Error -> {
                         // If topics loaded but progress failed, still show topics with default progress
                         if (topicsResult is Result.Success) {
                             val userTopics = topicsResult.data.map { topic ->
                                 SkillDetailState.UserTopic(
-                                    topic = topic,
-                                    currentMaterialIndex = 0
+                                    topic = topic, currentMaterialIndex = 0
                                 )
                             }
                             Result.Success(userTopics)
@@ -103,7 +99,10 @@ class SkillDetailViewModel(
                             progressResult
                         }
                     }
-                    else -> Result.Loading
+
+                    else -> {
+                        Result.Error(Exception("Unexpected state in topics loading"))
+                    }
                 }
             }.collect { combinedResult ->
                 when (combinedResult) {
@@ -114,11 +113,6 @@ class SkillDetailViewModel(
 
                     is Result.Error -> {
                         Timber.e(combinedResult.exception, "Error loading topics or progress")
-                        // Don't show error for topics if skill loaded successfully
-                    }
-
-                    is Result.Loading -> {
-                        // Keep current state
                     }
                 }
             }

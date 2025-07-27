@@ -46,8 +46,6 @@ class MainViewModel(
                     )
                     Timber.e(result.exception, "Error checking onboarding status")
                 }
-
-                is Result.Loading -> {}
             }
         }
     }
@@ -62,8 +60,6 @@ class MainViewModel(
                 is Result.Error -> {
                     Timber.e(result.exception, "Error completing onboarding")
                 }
-
-                is Result.Loading -> {}
             }
         }
     }

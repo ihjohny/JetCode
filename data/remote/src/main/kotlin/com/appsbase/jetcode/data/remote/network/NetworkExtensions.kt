@@ -26,8 +26,7 @@ suspend inline fun <reified T> HttpResponse.safeCall(): Result<T> {
                 HttpStatusCode.Forbidden -> AppError.BusinessError.Forbidden
                 HttpStatusCode.NotFound -> AppError.DataError.NotFound
                 else -> AppError.NetworkError.HttpError(
-                    code = status.value,
-                    message = status.description
+                    code = status.value, message = status.description
                 )
             }
             Result.Error(error)
@@ -44,7 +43,6 @@ suspend inline fun <reified T> HttpResponse.safeCall(): Result<T> {
 inline fun <reified T> safeNetworkCall(
     crossinline call: suspend () -> HttpResponse
 ): Flow<Result<T>> = flow {
-    emit(Result.Loading)
     try {
         val response = call()
         emit(response.safeCall<T>())

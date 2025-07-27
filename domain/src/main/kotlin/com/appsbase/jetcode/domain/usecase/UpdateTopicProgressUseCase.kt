@@ -54,8 +54,6 @@ class UpdateTopicProgressUseCase(
                 }
 
                 is Result.Error -> currentProgressResult
-
-                is Result.Loading -> currentProgressResult
             }
         }
     }
