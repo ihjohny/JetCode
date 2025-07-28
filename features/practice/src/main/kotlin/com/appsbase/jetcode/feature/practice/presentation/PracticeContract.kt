@@ -47,10 +47,14 @@ data class PracticeState(
     data class QuizStatistics(
         val totalQuizzes: Int,
         val correctAnswers: Int,
-        val scorePercentage: Int,
         val averageTimeSeconds: Float = 0F,
     ) {
         val wrongAnswers: Int get() = totalQuizzes - correctAnswers
+
+        val scorePercentage: Int
+            get() = if (totalQuizzes > 0) {
+                (correctAnswers * 100) / totalQuizzes
+            } else 0
 
         val formattedAverageTime: String
             get() = if (averageTimeSeconds % 1 == 0f) {
@@ -72,9 +76,6 @@ data class PracticeState(
     val statistics: QuizStatistics
         get() {
             val correctCount = quizResults.count { it.isCorrect }
-            val scorePercentage = if (quizResults.isNotEmpty()) {
-                (correctCount * 100) / quizResults.size
-            } else 0
 
             val averageTimeSeconds = if (quizResults.isNotEmpty()) {
                 ((totalTimeMillis / quizResults.size) / 1000).toFloat()
@@ -83,7 +84,6 @@ data class PracticeState(
             return QuizStatistics(
                 totalQuizzes = quizResults.size,
                 correctAnswers = correctCount,
-                scorePercentage = scorePercentage,
                 averageTimeSeconds = averageTimeSeconds,
             )
         }
