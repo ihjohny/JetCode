@@ -17,7 +17,7 @@ class UpdateProgressUseCase(
     private val learningRepository: LearningRepository,
     private val progressRepository: ProgressRepository,
     private val getTopicProgressUseCase: GetTopicProgressUseCase,
-    private val dispatcherProvider: DispatcherProvider
+    private val dispatcherProvider: DispatcherProvider,
 ) {
     suspend operator fun invoke(
         topicId: String,
@@ -46,7 +46,10 @@ class UpdateProgressUseCase(
                     )
 
                     progressRepository.upsertTopicProgress(progress)
-                    incrementSkillProgressUsingTopic(topicId = topicId)
+                    incrementSkillProgressUsingTopic(
+                        topicId = topicId,
+                        isCompleteAnyMaterial = updatedMaterialIndex > 0,
+                    )
                 }
 
                 is Result.Error -> currentProgressResult
@@ -56,6 +59,7 @@ class UpdateProgressUseCase(
 
     private suspend fun incrementSkillProgressUsingTopic(
         topicId: String,
+        isCompleteAnyMaterial: Boolean,
     ): Result<Unit> {
         val skillsResult = learningRepository.getSkillsByTopicId(topicId).first()
 
@@ -92,15 +96,23 @@ class UpdateProgressUseCase(
                                 id = "${DummyUserId}_${skill.id}",
                                 userId = DummyUserId,
                                 skillId = skill.id,
-                                completedMaterial = 1,
+                                completedMaterial = 0, // 0 means enrolled to the skill
                                 totalMaterial = totalMaterial,
                                 updatedAt = System.currentTimeMillis()
                             )
                         } else {
-                            currentSkillProgress.copy(
-                                completedMaterial = currentSkillProgress.completedMaterial + 1,
-                                updatedAt = System.currentTimeMillis()
-                            )
+                            if (isCompleteAnyMaterial) {
+                                currentSkillProgress.copy(
+                                    completedMaterial = currentSkillProgress.completedMaterial + 1,
+                                    updatedAt = System.currentTimeMillis(),
+                                )
+                            } else {
+                                null
+                            }
+                        }
+
+                        if (updatedSkillProgress == null) {
+                            return Result.Error(AppError.BusinessError.Custom("Skill progress cannot be updated to zero completed materials."))
                         }
 
                         return progressRepository.upsertSkillProgress(updatedSkillProgress)

@@ -122,7 +122,7 @@ class TopicDetailViewModel(
                             val index = 0
                             Timber.d("No progress found for topic $topicId, starting from index $index")
                             updateState(currentState().copy(currentMaterialIndex = index))
-                            saveProgress(updatedMaterialIndex = index)
+                            saveProgress(updatedMaterialIndex = index) // 0 means enrolled to the topic
                         }
                     }
 

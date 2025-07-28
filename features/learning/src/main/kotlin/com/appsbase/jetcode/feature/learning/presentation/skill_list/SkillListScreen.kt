@@ -228,27 +228,29 @@ private fun SkillCard(
                 DifficultyChip(difficulty = userSkill.skill.difficulty)
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                LinearProgressIndicator(
-                    progress = { userSkill.progressValue },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(6.dp),
-                    color = JetCodeTheme.extendedColors.progressInProgress,
-                    trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                )
+            if (userSkill.progressValue > 0) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    LinearProgressIndicator(
+                        progress = { userSkill.progressValue },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(6.dp),
+                        color = JetCodeTheme.extendedColors.progressInProgress,
+                        trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    text = "${userSkill.progressPercentageValue}%",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                    Text(
+                        text = "${userSkill.progressPercentageValue}%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                }
             }
         }
     }

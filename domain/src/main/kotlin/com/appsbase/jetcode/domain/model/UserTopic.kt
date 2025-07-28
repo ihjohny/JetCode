@@ -5,9 +5,9 @@ data class UserTopic(
     val currentMaterialIndex: Int,
 ) {
     val progressValue: Float
-        get() = if (topic.materialIds.isNotEmpty()) {
-            (currentMaterialIndex + 1f) / topic.materialIds.size
-        } else {
-            0f
+        get() = when {
+            topic.materialIds.isEmpty() -> NoProgress.toFloat()
+            currentMaterialIndex <= NoProgress -> NoProgress.toFloat()
+            else -> currentMaterialIndex.coerceAtLeast(0).toFloat() / topic.materialIds.size
         }
 }

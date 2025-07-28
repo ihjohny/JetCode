@@ -20,7 +20,7 @@ data class TopicDetailState(
     val progressValue get() = if (materials.isNotEmpty()) (currentMaterialIndex + 1f) / materials.size else 0f
     val progressValueLabel: String
         get() {
-            return if (currentMaterialIndex == materials.size) {
+            return if (currentMaterialIndex >= materials.size) {
                 "Completed"
             } else {
                 "${(currentMaterialIndex + 1).coerceAtMost(materials.size)} of ${materials.size}"

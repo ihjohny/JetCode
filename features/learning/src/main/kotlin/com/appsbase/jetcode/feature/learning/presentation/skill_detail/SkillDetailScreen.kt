@@ -37,6 +37,7 @@ import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
 import com.appsbase.jetcode.domain.model.Difficulty
+import com.appsbase.jetcode.domain.model.NoProgress
 import com.appsbase.jetcode.domain.model.SampleData
 import com.appsbase.jetcode.domain.model.Skill
 import com.appsbase.jetcode.domain.model.UserSkill
@@ -320,7 +321,7 @@ private fun TopicCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (userTopic.progressValue > 0F) {
+            if (userTopic.progressValue > NoProgress) {
                 LinearProgressIndicator(
                     progress = { userTopic.progressValue },
                     modifier = Modifier
