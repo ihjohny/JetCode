@@ -7,10 +7,12 @@ import com.appsbase.jetcode.data.preferences.di.preferencesModule
 import com.appsbase.jetcode.data.remote.di.remoteModule
 import com.appsbase.jetcode.data.repository.repository.LearningRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PracticeRepositoryImpl
+import com.appsbase.jetcode.data.repository.repository.PracticeResultRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.PreferencesRepositoryImpl
 import com.appsbase.jetcode.data.repository.repository.ProgressRepositoryImpl
 import com.appsbase.jetcode.domain.repository.LearningRepository
 import com.appsbase.jetcode.domain.repository.PracticeRepository
+import com.appsbase.jetcode.domain.repository.PracticeResultRepository
 import com.appsbase.jetcode.domain.repository.PreferencesRepository
 import com.appsbase.jetcode.domain.repository.ProgressRepository
 import com.appsbase.jetcode.domain.usecase.CompleteOnboardingUseCase
@@ -73,6 +75,12 @@ val repositoryModule = module {
     single<ProgressRepository> {
         ProgressRepositoryImpl(
             progressDao = get(),
+        )
+    }
+
+    single<PracticeResultRepository> {
+        PracticeResultRepositoryImpl(
+            practiceResultDao = get(),
         )
     }
 }

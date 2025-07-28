@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.appsbase.jetcode.data.database.dao.LearningDao
 import com.appsbase.jetcode.data.database.dao.PracticeDao
+import com.appsbase.jetcode.data.database.dao.PracticeResultDao
 import com.appsbase.jetcode.data.database.dao.ProgressDao
 import com.appsbase.jetcode.data.database.entity.Converters
 import com.appsbase.jetcode.data.database.entity.MaterialEntity
+import com.appsbase.jetcode.data.database.entity.PracticeResultEntity
 import com.appsbase.jetcode.data.database.entity.PracticeSetEntity
 import com.appsbase.jetcode.data.database.entity.QuizEntity
 import com.appsbase.jetcode.data.database.entity.SkillEntity
@@ -26,6 +28,7 @@ import com.appsbase.jetcode.data.database.entity.TopicProgressEntity
         QuizEntity::class,
         TopicProgressEntity::class,
         SkillProgressEntity::class,
+        PracticeResultEntity::class,
     ],
     version = 1,
     exportSchema = false,
@@ -35,6 +38,7 @@ abstract class JetCodeDatabase : RoomDatabase() {
 
     abstract fun learningDao(): LearningDao
     abstract fun practiceDao(): PracticeDao
+    abstract fun practiceResultDao(): PracticeResultDao
     abstract fun progressDao(): ProgressDao
 
     companion object {

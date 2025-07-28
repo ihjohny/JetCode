@@ -16,5 +16,7 @@ val databaseModule = module {
 
     single { get<JetCodeDatabase>().practiceDao() }
 
+    single { get<JetCodeDatabase>().practiceResultDao() }
+
     single { get<JetCodeDatabase>().progressDao() }
 }

@@ -3,6 +3,7 @@ package com.appsbase.jetcode.feature.practice.presentation
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
+import com.appsbase.jetcode.domain.model.PracticeSessionStatistics
 import com.appsbase.jetcode.domain.model.PracticeSet
 import com.appsbase.jetcode.domain.model.Quiz
 import com.appsbase.jetcode.domain.model.QuizType
@@ -44,26 +45,6 @@ data class PracticeState(
         val formattedTime get() = "${(timeTakenMillis / 1000f).toInt()}s"
     }
 
-    data class QuizStatistics(
-        val totalQuizzes: Int,
-        val correctAnswers: Int,
-        val averageTimeSeconds: Float = 0F,
-    ) {
-        val wrongAnswers: Int get() = totalQuizzes - correctAnswers
-
-        val scorePercentage: Int
-            get() = if (totalQuizzes > 0) {
-                (correctAnswers * 100) / totalQuizzes
-            } else 0
-
-        val formattedAverageTime: String
-            get() = if (averageTimeSeconds % 1 == 0f) {
-                "${averageTimeSeconds.toInt()}s"
-            } else {
-                "%.1f".format(averageTimeSeconds) + "s"
-            }
-    }
-
     val currentQuiz: Quiz? get() = quizzes.getOrNull(currentQuizIndex)
     val progressLabel get() = "${(currentQuizIndex + 1).coerceAtMost(quizzes.size)} of ${quizzes.size}"
     val progressValue get() = if (quizzes.isNotEmpty()) (currentQuizIndex + 1f) / quizzes.size else 0f
@@ -73,7 +54,7 @@ data class PracticeState(
             quizResults.sumOf { it.timeTakenMillis }
         } else 0
 
-    val statistics: QuizStatistics
+    val statistics: PracticeSessionStatistics
         get() {
             val correctCount = quizResults.count { it.isCorrect }
 
@@ -81,7 +62,7 @@ data class PracticeState(
                 ((totalTimeMillis / quizResults.size) / 1000).toFloat()
             } else 0f
 
-            return QuizStatistics(
+            return PracticeSessionStatistics(
                 totalQuizzes = quizResults.size,
                 correctAnswers = correctCount,
                 averageTimeSeconds = averageTimeSeconds,
