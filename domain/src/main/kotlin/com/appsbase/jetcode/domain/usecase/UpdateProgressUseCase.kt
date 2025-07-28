@@ -45,7 +45,7 @@ class UpdateProgressUseCase(
                         updatedAt = System.currentTimeMillis(),
                     )
 
-                    progressRepository.upsertProgress(progress)
+                    progressRepository.upsertTopicProgress(progress)
                     incrementSkillProgressUsingTopic(topicId = topicId)
                 }
 

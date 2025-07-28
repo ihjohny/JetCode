@@ -6,7 +6,7 @@ import com.appsbase.jetcode.domain.model.TopicProgress
 import kotlinx.coroutines.flow.Flow
 
 interface ProgressRepository {
-    suspend fun upsertProgress(progress: TopicProgress): Result<Unit>
+    suspend fun upsertTopicProgress(progress: TopicProgress): Result<Unit>
 
     fun getTopicProgressById(
         topicId: String,

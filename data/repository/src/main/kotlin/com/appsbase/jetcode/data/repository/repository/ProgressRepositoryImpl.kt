@@ -21,9 +21,9 @@ class ProgressRepositoryImpl(
     private val progressDao: ProgressDao,
 ) : ProgressRepository {
 
-    override suspend fun upsertProgress(progress: TopicProgress): Result<Unit> {
+    override suspend fun upsertTopicProgress(progress: TopicProgress): Result<Unit> {
         return try {
-            progressDao.upsertProgress(progress.toEntity())
+            progressDao.upsertTopicProgress(progress.toEntity())
             Result.Success(Unit)
         } catch (e: Exception) {
             Timber.e(

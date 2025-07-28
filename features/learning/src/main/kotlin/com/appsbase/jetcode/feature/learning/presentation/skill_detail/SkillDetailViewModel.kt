@@ -5,13 +5,11 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
+import com.appsbase.jetcode.domain.model.NoProgress
 import com.appsbase.jetcode.domain.model.UserSkill
-import com.appsbase.jetcode.domain.model.UserTopic
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
-import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
-import com.appsbase.jetcode.domain.usecase.GetTopicsProgressByIdsUseCase
-import kotlinx.coroutines.flow.combine
+import com.appsbase.jetcode.domain.usecase.GetUserTopicsByIdsUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -21,8 +19,7 @@ import timber.log.Timber
 class SkillDetailViewModel(
     private val getSkillByIdUseCase: GetSkillByIdUseCase,
     private val getSkillProgressUseCase: GetSkillProgressUseCase,
-    private val getTopicsByIdsUseCase: GetTopicsByIdsUseCase,
-    private val getTopicsProgressByIdsUseCase: GetTopicsProgressByIdsUseCase,
+    private val getUserTopicsByIdsUseCase: GetUserTopicsByIdsUseCase,
 ) : BaseViewModel<SkillDetailState, SkillDetailIntent, SkillDetailEffect>(
     initialState = SkillDetailState()
 ) {
@@ -39,27 +36,20 @@ class SkillDetailViewModel(
         updateState(currentState().copy(isLoading = true, error = null))
 
         viewModelScope.launch {
-            combine(
-                getSkillByIdUseCase(skillId),
-                getSkillProgressUseCase(skillId)
-            ) { skillResult, progressResult ->
+            getSkillByIdUseCase(skillId).collect { skillResult ->
                 when (skillResult) {
                     is Result.Success -> {
-                        val progress = when (progressResult) {
-                            is Result.Success -> progressResult.data
-                            is Result.Error -> null
-                        }
-
                         updateState(
                             currentState().copy(
                                 userSkill = UserSkill(
                                     skill = skillResult.data,
-                                    completedMaterial = progress?.completedMaterial ?: 0,
-                                    totalMaterial = progress?.totalMaterial ?: skillResult.data.topicIds.size,
+                                    completedMaterial = NoProgress,
+                                    totalMaterial = 0,
                                 ),
                                 isLoading = false,
                             )
                         )
+                        loadSkillProgress(skillId = skillId)
                         loadTopicsWithProgress(topicIds = skillResult.data.topicIds)
                         Timber.d("Skill loaded successfully: ${skillResult.data.name}")
                     }
@@ -79,41 +69,46 @@ class SkillDetailViewModel(
                         Timber.e(skillResult.exception, "Error loading skill")
                     }
                 }
-            }.collect { }
+            }
+        }
+    }
+
+    private fun loadSkillProgress(skillId: String) {
+        viewModelScope.launch {
+            getSkillProgressUseCase(skillId = skillId).collect { result ->
+                when (result) {
+                    is Result.Success -> {
+                        val userSkill = currentState().userSkill ?: return@collect
+                        updateState(
+                            currentState().copy(
+                                userSkill = userSkill.copy(
+                                    completedMaterial = result.data?.completedMaterial ?: NoProgress,
+                                    totalMaterial = result.data?.totalMaterial ?: 0,
+                                )
+                            )
+                        )
+                        Timber.d("Skill progress loaded successfully: ${result.data?.completedMaterial}/${result.data?.totalMaterial}")
+                    }
+
+                    is Result.Error -> {
+                        Timber.e(result.exception, "Error loading skill progress")
+                    }
+                }
+            }
         }
     }
 
     private fun loadTopicsWithProgress(topicIds: List<String>) {
         viewModelScope.launch {
-            combine(
-                getTopicsByIdsUseCase(topicIds = topicIds),
-                getTopicsProgressByIdsUseCase(topicIds = topicIds)
-            ) { topicsResult, progressResult ->
-                when (topicsResult) {
+            getUserTopicsByIdsUseCase(topicIds).collect { result ->
+                when (result) {
                     is Result.Success -> {
-                        val progressResult =
-                            progressResult as? Result.Success ?: Result.Success(emptyList())
-                        val userTopics = topicsResult.data.map { topic ->
-                            val progress = progressResult.data.find { it.topicId == topic.id }
-                            UserTopic(
-                                topic = topic,
-                                currentMaterialIndex = progress?.currentMaterialIndex ?: NoProgress
-                            )
-                        }
-                        Result.Success(userTopics)
-                    }
-
-                    is Result.Error -> topicsResult
-                }
-            }.collect { combinedResult ->
-                when (combinedResult) {
-                    is Result.Success -> {
-                        updateState(currentState().copy(userTopics = combinedResult.data))
-                        Timber.d("Topics loaded successfully: ${combinedResult.data.size} topics")
+                        updateState(currentState().copy(userTopics = result.data))
+                        Timber.d("User Topics loaded successfully: ${result.data.size} topics")
                     }
 
                     is Result.Error -> {
-                        Timber.e(combinedResult.exception, "Error loading topics")
+                        Timber.e(result.exception, "Error loading user topics")
                     }
                 }
             }

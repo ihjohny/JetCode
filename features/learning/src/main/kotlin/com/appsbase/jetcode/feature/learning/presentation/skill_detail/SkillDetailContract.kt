@@ -6,8 +6,6 @@ import com.appsbase.jetcode.core.common.mvi.UiState
 import com.appsbase.jetcode.domain.model.UserSkill
 import com.appsbase.jetcode.domain.model.UserTopic
 
-const val NoProgress = -1
-
 /**
  * MVI contracts for Skill Detail screen
  */

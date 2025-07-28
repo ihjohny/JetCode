@@ -19,7 +19,7 @@ import timber.log.Timber
  */
 class TopicDetailViewModel(
     private val getTopicByIdUseCase: GetTopicByIdUseCase,
-    private val getMaterialsForTopicUseCase: GetMaterialsByIdsUseCase,
+    private val getMaterialsByIdsUseCase: GetMaterialsByIdsUseCase,
     private val getTopicProgressUseCase: GetTopicProgressUseCase,
     private val updateProgressUseCase: UpdateProgressUseCase,
 ) : BaseViewModel<TopicDetailState, TopicDetailIntent, TopicDetailEffect>(
@@ -80,7 +80,7 @@ class TopicDetailViewModel(
 
     private fun loadMaterials(materialIds: List<String>) {
         viewModelScope.launch {
-            getMaterialsForTopicUseCase(materialIds).collect { materialsResult ->
+            getMaterialsByIdsUseCase(materialIds).collect { materialsResult ->
                 when (materialsResult) {
                     is Result.Success -> {
                         updateState(

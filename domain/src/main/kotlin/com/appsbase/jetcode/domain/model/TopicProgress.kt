@@ -2,6 +2,8 @@ package com.appsbase.jetcode.domain.model
 
 import kotlinx.serialization.Serializable
 
+const val NoProgress = -1
+
 @Serializable
 data class TopicProgress(
     val id: String,
