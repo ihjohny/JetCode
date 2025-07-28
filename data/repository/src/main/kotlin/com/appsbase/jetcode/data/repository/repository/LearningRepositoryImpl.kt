@@ -28,7 +28,7 @@ class LearningRepositoryImpl(
     private val apiService: LearningApiService,
 ) : LearningRepository {
 
-    override fun getSkills(): Flow<Result<List<Skill>>> {
+    override fun getAllSkills(): Flow<Result<List<Skill>>> {
         return learningDao.getAllSkills().map { entities ->
             try {
                 val skills = entities.map { it.toDomain() }

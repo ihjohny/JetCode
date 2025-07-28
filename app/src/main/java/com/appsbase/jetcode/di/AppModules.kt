@@ -20,10 +20,9 @@ import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
-import com.appsbase.jetcode.domain.usecase.GetSkillsProgressByIdsUseCase
-import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
+import com.appsbase.jetcode.domain.usecase.GetUserAllSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
@@ -89,13 +88,6 @@ val useCaseModule = module {
     factory {
         CompleteOnboardingUseCase(
             preferencesRepository = get(),
-            dispatcherProvider = get(),
-        )
-    }
-
-    factory {
-        GetSkillsUseCase(
-            learningRepository = get(),
             dispatcherProvider = get(),
         )
     }
@@ -172,7 +164,8 @@ val useCaseModule = module {
     }
 
     factory {
-        GetSkillsProgressByIdsUseCase(
+        GetUserAllSkillsUseCase(
+            learningRepository = get(),
             progressRepository = get(),
             dispatcherProvider = get(),
         )

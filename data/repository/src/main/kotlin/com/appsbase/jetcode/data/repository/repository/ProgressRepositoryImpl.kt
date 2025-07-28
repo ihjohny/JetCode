@@ -118,28 +118,20 @@ class ProgressRepositoryImpl(
         }
     }
 
-    override fun getSkillsProgressByIds(
-        skillIds: List<String>,
-        userId: String,
-    ): Flow<Result<List<SkillProgress>>> {
-        return progressDao.getSkillsProgressByIds(
-            skillIds = skillIds,
-            userId = userId,
-        ).map { entities ->
+    override fun getAllSkillsProgress(userId: String): Flow<Result<List<SkillProgress>>> {
+        return progressDao.getAllSkillsProgress(userId = userId).map { entities ->
             try {
                 val progressList = entities.map { it.toDomain() }
                 Result.Success(progressList)
             } catch (e: Exception) {
                 Timber.e(
-                    e,
-                    "Error mapping skill progress list to domain for skills: $skillIds, user: $userId"
+                    e, "Error mapping all skills progress list to domain for user: $userId"
                 )
                 Result.Error(AppError.DataError.ParseError(e))
             }
         }.catch { e ->
             Timber.e(
-                e,
-                "Error getting skill progress list from database for skills: $skillIds, user: $userId"
+                e, "Error getting all skills progress list from database for user: $userId"
             )
             emit(Result.Error(AppError.DataError.DatabaseError))
         }

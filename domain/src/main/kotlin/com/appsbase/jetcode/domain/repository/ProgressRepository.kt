@@ -25,8 +25,5 @@ interface ProgressRepository {
         userId: String,
     ): Flow<Result<SkillProgress?>>
 
-    fun getSkillsProgressByIds(
-        skillIds: List<String>,
-        userId: String,
-    ): Flow<Result<List<SkillProgress>>>
+    fun getAllSkillsProgress(userId: String): Flow<Result<List<SkillProgress>>>
 }

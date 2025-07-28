@@ -3,7 +3,7 @@ package com.appsbase.jetcode.feature.learning.presentation.skill_list
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
 import com.appsbase.jetcode.core.common.mvi.UiState
-import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.UserSkill
 
 /**
  * MVI contracts for Learning Dashboard
@@ -11,9 +11,9 @@ import com.appsbase.jetcode.domain.model.Skill
 
 data class SkillListState(
     val isLoading: Boolean = false,
-    val skills: List<Skill> = emptyList(),
+    val userSkills: List<UserSkill> = emptyList(),
     val searchQuery: String = "",
-    val filteredSkills: List<Skill> = emptyList(),
+    val filteredUserSkills: List<UserSkill> = emptyList(),
     val error: String? = null,
 ) : UiState
 

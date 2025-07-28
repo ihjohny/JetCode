@@ -41,8 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
-import com.appsbase.jetcode.domain.model.Difficulty
-import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.SampleData
+import com.appsbase.jetcode.domain.model.UserSkill
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -97,7 +97,7 @@ fun SkillListScreen(
         )
 
         when {
-            state.error != null && state.skills.isEmpty() -> {
+            state.error != null && state.userSkills.isEmpty() -> {
                 ErrorState(
                     message = state.error ?: "Unknown error",
                     onRetry = { viewModel.handleIntent(SkillListIntent.RetryClicked) },
@@ -152,7 +152,7 @@ private fun LearningContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                if (state.filteredSkills.isEmpty() && state.searchQuery.isNotEmpty()) {
+                if (state.filteredUserSkills.isEmpty() && state.searchQuery.isNotEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -169,11 +169,11 @@ private fun LearningContent(
                     }
                 } else {
                     items(
-                        items = state.filteredSkills, key = { it.id }) { skill ->
+                        items = state.filteredUserSkills, key = { it.skill.id }) { skill ->
                         SkillCard(
-                            skill = skill,
+                            userSkill = skill,
                             onClick = {
-                                onIntent(SkillListIntent.SkillClicked(skill.id))
+                                onIntent(SkillListIntent.SkillClicked(skill.skill.id))
                             },
                         )
                     }
@@ -185,7 +185,9 @@ private fun LearningContent(
 
 @Composable
 private fun SkillCard(
-    skill: Skill, onClick: () -> Unit, modifier: Modifier = Modifier
+    userSkill: UserSkill,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
@@ -208,14 +210,14 @@ private fun SkillCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = skill.name,
+                        text = userSkill.skill.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = skill.description,
+                        text = userSkill.skill.description,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         maxLines = 2,
@@ -223,7 +225,7 @@ private fun SkillCard(
                     )
                 }
 
-                DifficultyChip(difficulty = skill.difficulty)
+                DifficultyChip(difficulty = userSkill.skill.difficulty)
             }
 
             Row(
@@ -232,7 +234,7 @@ private fun SkillCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LinearProgressIndicator(
-                    progress = { .33f },
+                    progress = { userSkill.progressValue },
                     modifier = Modifier
                         .weight(1f)
                         .height(6.dp),
@@ -243,7 +245,7 @@ private fun SkillCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "33%",
+                    text = "${userSkill.progressPercentageValue}%",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
@@ -255,44 +257,17 @@ private fun SkillCard(
 @Preview(showBackground = true)
 @Composable
 private fun SkillListScreenPreview() {
-    val sampleSkills = listOf(
-        Skill(
-            id = "1",
-            name = "Kotlin Fundamentals",
-            description = "Learn the basics of Kotlin programming language including variables, functions, and classes.",
-            difficulty = Difficulty.BEGINNER,
-            iconUrl = "https://example.com/kotlin-icon.png",
-            estimatedDuration = 120,
-        ),
-        Skill(
-            id = "2",
-            name = "Jetpack Compose",
-            description = "Master modern Android UI development with Jetpack Compose declarative toolkit.",
-            difficulty = Difficulty.INTERMEDIATE,
-            iconUrl = "https://example.com/compose-icon.png",
-            estimatedDuration = 240,
-        ),
-        Skill(
-            id = "3",
-            name = "Coroutines & Flow",
-            description = "Advanced asynchronous programming patterns in Kotlin for Android development.",
-            difficulty = Difficulty.ADVANCED,
-            iconUrl = "https://example.com/coroutines-icon.png",
-            estimatedDuration = 360,
-        ),
-        Skill(
-            id = "4",
-            name = "Room Database",
-            description = "Local data persistence using Room database with SQL queries and migrations.",
-            difficulty = Difficulty.INTERMEDIATE,
-            iconUrl = "https://example.com/room-icon.png",
-            estimatedDuration = 180,
-        ),
-    )
+    val sampleUserSkills = SampleData.getSampleSkills().take(5).map {
+        UserSkill(
+            skill = it,
+            completedMaterial = 2,
+            totalMaterial = 5,
+        )
+    }
 
     val sampleState = SkillListState(
-        skills = sampleSkills,
-        filteredSkills = sampleSkills,
+        userSkills = sampleUserSkills,
+        filteredUserSkills = sampleUserSkills,
         searchQuery = "",
         isLoading = false,
         error = null,

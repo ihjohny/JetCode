@@ -34,9 +34,8 @@ interface ProgressDao {
         userId: String,
     ): Flow<SkillProgressEntity?>
 
-    @Query("SELECT * FROM skill_progress WHERE skillId IN (:skillIds) AND userId = :userId")
-    fun getSkillsProgressByIds(
-        skillIds: List<String>,
+    @Query("SELECT * FROM skill_progress WHERE userId = :userId")
+    fun getAllSkillsProgress(
         userId: String,
     ): Flow<List<SkillProgressEntity>>
 }

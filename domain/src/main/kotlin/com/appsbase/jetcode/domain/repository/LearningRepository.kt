@@ -15,7 +15,7 @@ interface LearningRepository {
     /**
      * Get all available skills
      */
-    fun getSkills(): Flow<Result<List<Skill>>>
+    fun getAllSkills(): Flow<Result<List<Skill>>>
 
     /**
      * Get skill by ID

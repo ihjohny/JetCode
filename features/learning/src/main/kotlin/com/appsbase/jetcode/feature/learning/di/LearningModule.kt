@@ -12,7 +12,7 @@ import org.koin.dsl.module
 val learningModule = module {
     viewModel {
         SkillListViewModel(
-            getSkillsUseCase = get(),
+            getUserAllSkillsUseCase = get(),
             syncContentUseCase = get(),
         )
     }

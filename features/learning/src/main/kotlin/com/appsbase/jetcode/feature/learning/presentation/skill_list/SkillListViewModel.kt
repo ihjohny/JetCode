@@ -5,8 +5,8 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
-import com.appsbase.jetcode.domain.model.Skill
-import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
+import com.appsbase.jetcode.domain.model.UserSkill
+import com.appsbase.jetcode.domain.usecase.GetUserAllSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListEffect.ShowError
 import kotlinx.coroutines.delay
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SkillListViewModel(
-    private val getSkillsUseCase: GetSkillsUseCase,
+    private val getUserAllSkillsUseCase: GetUserAllSkillsUseCase,
     private val syncContentUseCase: SyncContentUseCase,
 ) : BaseViewModel<SkillListState, SkillListIntent, SkillListEffect>(
     initialState = SkillListState()
@@ -39,18 +39,18 @@ class SkillListViewModel(
         updateState(currentState().copy(isLoading = true, error = null))
 
         viewModelScope.launch {
-            getSkillsUseCase().collect { result ->
+            getUserAllSkillsUseCase().collect { result ->
                 when (result) {
                     is Result.Success -> {
                         updateState(
                             currentState().copy(
                                 isLoading = false,
-                                skills = result.data,
-                                filteredSkills = result.data,
+                                userSkills = result.data,
+                                filteredUserSkills = result.data,
                                 error = null,
                             )
                         )
-                        Timber.Forest.d("Skills loaded successfully: ${result.data.size} skills")
+                        Timber.Forest.d("UserSkills loaded successfully: ${result.data.size} skills")
                     }
 
                     is Result.Error -> {
@@ -65,7 +65,7 @@ class SkillListViewModel(
                             )
                         )
                         sendEffect(ShowError(errorMessage))
-                        Timber.Forest.e(result.exception, "Error loading skills")
+                        Timber.Forest.e(result.exception, "Error loading user skills")
                     }
                 }
             }
@@ -102,24 +102,24 @@ class SkillListViewModel(
     }
 
     private fun searchSkills(query: String) {
-        val filteredSkills = filterSkills(currentState().skills, query)
+        val filteredSkills = filterSkills(currentState().userSkills, query)
         updateState(
             currentState().copy(
-                searchQuery = query, filteredSkills = filteredSkills
+                searchQuery = query,
+                filteredUserSkills = filteredSkills,
             )
         )
         Timber.Forest.d("Search query: '$query', found ${filteredSkills.size} results")
     }
 
     private fun filterSkills(
-        skills: List<Skill>, query: String
-    ): List<Skill> {
+        skills: List<UserSkill>, query: String
+    ): List<UserSkill> {
         if (query.isBlank()) return skills
 
         return skills.filter { skill ->
-            skill.name.contains(query, ignoreCase = true) || skill.description.contains(
-                query, ignoreCase = true
-            )
+            skill.skill.name.contains(query, ignoreCase = true) ||
+                    skill.skill.description.contains(query, ignoreCase = true)
         }
     }
 
