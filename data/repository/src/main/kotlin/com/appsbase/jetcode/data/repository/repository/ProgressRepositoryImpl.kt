@@ -5,6 +5,7 @@ import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.data.database.dao.ProgressDao
 import com.appsbase.jetcode.data.repository.mapper.toDomain
 import com.appsbase.jetcode.data.repository.mapper.toEntity
+import com.appsbase.jetcode.domain.model.SkillProgress
 import com.appsbase.jetcode.domain.model.TopicProgress
 import com.appsbase.jetcode.domain.repository.ProgressRepository
 import kotlinx.coroutines.flow.Flow
@@ -74,6 +75,71 @@ class ProgressRepositoryImpl(
         }.catch { e ->
             Timber.e(
                 e, "Error getting progress list from database for topics: $topicIds, user: $userId"
+            )
+            emit(Result.Error(AppError.DataError.DatabaseError))
+        }
+    }
+
+    override suspend fun upsertSkillProgress(progress: SkillProgress): Result<Unit> {
+        return try {
+            progressDao.upsertSkillProgress(progress.toEntity())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(
+                e,
+                "Error upserting skill progress for skill: ${progress.skillId}, user: ${progress.userId}"
+            )
+            Result.Error(AppError.DataError.DatabaseError)
+        }
+    }
+
+    override fun getSkillProgressById(
+        skillId: String,
+        userId: String,
+    ): Flow<Result<SkillProgress?>> {
+        return progressDao.getSkillProgressById(
+            skillId = skillId,
+            userId = userId,
+        ).map { entity ->
+            try {
+                val progress = entity?.toDomain()
+                Result.Success(progress)
+            } catch (e: Exception) {
+                Timber.e(
+                    e, "Error mapping skill progress to domain for skill: $skillId, user: $userId"
+                )
+                Result.Error(AppError.DataError.ParseError(e))
+            }
+        }.catch { e ->
+            Timber.e(
+                e, "Error getting skill progress from database for skill: $skillId, user: $userId"
+            )
+            emit(Result.Error(AppError.DataError.DatabaseError))
+        }
+    }
+
+    override fun getSkillsProgressByIds(
+        skillIds: List<String>,
+        userId: String,
+    ): Flow<Result<List<SkillProgress>>> {
+        return progressDao.getSkillsProgressByIds(
+            skillIds = skillIds,
+            userId = userId,
+        ).map { entities ->
+            try {
+                val progressList = entities.map { it.toDomain() }
+                Result.Success(progressList)
+            } catch (e: Exception) {
+                Timber.e(
+                    e,
+                    "Error mapping skill progress list to domain for skills: $skillIds, user: $userId"
+                )
+                Result.Error(AppError.DataError.ParseError(e))
+            }
+        }.catch { e ->
+            Timber.e(
+                e,
+                "Error getting skill progress list from database for skills: $skillIds, user: $userId"
             )
             emit(Result.Error(AppError.DataError.DatabaseError))
         }

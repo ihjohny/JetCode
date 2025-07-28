@@ -23,6 +23,11 @@ interface LearningRepository {
     fun getSkillById(skillId: String): Flow<Result<Skill>>
 
     /**
+     * Get skills by topic ID
+     */
+    fun getSkillsByTopicId(topicId: String): Flow<Result<List<Skill>>>
+
+    /**
      * Get topic by ID
      */
     fun getTopicById(topicId: String): Flow<Result<Topic>>
@@ -46,4 +51,9 @@ interface LearningRepository {
      * Search content
      */
     fun searchLearningContent(query: String): Flow<Result<List<Content>>>
+
+    /**
+     * Get total material count for a skill
+     */
+    suspend fun getTotalMaterialCountForSkill(skillId: String): Result<Int>
 }

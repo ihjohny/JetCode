@@ -19,6 +19,8 @@ import com.appsbase.jetcode.domain.usecase.GetOnboardingStatusUseCase
 import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
+import com.appsbase.jetcode.domain.usecase.GetSkillsProgressByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
@@ -26,7 +28,7 @@ import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsProgressByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
-import com.appsbase.jetcode.domain.usecase.UpdateTopicProgressUseCase
+import com.appsbase.jetcode.domain.usecase.UpdateProgressUseCase
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
 import com.appsbase.jetcode.main.MainViewModel
@@ -170,7 +172,22 @@ val useCaseModule = module {
     }
 
     factory {
-        UpdateTopicProgressUseCase(
+        GetSkillProgressUseCase(
+            progressRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        GetSkillsProgressByIdsUseCase(
+            progressRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        UpdateProgressUseCase(
+            learningRepository = get(),
             progressRepository = get(),
             getTopicProgressUseCase = get(),
             dispatcherProvider = get(),

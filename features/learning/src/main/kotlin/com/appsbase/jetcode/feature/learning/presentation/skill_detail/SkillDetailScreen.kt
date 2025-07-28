@@ -39,6 +39,8 @@ import com.appsbase.jetcode.core.ui.components.LoadingState
 import com.appsbase.jetcode.domain.model.Difficulty
 import com.appsbase.jetcode.domain.model.SampleData
 import com.appsbase.jetcode.domain.model.Skill
+import com.appsbase.jetcode.domain.model.UserSkill
+import com.appsbase.jetcode.domain.model.UserTopic
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -80,7 +82,8 @@ fun SkillDetailScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = state.skill?.name ?: "Skill Detail", fontWeight = FontWeight.Bold
+                    text = state.userSkill?.skill?.name ?: "Skill Detail",
+                    fontWeight = FontWeight.Bold
                 )
             },
             navigationIcon = {
@@ -101,7 +104,7 @@ fun SkillDetailScreen(
                 )
             }
 
-            state.error != null && state.skill == null -> {
+            state.error != null && state.userSkill == null -> {
                 ErrorState(
                     message = state.error ?: "Unknown error",
                     onRetry = {
@@ -111,7 +114,7 @@ fun SkillDetailScreen(
                 )
             }
 
-            state.skill != null -> {
+            state.userSkill != null -> {
                 SkillDetailContent(
                     state = state,
                     onTopicClick = { topicId ->
@@ -130,7 +133,7 @@ private fun SkillDetailContent(
     onTopicClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val skill = state.skill ?: return
+    val userSkill = state.userSkill ?: return
 
     LazyColumn(
         modifier = modifier.padding(16.dp),
@@ -151,7 +154,7 @@ private fun SkillDetailContent(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = skill.name,
+                                text = userSkill.skill.name,
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                             )
@@ -159,13 +162,13 @@ private fun SkillDetailContent(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = skill.description,
+                                text = userSkill.skill.description,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             )
                         }
 
-                        DifficultyChip(difficulty = skill.difficulty)
+                        DifficultyChip(difficulty = userSkill.skill.difficulty)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -181,7 +184,7 @@ private fun SkillDetailContent(
                             fontWeight = FontWeight.Medium,
                         )
                         Text(
-                            text = "33%",
+                            text = "${userSkill.progressPercentageValue}%",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.primary,
                         )
@@ -190,7 +193,7 @@ private fun SkillDetailContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LinearProgressIndicator(
-                        progress = { .33f },
+                        progress = { userSkill.progressValue },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp),
@@ -205,7 +208,7 @@ private fun SkillDetailContent(
                     ) {
                         InfoChip(
                             label = "Duration",
-                            value = "${skill.estimatedDuration} min",
+                            value = "${userSkill.skill.estimatedDuration} min",
                         )
                         InfoChip(
                             label = "Topics",
@@ -263,7 +266,7 @@ private fun SkillDetailContent(
 
 @Composable
 private fun TopicCard(
-    userTopic: SkillDetailState.UserTopic,
+    userTopic: UserTopic,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -365,9 +368,13 @@ private val mockSkill = Skill(
 
 private val mockStateWithData = SkillDetailState(
     isLoading = false,
-    skill = mockSkill,
+    userSkill = UserSkill(
+        skill = mockSkill,
+        completedMaterial = 1,
+        totalMaterial = 4,
+    ),
     userTopics = SampleData.getSampleTopics().map {
-        SkillDetailState.UserTopic(
+        UserTopic(
             topic = it,
             currentMaterialIndex = 1,
         )

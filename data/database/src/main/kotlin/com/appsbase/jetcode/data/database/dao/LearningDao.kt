@@ -17,6 +17,9 @@ interface LearningDao {
     @Query("SELECT * FROM skills WHERE id = :skillId")
     fun getSkillById(skillId: String): Flow<SkillEntity?>
 
+    @Query("SELECT * FROM skills WHERE topicIds LIKE '%' || :topicId || '%'")
+    fun getSkillsByTopicId(topicId: String): Flow<List<SkillEntity>>
+
     @Query("SELECT * FROM topics WHERE id = :topicId")
     fun getTopicById(topicId: String): Flow<TopicEntity?>
 
@@ -70,4 +73,16 @@ interface LearningDao {
     """
     )
     fun searchMaterials(query: String): Flow<List<MaterialEntity>>
+
+    @Query(
+        """
+        SELECT SUM(json_array_length(t.materialIds)) as totalMaterials
+        FROM topics t 
+        JOIN skills s ON t.id IN (
+            SELECT value FROM json_each(s.topicIds)
+        )
+        WHERE s.id = :skillId
+    """
+    )
+    suspend fun getTotalMaterialCountForSkill(skillId: String): Int?
 }

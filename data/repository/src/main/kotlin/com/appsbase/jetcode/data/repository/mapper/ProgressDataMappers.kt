@@ -1,6 +1,8 @@
 package com.appsbase.jetcode.data.repository.mapper
 
+import com.appsbase.jetcode.data.database.entity.SkillProgressEntity
 import com.appsbase.jetcode.data.database.entity.TopicProgressEntity
+import com.appsbase.jetcode.domain.model.SkillProgress
 import com.appsbase.jetcode.domain.model.TopicProgress
 
 /**
@@ -20,5 +22,23 @@ fun TopicProgress.toEntity(): TopicProgressEntity = TopicProgressEntity(
     userId = userId,
     topicId = topicId,
     currentMaterialIndex = currentMaterialIndex,
+    updatedAt = updatedAt,
+)
+
+fun SkillProgressEntity.toDomain(): SkillProgress = SkillProgress(
+    id = id,
+    userId = userId,
+    skillId = skillId,
+    completedMaterial = completedMaterial,
+    totalMaterial = totalMaterial,
+    updatedAt = updatedAt,
+)
+
+fun SkillProgress.toEntity(): SkillProgressEntity = SkillProgressEntity(
+    id = id,
+    userId = userId,
+    skillId = skillId,
+    completedMaterial = completedMaterial,
+    totalMaterial = totalMaterial,
     updatedAt = updatedAt,
 )

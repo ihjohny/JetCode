@@ -5,7 +5,10 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
+import com.appsbase.jetcode.domain.model.UserSkill
+import com.appsbase.jetcode.domain.model.UserTopic
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
+import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicsProgressByIdsUseCase
 import kotlinx.coroutines.flow.combine
@@ -17,6 +20,7 @@ import timber.log.Timber
  */
 class SkillDetailViewModel(
     private val getSkillByIdUseCase: GetSkillByIdUseCase,
+    private val getSkillProgressUseCase: GetSkillProgressUseCase,
     private val getTopicsByIdsUseCase: GetTopicsByIdsUseCase,
     private val getTopicsProgressByIdsUseCase: GetTopicsProgressByIdsUseCase,
 ) : BaseViewModel<SkillDetailState, SkillDetailIntent, SkillDetailEffect>(
@@ -35,12 +39,24 @@ class SkillDetailViewModel(
         updateState(currentState().copy(isLoading = true, error = null))
 
         viewModelScope.launch {
-            getSkillByIdUseCase(skillId).collect { skillResult ->
+            combine(
+                getSkillByIdUseCase(skillId),
+                getSkillProgressUseCase(skillId)
+            ) { skillResult, progressResult ->
                 when (skillResult) {
                     is Result.Success -> {
+                        val progress = when (progressResult) {
+                            is Result.Success -> progressResult.data
+                            is Result.Error -> null
+                        }
+
                         updateState(
                             currentState().copy(
-                                skill = skillResult.data,
+                                userSkill = UserSkill(
+                                    skill = skillResult.data,
+                                    completedMaterial = progress?.completedMaterial ?: 0,
+                                    totalMaterial = progress?.totalMaterial ?: skillResult.data.topicIds.size,
+                                ),
                                 isLoading = false,
                             )
                         )
@@ -63,7 +79,7 @@ class SkillDetailViewModel(
                         Timber.e(skillResult.exception, "Error loading skill")
                     }
                 }
-            }
+            }.collect { }
         }
     }
 
@@ -79,7 +95,7 @@ class SkillDetailViewModel(
                             progressResult as? Result.Success ?: Result.Success(emptyList())
                         val userTopics = topicsResult.data.map { topic ->
                             val progress = progressResult.data.find { it.topicId == topic.id }
-                            SkillDetailState.UserTopic(
+                            UserTopic(
                                 topic = topic,
                                 currentMaterialIndex = progress?.currentMaterialIndex ?: NoProgress
                             )

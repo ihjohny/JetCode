@@ -20,6 +20,7 @@ val learningModule = module {
     viewModel {
         SkillDetailViewModel(
             getSkillByIdUseCase = get(),
+            getSkillProgressUseCase = get(),
             getTopicsByIdsUseCase = get(),
             getTopicsProgressByIdsUseCase = get(),
         )
@@ -30,7 +31,7 @@ val learningModule = module {
             getTopicByIdUseCase = get(),
             getMaterialsForTopicUseCase = get(),
             getTopicProgressUseCase = get(),
-            updateTopicProgressUseCase = get(),
+            updateProgressUseCase = get(),
         )
     }
 }

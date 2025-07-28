@@ -8,7 +8,7 @@ import com.appsbase.jetcode.core.common.mvi.BaseViewModel
 import com.appsbase.jetcode.domain.usecase.GetMaterialsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
-import com.appsbase.jetcode.domain.usecase.UpdateTopicProgressUseCase
+import com.appsbase.jetcode.domain.usecase.UpdateProgressUseCase
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailEffect.ShowError
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class TopicDetailViewModel(
     private val getTopicByIdUseCase: GetTopicByIdUseCase,
     private val getMaterialsForTopicUseCase: GetMaterialsByIdsUseCase,
     private val getTopicProgressUseCase: GetTopicProgressUseCase,
-    private val updateTopicProgressUseCase: UpdateTopicProgressUseCase,
+    private val updateProgressUseCase: UpdateProgressUseCase,
 ) : BaseViewModel<TopicDetailState, TopicDetailIntent, TopicDetailEffect>(
     initialState = TopicDetailState()
 ) {
@@ -165,7 +165,7 @@ class TopicDetailViewModel(
         if (updatedMaterialIndex < 0 || updatedMaterialIndex > currentState().materials.size) return
 
         viewModelScope.launch {
-            updateTopicProgressUseCase(
+            updateProgressUseCase(
                 topicId = mTopicId,
                 updatedMaterialIndex = updatedMaterialIndex,
             )

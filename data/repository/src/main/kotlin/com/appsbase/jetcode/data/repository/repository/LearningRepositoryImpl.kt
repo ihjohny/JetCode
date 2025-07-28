@@ -3,10 +3,10 @@ package com.appsbase.jetcode.data.repository.repository
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.util.fetchContent
+import com.appsbase.jetcode.data.database.dao.LearningDao
+import com.appsbase.jetcode.data.remote.api_service.LearningApiService
 import com.appsbase.jetcode.data.repository.mapper.toDomain
 import com.appsbase.jetcode.data.repository.mapper.toEntity
-import com.appsbase.jetcode.data.remote.api_service.LearningApiService
-import com.appsbase.jetcode.data.database.dao.LearningDao
 import com.appsbase.jetcode.domain.model.Content
 import com.appsbase.jetcode.domain.model.Material
 import com.appsbase.jetcode.domain.model.Skill
@@ -57,6 +57,21 @@ class LearningRepositoryImpl(
             }
         }.catch { e ->
             Timber.e(e, "Error getting skill by id from database")
+            emit(Result.Error(AppError.DataError.DatabaseError))
+        }
+    }
+
+    override fun getSkillsByTopicId(topicId: String): Flow<Result<List<Skill>>> {
+        return learningDao.getSkillsByTopicId(topicId).map { entities ->
+            try {
+                val skills = entities.map { it.toDomain() }
+                Result.Success(skills)
+            } catch (e: Exception) {
+                Timber.e(e, "Error mapping skills to domain for topicId: $topicId")
+                Result.Error(AppError.DataError.ParseError(e))
+            }
+        }.catch { e ->
+            Timber.e(e, "Error getting skills by topicId from database: $topicId")
             emit(Result.Error(AppError.DataError.DatabaseError))
         }
     }
@@ -195,4 +210,13 @@ class LearningRepositoryImpl(
         }
     }
 
+    override suspend fun getTotalMaterialCountForSkill(skillId: String): Result<Int> {
+        return try {
+            val totalCount = learningDao.getTotalMaterialCountForSkill(skillId) ?: 0
+            Result.Success(totalCount)
+        } catch (e: Exception) {
+            Timber.e(e, "Error getting total material count for skill: $skillId")
+            Result.Error(AppError.DataError.DatabaseError)
+        }
+    }
 }
