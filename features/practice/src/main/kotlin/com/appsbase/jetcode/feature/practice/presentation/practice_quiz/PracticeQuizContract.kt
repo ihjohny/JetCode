@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.feature.practice.presentation
+package com.appsbase.jetcode.feature.practice.presentation.practice_quiz
 
 import com.appsbase.jetcode.core.common.mvi.UiEffect
 import com.appsbase.jetcode.core.common.mvi.UiIntent
@@ -12,7 +12,7 @@ import com.appsbase.jetcode.domain.model.QuizType
  * MVI contracts for Practice screen
  */
 
-data class PracticeState(
+data class PracticeQuizState(
     val isLoading: Boolean = false,
     val practiceSet: PracticeSet? = null,
     val quizzes: List<Quiz> = emptyList(),
@@ -70,17 +70,17 @@ data class PracticeState(
         }
 }
 
-sealed class PracticeIntent : UiIntent {
-    data class LoadPracticeSet(val practiceSetId: String) : PracticeIntent()
-    data class AnswerChanged(val answer: String) : PracticeIntent()
-    data object NextQuiz : PracticeIntent()
-    data object PreviousQuiz : PracticeIntent()
-    data object ViewAnswers : PracticeIntent()
-    data object RestartPractice : PracticeIntent()
-    data class RetryClicked(val practiceSetId: String) : PracticeIntent()
+sealed class PracticeQuizIntent : UiIntent {
+    data class LoadPracticeSet(val practiceSetId: String) : PracticeQuizIntent()
+    data class AnswerChanged(val answer: String) : PracticeQuizIntent()
+    data object NextQuiz : PracticeQuizIntent()
+    data object PreviousQuiz : PracticeQuizIntent()
+    data object ViewAnswers : PracticeQuizIntent()
+    data object RestartPractice : PracticeQuizIntent()
+    data class RetryClicked(val practiceSetId: String) : PracticeQuizIntent()
 }
 
-sealed class PracticeEffect : UiEffect {
-    data object NavigateBack : PracticeEffect()
-    data class ShowError(val message: String) : PracticeEffect()
+sealed class PracticeQuizEffect : UiEffect {
+    data object NavigateBack : PracticeQuizEffect()
+    data class ShowError(val message: String) : PracticeQuizEffect()
 }

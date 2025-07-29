@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.feature.practice.presentation
+package com.appsbase.jetcode.feature.practice.presentation.practice_quiz
 
 import androidx.lifecycle.viewModelScope
 import com.appsbase.jetcode.core.common.Result
@@ -16,23 +16,23 @@ import timber.log.Timber
 /**
  * ViewModel for Practice screen following MVI pattern
  */
-class PracticeViewModel(
+class PracticeQuizViewModel(
     private val getPracticeSetByIdUseCase: GetPracticeSetByIdUseCase,
     private val getQuizzesByIdsUseCase: GetQuizzesByIdsUseCase,
     private val savePracticeResultUseCase: SavePracticeResultUseCase,
-) : BaseViewModel<PracticeState, PracticeIntent, PracticeEffect>(
-    initialState = PracticeState()
+) : BaseViewModel<PracticeQuizState, PracticeQuizIntent, PracticeQuizEffect>(
+    initialState = PracticeQuizState()
 ) {
 
-    override fun handleIntent(intent: PracticeIntent) {
+    override fun handleIntent(intent: PracticeQuizIntent) {
         when (intent) {
-            is PracticeIntent.LoadPracticeSet -> loadPracticeSet(intent.practiceSetId)
-            is PracticeIntent.AnswerChanged -> updateAnswer(intent.answer)
-            is PracticeIntent.NextQuiz -> nextQuiz()
-            is PracticeIntent.PreviousQuiz -> previousQuiz()
-            is PracticeIntent.ViewAnswers -> viewAnswers()
-            is PracticeIntent.RestartPractice -> restartPractice()
-            is PracticeIntent.RetryClicked -> loadPracticeSet(intent.practiceSetId)
+            is PracticeQuizIntent.LoadPracticeSet -> loadPracticeSet(intent.practiceSetId)
+            is PracticeQuizIntent.AnswerChanged -> updateAnswer(intent.answer)
+            is PracticeQuizIntent.NextQuiz -> nextQuiz()
+            is PracticeQuizIntent.PreviousQuiz -> previousQuiz()
+            is PracticeQuizIntent.ViewAnswers -> viewAnswers()
+            is PracticeQuizIntent.RestartPractice -> restartPractice()
+            is PracticeQuizIntent.RetryClicked -> loadPracticeSet(intent.practiceSetId)
         }
     }
 
@@ -78,7 +78,7 @@ class PracticeViewModel(
             else -> exception.message ?: "An unexpected error occurred"
         }
         updateState(currentState().copy(isLoading = false, error = errorMessage))
-        sendEffect(PracticeEffect.ShowError(errorMessage))
+        sendEffect(PracticeQuizEffect.ShowError(errorMessage))
         Timber.e("Error: $errorMessage")
     }
 
@@ -98,11 +98,11 @@ class PracticeViewModel(
         }
     }
 
-    private fun submitAnswer(currentQuiz: Quiz, state: PracticeState) {
+    private fun submitAnswer(currentQuiz: Quiz, state: PracticeQuizState) {
         val userAnswer = state.userAnswer.trim()
         val timeTaken = System.currentTimeMillis() - state.currentQuizStartTime
 
-        val quizResult = PracticeState.QuizResult(
+        val quizResult = PracticeQuizState.QuizResult(
             quiz = currentQuiz,
             userAnswer = userAnswer.ifEmpty { "No answer" },
             timeTakenMillis = timeTaken,
@@ -158,7 +158,7 @@ class PracticeViewModel(
         }
     }
 
-    private fun navigateToNextQuiz(state: PracticeState) {
+    private fun navigateToNextQuiz(state: PracticeQuizState) {
         val nextIndex = state.currentQuizIndex + 1
         if (nextIndex < state.quizzes.size) {
             updateState(

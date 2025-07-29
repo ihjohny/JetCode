@@ -1,4 +1,4 @@
-package com.appsbase.jetcode.feature.practice.presentation
+package com.appsbase.jetcode.feature.practice.presentation.practice_quiz
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,25 +64,25 @@ import org.koin.androidx.compose.koinViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PracticeScreen(
+fun PracticeQuizScreen(
     practiceId: String,
     onPracticeComplete: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: PracticeViewModel = koinViewModel(),
+    viewModel: PracticeQuizViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is PracticeEffect.NavigateBack -> onBackClick()
-                is PracticeEffect.ShowError -> {}
+                is PracticeQuizEffect.NavigateBack -> onBackClick()
+                is PracticeQuizEffect.ShowError -> {}
             }
         }
     }
 
     LaunchedEffect(practiceId) {
-        viewModel.handleIntent(PracticeIntent.LoadPracticeSet(practiceId))
+        viewModel.handleIntent(PracticeQuizIntent.LoadPracticeSet(practiceId))
     }
 
     Scaffold(
@@ -102,7 +102,7 @@ fun PracticeScreen(
 
             !state.error.isNullOrEmpty() -> ErrorState(
                 message = state.error ?: "Unknown error",
-                onRetry = { viewModel.handleIntent(PracticeIntent.RetryClicked(practiceId)) },
+                onRetry = { viewModel.handleIntent(PracticeQuizIntent.RetryClicked(practiceId)) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
@@ -130,8 +130,8 @@ fun PracticeScreen(
 
 @Composable
 private fun PracticeContent(
-    state: PracticeState,
-    onIntent: (PracticeIntent) -> Unit,
+    state: PracticeQuizState,
+    onIntent: (PracticeQuizIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -160,8 +160,8 @@ private fun PracticeContent(
 
 @Composable
 private fun QuizSection(
-    state: PracticeState,
-    onIntent: (PracticeIntent) -> Unit,
+    state: PracticeQuizState,
+    onIntent: (PracticeQuizIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var dragOffset by remember { mutableFloatStateOf(0f) }
@@ -177,14 +177,14 @@ private fun QuizSection(
                 SwipeableCard(
                     dragOffset = dragOffset,
                     onDragOffsetChange = { dragOffset = it },
-                    onSwipeLeft = { onIntent(PracticeIntent.NextQuiz) },
-                    onSwipeRight = { onIntent(PracticeIntent.PreviousQuiz) },
+                    onSwipeLeft = { onIntent(PracticeQuizIntent.NextQuiz) },
+                    onSwipeRight = { onIntent(PracticeQuizIntent.PreviousQuiz) },
                     modifier = Modifier.fillMaxSize()
                 ) {
                     QuizContent(
                         quiz = currentQuiz,
                         userAnswer = state.userAnswer,
-                        onAnswerChanged = { onIntent(PracticeIntent.AnswerChanged(it)) },
+                        onAnswerChanged = { onIntent(PracticeQuizIntent.AnswerChanged(it)) },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(24.dp)
@@ -196,8 +196,8 @@ private fun QuizSection(
 
         NavigationControls(
             canGoPrevious = state.currentQuizIndex > 0,
-            onPrevious = { onIntent(PracticeIntent.PreviousQuiz) },
-            onNext = { onIntent(PracticeIntent.NextQuiz) },
+            onPrevious = { onIntent(PracticeQuizIntent.PreviousQuiz) },
+            onNext = { onIntent(PracticeQuizIntent.NextQuiz) },
             modifier = Modifier.padding(16.dp),
         )
     }
@@ -299,8 +299,8 @@ private fun QuizInput(
 
 @Composable
 private fun CompletionScreen(
-    state: PracticeState,
-    onIntent: (PracticeIntent) -> Unit,
+    state: PracticeQuizState,
+    onIntent: (PracticeQuizIntent) -> Unit,
     onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -323,7 +323,7 @@ private fun CompletionScreen(
             title = "🎉 Completed!",
             subtitle = "Great job! You've completed all the practice questions.",
             actionButtonText = "View Answers",
-            onActionClick = { onIntent(PracticeIntent.ViewAnswers) },
+            onActionClick = { onIntent(PracticeQuizIntent.ViewAnswers) },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp),
@@ -340,7 +340,7 @@ private fun CompletionScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = { onIntent(PracticeIntent.RestartPractice) },
+                onClick = { onIntent(PracticeQuizIntent.RestartPractice) },
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(Icons.Default.Refresh, null, Modifier.size(16.dp))
@@ -359,7 +359,7 @@ private fun CompletionScreen(
 
     if (state.showAllAnswers) {
         AllAnswersDialog(
-            quizResults = state.quizResults, onDismiss = { onIntent(PracticeIntent.ViewAnswers) })
+            quizResults = state.quizResults, onDismiss = { onIntent(PracticeQuizIntent.ViewAnswers) })
     }
 }
 
@@ -434,7 +434,7 @@ private fun PracticeScreenMCQPreview() {
         )
 
         PracticeContent(
-            state = PracticeState(
+            state = PracticeQuizState(
                 practiceSet = samplePracticeSet,
                 quizzes = listOf(sampleQuiz),
                 currentQuizIndex = 0,
@@ -474,15 +474,15 @@ private fun PracticeScreenCompletedPreview() {
         )
 
         val sampleResults = listOf(
-            PracticeState.QuizResult(sampleQuiz1, "A function"),
-            PracticeState.QuizResult(
+            PracticeQuizState.QuizResult(sampleQuiz1, "A function"),
+            PracticeQuizState.QuizResult(
                 sampleQuiz2,
                 "fun calculate(x: Int, operation: (Int) -> Int): Int = operation(x)",
             ),
         )
 
         CompletionScreen(
-            state = PracticeState(
+            state = PracticeQuizState(
                 practiceSet = samplePracticeSet,
                 quizzes = listOf(sampleQuiz1, sampleQuiz2),
                 currentQuizIndex = 2,

@@ -9,7 +9,8 @@ import com.appsbase.jetcode.feature.learning.presentation.skill_detail.SkillDeta
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListScreen
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailScreen
 import com.appsbase.jetcode.feature.onboarding.presentation.OnboardingScreen
-import com.appsbase.jetcode.feature.practice.presentation.PracticeScreen
+import com.appsbase.jetcode.feature.practice.presentation.practice_list.PracticeListScreen
+import com.appsbase.jetcode.feature.practice.presentation.practice_quiz.PracticeQuizScreen
 import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 
 /**
@@ -75,7 +76,19 @@ fun JetCodeNavHost(
                     navController.popBackStack()
                 },
                 onPracticeClick = { practiceSetId ->
+                    navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
+                },
+            )
+        }
+
+        // Practice List screen
+        composable(JetCodeDestinations.PRACTICE_LIST_ROUTE) {
+            PracticeListScreen(
+                onPracticeClick = { practiceSetId ->
                     navController.navigate("${JetCodeDestinations.PRACTICE_ROUTE}/$practiceSetId")
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 },
             )
         }
@@ -84,7 +97,7 @@ fun JetCodeNavHost(
         composable("${JetCodeDestinations.PRACTICE_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
             val practiceSetId =
                 backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
-            PracticeScreen(
+            PracticeQuizScreen(
                 practiceId = practiceSetId,
                 onPracticeComplete = {
                     navController.popBackStack()

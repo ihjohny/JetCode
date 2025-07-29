@@ -40,11 +40,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.domain.model.Quiz
 import com.appsbase.jetcode.domain.model.QuizType
-import com.appsbase.jetcode.feature.practice.presentation.PracticeState
+import com.appsbase.jetcode.feature.practice.presentation.practice_quiz.PracticeQuizState
 
 @Composable
 internal fun AllAnswersDialog(
-    quizResults: List<PracticeState.QuizResult>,
+    quizResults: List<PracticeQuizState.QuizResult>,
     onDismiss: () -> Unit,
 ) {
     Dialog(
@@ -173,7 +173,7 @@ private fun QuizTimeChip(
 private fun QuizAnswerItem(
     index: Int,
     quiz: Quiz,
-    quizResult: PracticeState.QuizResult,
+    quizResult: PracticeQuizState.QuizResult,
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -313,19 +313,19 @@ private fun AllAnswersDialogPreview() {
         )
 
         val sampleResults = listOf(
-            PracticeState.QuizResult(
+            PracticeQuizState.QuizResult(
                 quiz = sampleQuiz1,
                 userAnswer = "var name: String = \"John\"",
             ),
-            PracticeState.QuizResult(
+            PracticeQuizState.QuizResult(
                 quiz = sampleQuiz2,
                 userAnswer = "fun sum(a: Int, b: Int) = a + b",
             ),
-            PracticeState.QuizResult(
+            PracticeQuizState.QuizResult(
                 quiz = sampleQuiz3,
                 userAnswer = "15",
             ),
-            PracticeState.QuizResult(
+            PracticeQuizState.QuizResult(
                 quiz = sampleQuiz4,
                 userAnswer = "filter",
             ),

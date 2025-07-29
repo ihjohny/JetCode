@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.navigation.JetCodeDestinations
+import com.appsbase.jetcode.navigation.JetCodeDestinations.PRACTICE_LIST_ROUTE
 import com.appsbase.jetcode.navigation.JetCodeNavHost
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -53,7 +54,7 @@ private fun MainContent(mainViewModel: MainViewModel) {
         }
 
         JetCodeNavHost(
-            startDestination = startDestination,
+            startDestination = PRACTICE_LIST_ROUTE,
             onOnboardingComplete = {
                 mainViewModel.handleIntent(MainIntent.CompleteOnboarding)
             },
