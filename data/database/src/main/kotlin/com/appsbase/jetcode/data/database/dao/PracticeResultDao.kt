@@ -29,12 +29,6 @@ interface PracticeResultDao {
         userId: String,
     ): Flow<List<PracticeResultEntity>>
 
-    @Query("DELETE FROM practice_results WHERE practiceSetId = :practiceSetId AND userId = :userId")
-    suspend fun deletePracticeResult(
-        practiceSetId: String,
-        userId: String,
-    )
-
     @Query("DELETE FROM practice_results WHERE userId = :userId")
     suspend fun deleteAllUserPracticeResults(userId: String)
 }

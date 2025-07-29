@@ -88,20 +88,6 @@ class PracticeResultRepositoryImpl(
         }
     }
 
-    override suspend fun deletePracticeResult(
-        practiceSetId: String,
-        userId: String,
-    ): Result<Unit> {
-        return try {
-            practiceResultDao.deletePracticeResult(practiceSetId, userId)
-            Timber.d("Practice result deleted successfully for user $userId, practice set $practiceSetId")
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            Timber.e(e, "Error deleting practice result")
-            Result.Error(AppError.DataError.DatabaseError)
-        }
-    }
-
     override suspend fun deleteAllUserPracticeResults(userId: String): Result<Unit> {
         return try {
             practiceResultDao.deleteAllUserPracticeResults(userId)

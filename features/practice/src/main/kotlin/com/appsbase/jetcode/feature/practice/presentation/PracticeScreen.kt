@@ -77,7 +77,6 @@ fun PracticeScreen(
             when (effect) {
                 is PracticeEffect.NavigateBack -> onBackClick()
                 is PracticeEffect.ShowError -> {}
-                is PracticeEffect.QuizCompleted -> {}
             }
         }
     }

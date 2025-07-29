@@ -24,8 +24,10 @@ import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
+import com.appsbase.jetcode.domain.usecase.GetUserAllPracticeSetsUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserAllSkillsUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserTopicsByIdsUseCase
+import com.appsbase.jetcode.domain.usecase.SavePracticeResultUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.domain.usecase.UpdateProgressUseCase
@@ -184,6 +186,21 @@ val useCaseModule = module {
             learningRepository = get(),
             progressRepository = get(),
             getTopicProgressUseCase = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        GetUserAllPracticeSetsUseCase(
+            practiceRepository = get(),
+            practiceResultRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        SavePracticeResultUseCase(
+            practiceResultRepository = get(),
             dispatcherProvider = get(),
         )
     }

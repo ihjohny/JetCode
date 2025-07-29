@@ -83,5 +83,4 @@ sealed class PracticeIntent : UiIntent {
 sealed class PracticeEffect : UiEffect {
     data object NavigateBack : PracticeEffect()
     data class ShowError(val message: String) : PracticeEffect()
-    data object QuizCompleted : PracticeEffect()
 }

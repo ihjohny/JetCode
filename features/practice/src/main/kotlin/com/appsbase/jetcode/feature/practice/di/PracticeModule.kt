@@ -1,7 +1,7 @@
 package com.appsbase.jetcode.feature.practice.di
 
 import com.appsbase.jetcode.feature.practice.presentation.PracticeViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 /**
@@ -12,6 +12,7 @@ val practiceModule = module {
         PracticeViewModel(
             getPracticeSetByIdUseCase = get(),
             getQuizzesByIdsUseCase = get(),
+            savePracticeResultUseCase = get(),
         )
     }
 }

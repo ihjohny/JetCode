@@ -36,14 +36,6 @@ interface PracticeResultRepository {
     ): Flow<Result<List<PracticeSetResult>>>
 
     /**
-     * Delete practice result for a specific practice set and user
-     */
-    suspend fun deletePracticeResult(
-        practiceSetId: String,
-        userId: String,
-    ): Result<Unit>
-
-    /**
      * Delete all practice results for a user
      */
     suspend fun deleteAllUserPracticeResults(userId: String): Result<Unit>

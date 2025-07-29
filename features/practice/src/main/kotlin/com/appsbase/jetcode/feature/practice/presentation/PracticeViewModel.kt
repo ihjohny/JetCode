@@ -5,9 +5,11 @@ import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.core.common.error.getUserMessage
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
+import com.appsbase.jetcode.domain.model.PracticeSessionStatistics
 import com.appsbase.jetcode.domain.model.Quiz
 import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
+import com.appsbase.jetcode.domain.usecase.SavePracticeResultUseCase
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -17,6 +19,7 @@ import timber.log.Timber
 class PracticeViewModel(
     private val getPracticeSetByIdUseCase: GetPracticeSetByIdUseCase,
     private val getQuizzesByIdsUseCase: GetQuizzesByIdsUseCase,
+    private val savePracticeResultUseCase: SavePracticeResultUseCase,
 ) : BaseViewModel<PracticeState, PracticeIntent, PracticeEffect>(
     initialState = PracticeState()
 ) {
@@ -110,7 +113,10 @@ class PracticeViewModel(
 
         if (isLastQuiz) {
             updateState(state.copy(quizResults = updatedResults, isCompleted = true))
-            sendEffect(PracticeEffect.QuizCompleted)
+            savePracticeResult(
+                practiceSetId = state.practiceSet?.id,
+                practiceSessionStatistics = state.copy(quizResults = updatedResults).statistics,
+            )
         } else {
             updateState(
                 state.copy(
@@ -120,6 +126,35 @@ class PracticeViewModel(
                     currentQuizStartTime = System.currentTimeMillis()
                 )
             )
+        }
+    }
+
+    private fun savePracticeResult(
+        practiceSetId: String?,
+        practiceSessionStatistics: PracticeSessionStatistics,
+    ) {
+        if (practiceSetId == null) {
+            Timber.e("Cannot save practice result: practiceSetId is null")
+            return
+        }
+
+        viewModelScope.launch {
+            when (val result =
+                savePracticeResultUseCase(practiceSetId, practiceSessionStatistics)) {
+                is Result.Success -> {
+                    Timber.d("Practice result saved successfully for practice set: $practiceSetId")
+                }
+
+                is Result.Error -> {
+                    val exception = result.exception
+                    val errorMessage = if (exception is AppError) {
+                        exception.getUserMessage()
+                    } else {
+                        exception.message ?: "Failed to save practice result"
+                    }
+                    Timber.e("Failed to save practice result: $errorMessage")
+                }
+            }
         }
     }
 
