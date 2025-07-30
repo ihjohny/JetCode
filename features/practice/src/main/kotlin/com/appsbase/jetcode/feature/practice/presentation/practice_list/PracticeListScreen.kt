@@ -29,7 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -89,8 +88,7 @@ fun PracticeListScreen(
     Scaffold(
         topBar = {
             CommonTopAppBar(
-                title = "Practice",
-                onNavigateBack = onBackClick
+                title = "Practice", onNavigateBack = onBackClick
             )
         },
     ) { paddingValues ->
@@ -180,8 +178,7 @@ private fun PracticeTabRow(
             modifier = Modifier.padding(4.dp),
             containerColor = Color.Transparent,
             divider = {},
-            indicator = {}
-        ) {
+            indicator = {}) {
             Tab(
                 selected = selectedTab == PracticeTab.INCOMPLETE,
                 onClick = { onTabSelected(PracticeTab.INCOMPLETE) },
@@ -198,11 +195,9 @@ private fun PracticeTabRow(
                     modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
                 ) {
                     Text(
-                        "To Practice",
-                        color = if (selectedTab == PracticeTab.INCOMPLETE) {
+                        "To Practice", color = if (selectedTab == PracticeTab.INCOMPLETE) {
                             MaterialTheme.colorScheme.onPrimary
-                        } else MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Medium
+                        } else MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium
                     )
                     if (incompleteCount > 0) {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -230,11 +225,9 @@ private fun PracticeTabRow(
                     modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
                 ) {
                     Text(
-                        "Completed",
-                        color = if (selectedTab == PracticeTab.COMPLETED) {
+                        "Completed", color = if (selectedTab == PracticeTab.COMPLETED) {
                             MaterialTheme.colorScheme.onPrimary
-                        } else MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Medium
+                        } else MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium
                     )
                     if (completedCount > 0) {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -262,10 +255,8 @@ private fun CountBadge(
                     MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)
                 } else {
                     MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                },
-                CircleShape
-            ),
-        contentAlignment = Alignment.Center
+                }, CircleShape
+            ), contentAlignment = Alignment.Center
     ) {
         Text(
             text = count.toString(),
@@ -293,13 +284,12 @@ private fun IncompletePracticeList(
     } else {
         LazyColumn(
             modifier = modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(practiceSets) { userPracticeSet ->
                 IncompletePracticeItem(
                     userPracticeSet = userPracticeSet,
-                    onClick = { onPracticeClick(userPracticeSet.practiceSet.id) }
-                )
+                    onClick = { onPracticeClick(userPracticeSet.practiceSet.id) })
             }
         }
     }
@@ -320,14 +310,39 @@ private fun CompletedPracticeList(
     } else {
         LazyColumn(
             modifier = modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(practiceSets) { userPracticeSet ->
                 CompletedPracticeItem(
                     userPracticeSet = userPracticeSet,
-                    onClick = { onPracticeClick(userPracticeSet.practiceSet.id) }
+                    onClick = { onPracticeClick(userPracticeSet.practiceSet.id) },
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ActionButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+    ) {
+        Box(
+            modifier = Modifier.padding(4.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(16.dp)
+            )
         }
     }
 }
@@ -338,73 +353,63 @@ private fun IncompletePracticeItem(
     onClick: () -> Unit,
 ) {
     val scale by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(300),
-        label = "scale"
+        targetValue = 1f, animationSpec = tween(300), label = "scale"
     )
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Box(
+        modifier = Modifier.padding(vertical = 6.dp),
     ) {
-        Row(
-            modifier = Modifier.padding(20.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale)
+                .clickable { onClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            // Content
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = userPracticeSet.practiceSet.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = userPracticeSet.practiceSet.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    InfoChip(
-                        label = "${userPracticeSet.practiceSet.quizIds.size} Quizzes",
-                        emoji = "📝"
-                    )
-                }
-            }
-
-            // Start Button
-            Card(
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary),
-                modifier = Modifier.size(56.dp)
+            Row(
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Default.PlayArrow,
-                        contentDescription = "Start Practice",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
+                // Content
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = userPracticeSet.practiceSet.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = userPracticeSet.practiceSet.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        InfoChip(
+                            label = "${userPracticeSet.practiceSet.quizIds.size} Quizzes",
+                            emoji = "📝"
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        ActionButton(
+                            icon = Icons.Filled.PlayArrow,
+                            onClick = onClick
+                        )
+                    }
                 }
             }
         }
@@ -418,110 +423,82 @@ private fun CompletedPracticeItem(
 ) {
     val result = userPracticeSet.practiceSetResult!!
     val scale by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(300),
-        label = "scale"
+        targetValue = 1f, animationSpec = tween(300), label = "scale"
     )
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Box(
+        modifier = Modifier.padding(vertical = 6.dp),
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                // Content
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = userPracticeSet.practiceSet.name,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        ScoreBadge(score = result.practiceSessionStatistics.scorePercentage)
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = userPracticeSet.practiceSet.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Stats Row
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        InfoChip(
-                            label = "${result.practiceSessionStatistics.correctAnswers}/${result.practiceSessionStatistics.totalQuizzes}",
-                            emoji = "✅"
-                        )
-                        InfoChip(
-                            label = result.practiceSessionStatistics.formattedAverageTime,
-                            emoji = "⏱️"
-                        )
-                        InfoChip(
-                            label = formatDate(result.updatedAt),
-                            emoji = "📅"
-                        )
-                    }
-                }
-
-                // Retake Button
-                Card(
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.size(48.dp)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale)
+                .clickable { onClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = "Retake Practice",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(20.dp)
+                    // Content
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = userPracticeSet.practiceSet.name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = userPracticeSet.practiceSet.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
                         )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Stats Row
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ScoreBadge(score = result.practiceSessionStatistics.scorePercentage)
+                            InfoChip(
+                                label = "${result.practiceSessionStatistics.correctAnswers}/${result.practiceSessionStatistics.totalQuizzes}",
+                                emoji = "✅"
+                            )
+                            InfoChip(
+                                label = result.practiceSessionStatistics.formattedAverageTime,
+                                emoji = "⏱️"
+                            )
+                            InfoChip(
+                                label = formatDate(result.updatedAt), emoji = "📅"
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            ActionButton(
+                                icon = Icons.Filled.Refresh,
+                                onClick = onClick
+                            )
+                        }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Progress Bar
-            LinearProgressIndicator(
-                progress = { result.practiceSessionStatistics.scorePercentage / 100f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = when {
-                    result.practiceSessionStatistics.scorePercentage >= 80 -> Color(0xFF4CAF50)
-                    result.practiceSessionStatistics.scorePercentage >= 60 -> Color(0xFFFF9800)
-                    else -> Color(0xFFF44336)
-                },
-            )
         }
     }
 }
@@ -560,12 +537,12 @@ private fun ScoreBadge(score: Int) {
     }
 
     Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(color)
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(color),
     ) {
         Text(
             text = "$score%",
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -580,8 +557,7 @@ private fun EmptyState(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+        modifier = modifier, contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -618,27 +594,21 @@ private fun PracticeListIncompletePreview() {
                     name = "Kotlin Basics",
                     description = "Learn the fundamentals of Kotlin programming including variables, functions, and control structures.",
                     quizIds = listOf("q1", "q2", "q3", "q4", "q5")
-                ),
-                practiceSetResult = null
-            ),
-            UserPracticeSet(
+                ), practiceSetResult = null
+            ), UserPracticeSet(
                 practiceSet = PracticeSet(
                     id = "2",
                     name = "Object-Oriented Programming",
                     description = "Master classes, objects, inheritance, and polymorphism in Kotlin.",
                     quizIds = listOf("q6", "q7", "q8")
-                ),
-                practiceSetResult = null
+                ), practiceSetResult = null
             )
         )
 
         PracticeListContent(
             state = PracticeListState(
-                userPracticeSets = samplePracticeSets,
-                selectedTab = PracticeTab.INCOMPLETE
-            ),
-            onIntent = {},
-            modifier = Modifier.fillMaxSize()
+                userPracticeSets = samplePracticeSets, selectedTab = PracticeTab.INCOMPLETE
+            ), onIntent = {}, modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -654,34 +624,27 @@ private fun PracticeListCompletedPreview() {
                     name = "Advanced Functions",
                     description = "Deep dive into lambda expressions, higher-order functions, and inline functions.",
                     quizIds = listOf("q9", "q10", "q11", "q12")
-                ),
-                practiceSetResult = PracticeSetResult(
+                ), practiceSetResult = PracticeSetResult(
                     id = "r1",
                     userId = "user1",
                     practiceSetId = "3",
                     practiceSessionStatistics = PracticeSessionStatistics(
-                        totalQuizzes = 4,
-                        correctAnswers = 3,
-                        averageTimeSeconds = 45.5f
+                        totalQuizzes = 4, correctAnswers = 3, averageTimeSeconds = 45.5f
                     ),
                     updatedAt = System.currentTimeMillis() - 86400000 // 1 day ago
                 )
-            ),
-            UserPracticeSet(
+            ), UserPracticeSet(
                 practiceSet = PracticeSet(
                     id = "4",
                     name = "Collections & Generics",
                     description = "Work with lists, sets, maps, and understand generic programming.",
                     quizIds = listOf("q13", "q14", "q15")
-                ),
-                practiceSetResult = PracticeSetResult(
+                ), practiceSetResult = PracticeSetResult(
                     id = "r2",
                     userId = "user1",
                     practiceSetId = "4",
                     practiceSessionStatistics = PracticeSessionStatistics(
-                        totalQuizzes = 3,
-                        correctAnswers = 2,
-                        averageTimeSeconds = 60.0f
+                        totalQuizzes = 3, correctAnswers = 2, averageTimeSeconds = 60.0f
                     ),
                     updatedAt = System.currentTimeMillis() - 172800000 // 2 days ago
                 )
@@ -690,11 +653,8 @@ private fun PracticeListCompletedPreview() {
 
         PracticeListContent(
             state = PracticeListState(
-                userPracticeSets = samplePracticeSets,
-                selectedTab = PracticeTab.COMPLETED
-            ),
-            onIntent = {},
-            modifier = Modifier.fillMaxSize()
+                userPracticeSets = samplePracticeSets, selectedTab = PracticeTab.COMPLETED
+            ), onIntent = {}, modifier = Modifier.fillMaxSize()
         )
     }
 }
