@@ -10,6 +10,6 @@ object JetCodeDestinations {
     const val SKILL_DETAIL_ROUTE = "skill_detail"
     const val TOPIC_DETAIL_ROUTE = "topic_detail"
     const val PRACTICE_LIST_ROUTE = "practice_list"
-    const val PRACTICE_ROUTE = "practice"
+    const val PRACTICE_QUIZ_ROUTE = "practice_quiz"
     const val PROFILE_ROUTE = "profile"
 }

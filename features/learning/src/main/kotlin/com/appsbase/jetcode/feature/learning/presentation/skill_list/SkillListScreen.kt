@@ -82,7 +82,7 @@ fun SkillListScreen(
         modifier = modifier.fillMaxSize()
     ) {
         CommonTopAppBar(
-            title = "Practice", onNavigateBack = onBackClick
+            title = "Learning", onNavigateBack = onBackClick
         )
 
         when {

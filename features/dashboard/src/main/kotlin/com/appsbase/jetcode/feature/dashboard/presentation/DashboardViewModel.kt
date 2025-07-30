@@ -1,9 +1,6 @@
 package com.appsbase.jetcode.feature.dashboard.presentation
 
-import androidx.lifecycle.viewModelScope
 import com.appsbase.jetcode.core.common.mvi.BaseViewModel
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class DashboardViewModel : BaseViewModel<DashboardState, DashboardIntent, DashboardEffect>(
     initialState = DashboardState()
@@ -16,4 +13,3 @@ class DashboardViewModel : BaseViewModel<DashboardState, DashboardIntent, Dashbo
         }
     }
 }
-

@@ -95,7 +95,7 @@ fun JetCodeNavHost(
                     navController.popBackStack()
                 },
                 onPracticeClick = { practiceSetId ->
-                    navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
+                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
                 },
             )
         }
@@ -104,7 +104,7 @@ fun JetCodeNavHost(
         composable(JetCodeDestinations.PRACTICE_LIST_ROUTE) {
             PracticeListScreen(
                 onPracticeClick = { practiceSetId ->
-                    navController.navigate("${JetCodeDestinations.PRACTICE_ROUTE}/$practiceSetId")
+                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -113,7 +113,7 @@ fun JetCodeNavHost(
         }
 
         // Practice screen
-        composable("${JetCodeDestinations.PRACTICE_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
+        composable("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
             val practiceSetId =
                 backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
             PracticeQuizScreen(
