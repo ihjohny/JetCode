@@ -71,6 +71,7 @@ dependencies {
 
     // Feature modules
     implementation(project(":features:onboarding"))
+    implementation(project(":features:dashboard"))
     implementation(project(":features:learning"))
     implementation(project(":features:practice"))
     implementation(project(":features:profile"))

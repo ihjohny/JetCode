@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
 import com.appsbase.jetcode.navigation.JetCodeDestinations
-import com.appsbase.jetcode.navigation.JetCodeDestinations.PRACTICE_LIST_ROUTE
 import com.appsbase.jetcode.navigation.JetCodeNavHost
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,11 +49,11 @@ private fun MainContent(mainViewModel: MainViewModel) {
         val startDestination = if (state.shouldShowOnboarding == true) {
             JetCodeDestinations.ONBOARDING_ROUTE
         } else {
-            JetCodeDestinations.SKILL_LIST_ROUTE
+            JetCodeDestinations.DASHBOARD_ROUTE
         }
 
         JetCodeNavHost(
-            startDestination = PRACTICE_LIST_ROUTE,
+            startDestination = startDestination,
             onOnboardingComplete = {
                 mainViewModel.handleIntent(MainIntent.CompleteOnboarding)
             },

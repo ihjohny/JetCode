@@ -5,6 +5,7 @@ package com.appsbase.jetcode.navigation
  */
 object JetCodeDestinations {
     const val ONBOARDING_ROUTE = "onboarding"
+    const val DASHBOARD_ROUTE = "dashboard"
     const val SKILL_LIST_ROUTE = "skill_list"
     const val SKILL_DETAIL_ROUTE = "skill_detail"
     const val TOPIC_DETAIL_ROUTE = "topic_detail"

@@ -31,6 +31,7 @@ import com.appsbase.jetcode.domain.usecase.SavePracticeResultUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.domain.usecase.UpdateProgressUseCase
+import com.appsbase.jetcode.feature.dashboard.di.dashboardModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
 import com.appsbase.jetcode.main.MainViewModel
@@ -225,6 +226,7 @@ val appModules = listOf(
     repositoryModule,
     useCaseModule,
     syncModule,
+    dashboardModule,
     learningModule,
     practiceModule,
 )

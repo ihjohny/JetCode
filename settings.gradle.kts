@@ -39,6 +39,7 @@ include(":data:remote")
 
 // Feature modules
 include(":features:onboarding")
+include(":features:dashboard")
 include(":features:learning")
 include(":features:practice")
 include(":features:profile")

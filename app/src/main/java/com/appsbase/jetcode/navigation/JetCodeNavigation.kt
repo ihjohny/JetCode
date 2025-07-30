@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.appsbase.jetcode.feature.dashboard.presentation.DashboardScreen
 import com.appsbase.jetcode.feature.learning.presentation.skill_detail.SkillDetailScreen
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListScreen
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailScreen
@@ -31,9 +32,24 @@ fun JetCodeNavHost(
             OnboardingScreen(
                 onOnboardingComplete = {
                     onOnboardingComplete()
-                    navController.navigate(JetCodeDestinations.SKILL_LIST_ROUTE) {
+                    navController.navigate(JetCodeDestinations.DASHBOARD_ROUTE) {
                         popUpTo(JetCodeDestinations.ONBOARDING_ROUTE) { inclusive = true }
                     }
+                },
+            )
+        }
+
+        // Dashboard
+        composable(JetCodeDestinations.DASHBOARD_ROUTE) {
+            DashboardScreen(
+                onEnterLearning = {
+                    navController.navigate(JetCodeDestinations.SKILL_LIST_ROUTE)
+                },
+                onEnterPractice = {
+                    navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
+                },
+                onProfileClick = {
+                    navController.navigate(JetCodeDestinations.PROFILE_ROUTE)
                 },
             )
         }
@@ -46,6 +62,9 @@ fun JetCodeNavHost(
                 },
                 onProfileClick = {
                     navController.navigate(JetCodeDestinations.PROFILE_ROUTE)
+                },
+                onBackClick = {
+                    navController.popBackStack()
                 },
             )
         }

@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.designsystem.theme.JetCodeTheme
+import com.appsbase.jetcode.core.ui.components.CommonTopAppBar
 import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.domain.model.SampleData
@@ -53,6 +54,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SkillListScreen(
     onSkillClick: (String) -> Unit,
     onProfileClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SkillListViewModel = koinViewModel()
 ) {
@@ -79,21 +81,8 @@ fun SkillListScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "JetCode Learning", fontWeight = FontWeight.Bold
-                )
-            },
-            actions = {
-                IconButton(
-                    onClick = { viewModel.handleIntent(SkillListIntent.ProfileClicked) },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person, contentDescription = "Profile"
-                    )
-                }
-            },
+        CommonTopAppBar(
+            title = "Practice", onNavigateBack = onBackClick
         )
 
         when {

@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/data/repository" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/dashboard" />
             <option value="$PROJECT_DIR$/features/learning" />
             <option value="$PROJECT_DIR$/features/onboarding" />
             <option value="$PROJECT_DIR$/features/practice" />
