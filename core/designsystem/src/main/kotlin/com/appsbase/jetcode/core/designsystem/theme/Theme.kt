@@ -7,6 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
 /**
  * JetCode theme implementation with light and dark mode support
@@ -46,16 +47,16 @@ private val DarkColorScheme = darkColorScheme(
  * Extended colors for JetCode specific use cases
  */
 data class JetCodeExtendedColors(
-    val success: androidx.compose.ui.graphics.Color,
-    val warning: androidx.compose.ui.graphics.Color,
-    val info: androidx.compose.ui.graphics.Color,
-    val progressComplete: androidx.compose.ui.graphics.Color,
-    val progressInProgress: androidx.compose.ui.graphics.Color,
-    val progressLocked: androidx.compose.ui.graphics.Color,
-    val difficultyBeginner: androidx.compose.ui.graphics.Color,
-    val difficultyIntermediate: androidx.compose.ui.graphics.Color,
-    val difficultyAdvanced: androidx.compose.ui.graphics.Color,
-    val difficultyExpert: androidx.compose.ui.graphics.Color,
+    val success: Color,
+    val warning: Color,
+    val info: Color,
+    val progressComplete: Color,
+    val progressInProgress: Color,
+    val progressLocked: Color,
+    val difficultyBeginner: Color,
+    val difficultyIntermediate: Color,
+    val difficultyAdvanced: Color,
+    val difficultyExpert: Color,
 )
 
 /**
