@@ -9,6 +9,9 @@ import org.koin.dsl.module
  */
 val dashboardModule = module {
     viewModel {
-        DashboardViewModel()
+        DashboardViewModel(
+            getUserAllSkillsUseCase = get(),
+            getUserAllPracticeSetsUseCase = get()
+        )
     }
 }

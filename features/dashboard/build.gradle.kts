@@ -41,9 +41,13 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
+
+    implementation(project(":domain"))
+
     implementation(project(":features:learning"))
     implementation(project(":features:practice"))
     implementation(project(":features:profile"))
+    
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.lifecycle)

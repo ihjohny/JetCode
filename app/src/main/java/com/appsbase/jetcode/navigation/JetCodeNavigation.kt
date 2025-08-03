@@ -42,10 +42,16 @@ fun JetCodeNavHost(
         // Dashboard
         composable(JetCodeDestinations.DASHBOARD_ROUTE) {
             DashboardScreen(
-                onEnterLearning = {
+                onSkillClick = { skillId ->
+                    navController.navigate("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/$skillId")
+                },
+                onPracticeClick = { practiceSetId ->
+                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
+                },
+                onViewAllSkillsClick = {
                     navController.navigate(JetCodeDestinations.SKILL_LIST_ROUTE)
                 },
-                onEnterPractice = {
+                onViewAllPracticeClick = {
                     navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
                 },
                 onProfileClick = {
