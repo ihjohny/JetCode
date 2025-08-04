@@ -68,6 +68,7 @@ import java.util.Locale
 fun PracticeListScreen(
     onPracticeClick: (String) -> Unit,
     onBackClick: () -> Unit,
+    initialSelectedTab: PracticeTab = PracticeTab.INCOMPLETE,
     viewModel: PracticeListViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -83,6 +84,10 @@ fun PracticeListScreen(
 
     LaunchedEffect(Unit) {
         viewModel.handleIntent(PracticeListIntent.LoadPracticeSets)
+    }
+
+    LaunchedEffect(initialSelectedTab) {
+        viewModel.handleIntent(PracticeListIntent.TabChanged(initialSelectedTab))
     }
 
     Scaffold(

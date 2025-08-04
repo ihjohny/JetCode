@@ -79,6 +79,7 @@ fun DashboardScreen(
     onPracticeClick: (String) -> Unit,
     onViewAllSkillsClick: () -> Unit,
     onViewAllPracticeClick: () -> Unit,
+    onViewPracticeHistoryClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = koinViewModel()
@@ -92,6 +93,7 @@ fun DashboardScreen(
                 is DashboardEffect.NavigateToPractice -> onPracticeClick(effect.practiceSetId)
                 is DashboardEffect.NavigateToSkillsList -> onViewAllSkillsClick()
                 is DashboardEffect.NavigateToPracticeList -> onViewAllPracticeClick()
+                is DashboardEffect.NavigateToPracticeHistory -> onViewPracticeHistoryClick()
                 is DashboardEffect.NavigateToProfile -> onProfileClick()
                 is DashboardEffect.ShowError -> {
                     // Handle error display if needed
@@ -238,7 +240,7 @@ private fun DashboardContent(
                         title = "Recent Achievements",
                         emoji = "🏆",
                         actionText = "View History",
-                        onActionClick = { onIntent(DashboardIntent.ViewAllPracticeClicked) })
+                        onActionClick = { onIntent(DashboardIntent.ViewPracticeHistoryClicked) })
                 }
                 item {
                     RecentAchievementsSection(

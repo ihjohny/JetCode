@@ -2,15 +2,18 @@ package com.appsbase.jetcode.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.appsbase.jetcode.feature.dashboard.presentation.DashboardScreen
 import com.appsbase.jetcode.feature.learning.presentation.skill_detail.SkillDetailScreen
 import com.appsbase.jetcode.feature.learning.presentation.skill_list.SkillListScreen
 import com.appsbase.jetcode.feature.learning.presentation.topic_detail.TopicDetailScreen
 import com.appsbase.jetcode.feature.onboarding.presentation.OnboardingScreen
 import com.appsbase.jetcode.feature.practice.presentation.practice_list.PracticeListScreen
+import com.appsbase.jetcode.feature.practice.presentation.practice_list.PracticeTab
 import com.appsbase.jetcode.feature.practice.presentation.practice_quiz.PracticeQuizScreen
 import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 
@@ -53,6 +56,9 @@ fun JetCodeNavHost(
                 },
                 onViewAllPracticeClick = {
                     navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
+                },
+                onViewPracticeHistoryClick = {
+                    navController.navigate("${JetCodeDestinations.PRACTICE_LIST_ROUTE}?${NavigationArgs.SELECTED_TAB_KEY}=${PracticeTab.COMPLETED.name}")
                 },
                 onProfileClick = {
                     navController.navigate(JetCodeDestinations.PROFILE_ROUTE)
@@ -107,8 +113,25 @@ fun JetCodeNavHost(
         }
 
         // Practice List screen
-        composable(JetCodeDestinations.PRACTICE_LIST_ROUTE) {
+        composable(
+            route = "${JetCodeDestinations.PRACTICE_LIST_ROUTE}?${NavigationArgs.SELECTED_TAB_KEY}={${NavigationArgs.SELECTED_TAB_ARG}}",
+            arguments = listOf(
+                navArgument(NavigationArgs.SELECTED_TAB_ARG) {
+                    type = NavType.StringType
+                    defaultValue = PracticeTab.INCOMPLETE.name
+                }
+            )
+        ) { backStackEntry ->
+            val selectedTabString =
+                backStackEntry.arguments?.getString(NavigationArgs.SELECTED_TAB_ARG)
+                    ?: PracticeTab.INCOMPLETE.name
+            val initialTab = when (selectedTabString) {
+                PracticeTab.COMPLETED.name -> PracticeTab.COMPLETED
+                else -> PracticeTab.INCOMPLETE
+            }
+
             PracticeListScreen(
+                initialSelectedTab = initialTab,
                 onPracticeClick = { practiceSetId ->
                     navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
                 },

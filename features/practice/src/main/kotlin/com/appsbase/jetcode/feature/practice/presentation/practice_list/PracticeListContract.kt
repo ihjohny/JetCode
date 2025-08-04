@@ -16,11 +16,9 @@ data class PracticeListState(
     val error: String? = null,
 ) : UiState {
 
-    val incompletePracticeSets: List<UserPracticeSet>
-        get() = userPracticeSets.filter { !it.isCompleted }
+    val incompletePracticeSets: List<UserPracticeSet> = userPracticeSets.filter { !it.isCompleted }
 
-    val completedPracticeSets: List<UserPracticeSet>
-        get() = userPracticeSets.filter { it.isCompleted }
+    val completedPracticeSets: List<UserPracticeSet> = userPracticeSets.filter { it.isCompleted }
 }
 
 enum class PracticeTab {

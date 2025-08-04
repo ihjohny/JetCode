@@ -41,6 +41,7 @@ sealed class DashboardIntent : UiIntent {
     data class PracticeClicked(val practiceSetId: String) : DashboardIntent()
     data object ViewAllSkillsClicked : DashboardIntent()
     data object ViewAllPracticeClicked : DashboardIntent()
+    data object ViewPracticeHistoryClicked : DashboardIntent()
     data object ProfileClicked : DashboardIntent()
     data object RetryClicked : DashboardIntent()
 }
@@ -50,6 +51,7 @@ sealed class DashboardEffect : UiEffect {
     data class NavigateToPractice(val practiceSetId: String) : DashboardEffect()
     data object NavigateToSkillsList : DashboardEffect()
     data object NavigateToPracticeList : DashboardEffect()
+    data object NavigateToPracticeHistory : DashboardEffect()
     data object NavigateToProfile : DashboardEffect()
     data class ShowError(val message: String) : DashboardEffect()
 }
