@@ -47,9 +47,9 @@ private fun MainContent(mainViewModel: MainViewModel) {
 
     if (state.shouldShowOnboarding != null) {
         val startDestination = if (state.shouldShowOnboarding == true) {
-            JetCodeDestinations.ONBOARDING_ROUTE
+            JetCodeDestinations.Onboarding.route
         } else {
-            JetCodeDestinations.DASHBOARD_ROUTE
+            JetCodeDestinations.Dashboard.route
         }
 
         JetCodeNavHost(

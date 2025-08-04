@@ -18,12 +18,12 @@ import com.appsbase.jetcode.feature.practice.presentation.practice_quiz.Practice
 import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
 
 /**
- * Main navigation host for the JetCode app
+ * Main navigation host for the JetCode app with type-safe routing
  */
 @Composable
 fun JetCodeNavHost(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = JetCodeDestinations.ONBOARDING_ROUTE,
+    startDestination: String = JetCodeDestinations.Onboarding.route,
     onOnboardingComplete: () -> Unit = {},
 ) {
     NavHost(
@@ -31,49 +31,57 @@ fun JetCodeNavHost(
         startDestination = startDestination,
     ) {
         // Onboarding flow
-        composable(JetCodeDestinations.ONBOARDING_ROUTE) {
+        composable(JetCodeDestinations.Onboarding.route) {
             OnboardingScreen(
                 onOnboardingComplete = {
                     onOnboardingComplete()
-                    navController.navigate(JetCodeDestinations.DASHBOARD_ROUTE) {
-                        popUpTo(JetCodeDestinations.ONBOARDING_ROUTE) { inclusive = true }
+                    navController.navigate(JetCodeDestinations.Dashboard.route) {
+                        popUpTo(JetCodeDestinations.Onboarding.route) { inclusive = true }
                     }
                 },
             )
         }
 
         // Dashboard
-        composable(JetCodeDestinations.DASHBOARD_ROUTE) {
+        composable(JetCodeDestinations.Dashboard.route) {
             DashboardScreen(
                 onSkillClick = { skillId ->
-                    navController.navigate("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/$skillId")
+                    navController.navigate(
+                        JetCodeDestinations.SkillDetail(skillId).createRoute(skillId)
+                    )
                 },
                 onPracticeClick = { practiceSetId ->
-                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
+                    navController.navigate(
+                        JetCodeDestinations.PracticeQuiz(practiceSetId).createRoute(practiceSetId)
+                    )
                 },
                 onViewAllSkillsClick = {
-                    navController.navigate(JetCodeDestinations.SKILL_LIST_ROUTE)
+                    navController.navigate(JetCodeDestinations.SkillList.route)
                 },
                 onViewAllPracticeClick = {
-                    navController.navigate(JetCodeDestinations.PRACTICE_LIST_ROUTE)
+                    navController.navigate(JetCodeDestinations.PracticeList().createRoute())
                 },
                 onViewPracticeHistoryClick = {
-                    navController.navigate("${JetCodeDestinations.PRACTICE_LIST_ROUTE}?${NavigationArgs.SELECTED_TAB_KEY}=${PracticeTab.COMPLETED.name}")
+                    navController.navigate(
+                        JetCodeDestinations.PracticeList().createRoute(PracticeTab.COMPLETED)
+                    )
                 },
                 onProfileClick = {
-                    navController.navigate(JetCodeDestinations.PROFILE_ROUTE)
+                    navController.navigate(JetCodeDestinations.Profile.route)
                 },
             )
         }
 
         // Learning dashboard
-        composable(JetCodeDestinations.SKILL_LIST_ROUTE) {
+        composable(JetCodeDestinations.SkillList.route) {
             SkillListScreen(
                 onSkillClick = { skillId ->
-                    navController.navigate("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/$skillId")
+                    navController.navigate(
+                        JetCodeDestinations.SkillDetail(skillId).createRoute(skillId)
+                    )
                 },
                 onProfileClick = {
-                    navController.navigate(JetCodeDestinations.PROFILE_ROUTE)
+                    navController.navigate(JetCodeDestinations.Profile.route)
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -82,12 +90,14 @@ fun JetCodeNavHost(
         }
 
         // Skill detail
-        composable("${JetCodeDestinations.SKILL_DETAIL_ROUTE}/{${NavigationArgs.SKILL_ID}}") { backStackEntry ->
+        composable(JetCodeDestinations.SkillDetail.ROUTE_TEMPLATE) { backStackEntry ->
             val skillId = backStackEntry.arguments?.getString(NavigationArgs.SKILL_ID) ?: ""
             SkillDetailScreen(
                 skillId = skillId,
                 onLessonClick = { topicId ->
-                    navController.navigate("${JetCodeDestinations.TOPIC_DETAIL_ROUTE}/$topicId")
+                    navController.navigate(
+                        JetCodeDestinations.TopicDetail(topicId).createRoute(topicId)
+                    )
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -96,7 +106,7 @@ fun JetCodeNavHost(
         }
 
         // Topic detail (replaces lesson detail)
-        composable("${JetCodeDestinations.TOPIC_DETAIL_ROUTE}/{${NavigationArgs.TOPIC_ID}}") { backStackEntry ->
+        composable(JetCodeDestinations.TopicDetail.ROUTE_TEMPLATE) { backStackEntry ->
             val topicId = backStackEntry.arguments?.getString(NavigationArgs.TOPIC_ID) ?: ""
             TopicDetailScreen(
                 topicId = topicId,
@@ -107,14 +117,16 @@ fun JetCodeNavHost(
                     navController.popBackStack()
                 },
                 onPracticeClick = { practiceSetId ->
-                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
+                    navController.navigate(
+                        JetCodeDestinations.PracticeQuiz(practiceSetId).createRoute(practiceSetId)
+                    )
                 },
             )
         }
 
         // Practice List screen
         composable(
-            route = "${JetCodeDestinations.PRACTICE_LIST_ROUTE}?${NavigationArgs.SELECTED_TAB_KEY}={${NavigationArgs.SELECTED_TAB_ARG}}",
+            route = JetCodeDestinations.PracticeList.ROUTE_TEMPLATE,
             arguments = listOf(
                 navArgument(NavigationArgs.SELECTED_TAB_ARG) {
                     type = NavType.StringType
@@ -133,7 +145,9 @@ fun JetCodeNavHost(
             PracticeListScreen(
                 initialSelectedTab = initialTab,
                 onPracticeClick = { practiceSetId ->
-                    navController.navigate("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/$practiceSetId")
+                    navController.navigate(
+                        JetCodeDestinations.PracticeQuiz(practiceSetId).createRoute(practiceSetId)
+                    )
                 },
                 onBackClick = {
                     navController.popBackStack()
@@ -142,7 +156,7 @@ fun JetCodeNavHost(
         }
 
         // Practice screen
-        composable("${JetCodeDestinations.PRACTICE_QUIZ_ROUTE}/{${NavigationArgs.PRACTICE_SET_ID}}") { backStackEntry ->
+        composable(JetCodeDestinations.PracticeQuiz.ROUTE_TEMPLATE) { backStackEntry ->
             val practiceSetId =
                 backStackEntry.arguments?.getString(NavigationArgs.PRACTICE_SET_ID) ?: ""
             PracticeQuizScreen(
@@ -157,7 +171,7 @@ fun JetCodeNavHost(
         }
 
         // Profile
-        composable(JetCodeDestinations.PROFILE_ROUTE) {
+        composable(JetCodeDestinations.Profile.route) {
             ProfileScreen(
                 onBackClick = {
                     navController.popBackStack()
