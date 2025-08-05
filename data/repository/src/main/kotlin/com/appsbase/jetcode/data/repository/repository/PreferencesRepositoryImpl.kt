@@ -3,6 +3,9 @@ package com.appsbase.jetcode.data.repository.repository
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.error.AppError
 import com.appsbase.jetcode.data.preferences.data_store.PreferencesDataStore
+import com.appsbase.jetcode.data.repository.mapper.toDomain
+import com.appsbase.jetcode.data.repository.mapper.toEntity
+import com.appsbase.jetcode.domain.model.ThemeMode
 import com.appsbase.jetcode.domain.repository.PreferencesRepository
 import timber.log.Timber
 
@@ -30,6 +33,28 @@ class PreferencesRepositoryImpl(
             Result.Success(Unit)
         } catch (e: Exception) {
             Timber.e(e, "Error setting onboarding preference")
+            Result.Error(AppError.DataError.DatabaseError)
+        }
+    }
+
+    override suspend fun getThemeMode(): Result<ThemeMode> {
+        return try {
+            val themeModeEntity = preferencesDataStore.getThemeMode()
+            val themeMode = themeModeEntity.toDomain()
+            Result.Success(themeMode)
+        } catch (e: Exception) {
+            Timber.e(e, "Error getting theme preference")
+            Result.Error(AppError.DataError.DatabaseError)
+        }
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode): Result<Unit> {
+        return try {
+            val themeModeEntity = themeMode.toEntity()
+            preferencesDataStore.setThemeMode(themeModeEntity)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e, "Error setting theme preference")
             Result.Error(AppError.DataError.DatabaseError)
         }
     }

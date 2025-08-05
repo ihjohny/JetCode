@@ -22,18 +22,22 @@ import com.appsbase.jetcode.domain.usecase.GetPracticeSetByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetQuizzesByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetSkillProgressUseCase
+import com.appsbase.jetcode.domain.usecase.GetThemeModeUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicByIdUseCase
 import com.appsbase.jetcode.domain.usecase.GetTopicProgressUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserAllPracticeSetsUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserAllSkillsUseCase
+import com.appsbase.jetcode.domain.usecase.GetUserStatisticsUseCase
 import com.appsbase.jetcode.domain.usecase.GetUserTopicsByIdsUseCase
 import com.appsbase.jetcode.domain.usecase.SavePracticeResultUseCase
 import com.appsbase.jetcode.domain.usecase.SearchContentUseCase
+import com.appsbase.jetcode.domain.usecase.SetThemeModeUseCase
 import com.appsbase.jetcode.domain.usecase.SyncContentUseCase
 import com.appsbase.jetcode.domain.usecase.UpdateProgressUseCase
 import com.appsbase.jetcode.feature.dashboard.di.dashboardModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
+import com.appsbase.jetcode.feature.profile.di.profileModule
 import com.appsbase.jetcode.main.MainViewModel
 import com.appsbase.jetcode.sync.SyncManager
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -205,6 +209,29 @@ val useCaseModule = module {
             dispatcherProvider = get(),
         )
     }
+
+    factory {
+        GetThemeModeUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        SetThemeModeUseCase(
+            preferencesRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
+
+    factory {
+        GetUserStatisticsUseCase(
+            learningRepository = get(),
+            progressRepository = get(),
+            practiceResultRepository = get(),
+            dispatcherProvider = get(),
+        )
+    }
 }
 
 val syncModule = module {
@@ -229,4 +256,5 @@ val appModules = listOf(
     dashboardModule,
     learningModule,
     practiceModule,
+    profileModule,
 )
