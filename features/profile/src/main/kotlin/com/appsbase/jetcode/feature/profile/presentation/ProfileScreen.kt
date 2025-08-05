@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -51,7 +50,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -64,13 +62,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.appsbase.jetcode.core.ui.components.CommonTopAppBar
-import com.appsbase.jetcode.core.ui.components.DifficultyChip
 import com.appsbase.jetcode.core.ui.components.ErrorState
 import com.appsbase.jetcode.core.ui.components.LoadingState
 import com.appsbase.jetcode.domain.model.ActivityType
-import com.appsbase.jetcode.domain.model.Difficulty
 import com.appsbase.jetcode.domain.model.RecentActivity
-import com.appsbase.jetcode.domain.model.SkillDifficultyStats
 import com.appsbase.jetcode.domain.model.UserStatistics
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -189,16 +184,6 @@ private fun ProfileContent(
                 ) {
                     // Quick Stats Grid
                     QuickStatsGrid(statistics = statistics)
-                }
-
-                AnimatedVisibility(
-                    visible = true, enter = slideInVertically(
-                        initialOffsetY = { 40 },
-                        animationSpec = tween(durationMillis = 300, delayMillis = 200)
-                    ) + fadeIn(animationSpec = tween(delayMillis = 200))
-                ) {
-                    // Skills Progress Section
-                    EnhancedSkillsProgressSection(statistics = statistics)
                 }
 
                 if (statistics.totalPracticeSetsCompleted > 0) {
@@ -516,144 +501,6 @@ private fun QuickStatCard(
                     textAlign = TextAlign.Center
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun EnhancedSkillsProgressSection(
-    statistics: UserStatistics,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        shape = RoundedCornerShape(20.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.EmojiEvents,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = "Skills by Difficulty",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Difficulty.entries.forEach { difficulty ->
-                val stats = statistics.skillsByDifficulty[difficulty] ?: SkillDifficultyStats()
-                if (stats.total > 0) {
-                    EnhancedSkillDifficultyRow(
-                        difficulty = difficulty, stats = stats
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EnhancedSkillDifficultyRow(
-    difficulty: Difficulty,
-    stats: SkillDifficultyStats,
-    modifier: Modifier = Modifier,
-) {
-    val animatedProgress by animateFloatAsState(
-        targetValue = if (stats.total > 0) stats.completed.toFloat() / stats.total else 0f,
-        animationSpec = tween(durationMillis = 1000),
-        label = "progress"
-    )
-
-    Card(
-        modifier = modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        ), shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    DifficultyChip(difficulty = difficulty)
-                    Text(
-                        text = "${stats.completed}/${stats.total} completed",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                if (stats.running > 0) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                        ), shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "${stats.running} in progress",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // Enhanced progress bar with gradient
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(animatedProgress)
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = when (difficulty) {
-                                    Difficulty.BEGINNER -> listOf(
-                                        Color(0xFF10B981), Color(0xFF34D399)
-                                    )
-
-                                    Difficulty.INTERMEDIATE -> listOf(
-                                        Color(0xFFF59E0B), Color(0xFFFBBF24)
-                                    )
-
-                                    Difficulty.ADVANCED -> listOf(
-                                        Color(0xFFEF4444), Color(0xFFF87171)
-                                    )
-                                }
-                            )
-                        )
-                )
-            }
-
-            // Progress percentage
-            Text(
-                text = "${(animatedProgress * 100).toInt()}% completed",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }

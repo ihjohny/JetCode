@@ -11,24 +11,12 @@ data class UserStatistics(
     val totalCorrectAnswers: Int = 0,
     val totalQuestions: Int = 0,
     val averageScore: Float = 0f,
-    val skillsByDifficulty: Map<Difficulty, SkillDifficultyStats> = emptyMap(),
     val recentActivities: List<RecentActivity> = emptyList(),
 ) {
     val overallAccuracy: Float
         get() = if (totalQuestions > 0) {
             (totalCorrectAnswers.toFloat() / totalQuestions) * 100
         } else 0f
-}
-
-@Serializable
-data class SkillDifficultyStats(
-    val enrolled: Int = 0,
-    val completed: Int = 0,
-    val running: Int = 0,
-) {
-    val total: Int get() = enrolled
-    val progressPercentage: Float
-        get() = if (total > 0) (completed.toFloat() / total) * 100 else 0f
 }
 
 @Serializable

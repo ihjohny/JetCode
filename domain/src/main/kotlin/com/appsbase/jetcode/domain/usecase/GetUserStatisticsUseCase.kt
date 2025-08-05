@@ -3,11 +3,9 @@ package com.appsbase.jetcode.domain.usecase
 import com.appsbase.jetcode.core.common.Result
 import com.appsbase.jetcode.core.common.util.DispatcherProvider
 import com.appsbase.jetcode.domain.model.ActivityType
-import com.appsbase.jetcode.domain.model.Difficulty
 import com.appsbase.jetcode.domain.model.PracticeSetResult
 import com.appsbase.jetcode.domain.model.RecentActivity
 import com.appsbase.jetcode.domain.model.Skill
-import com.appsbase.jetcode.domain.model.SkillDifficultyStats
 import com.appsbase.jetcode.domain.model.SkillProgress
 import com.appsbase.jetcode.domain.model.UserStatistics
 import com.appsbase.jetcode.domain.repository.LearningRepository
@@ -63,26 +61,6 @@ class GetUserStatisticsUseCase(
         skillProgress: List<SkillProgress>,
         practiceResults: List<PracticeSetResult>
     ): UserStatistics {
-        // Calculate skills by difficulty
-        val skillsByDifficulty = mutableMapOf<Difficulty, SkillDifficultyStats>()
-
-        Difficulty.entries.forEach { difficulty ->
-            val skillsInDifficulty = skills.filter { it.difficulty == difficulty }
-            val progressInDifficulty = skillProgress.filter { progress ->
-                skillsInDifficulty.any { it.id == progress.skillId }
-            }
-
-            val enrolled = progressInDifficulty.size
-            val completed =
-                progressInDifficulty.count { it.completedMaterial >= it.totalMaterial && it.totalMaterial > 0 }
-            val running =
-                progressInDifficulty.count { it.completedMaterial > 0 && it.completedMaterial < it.totalMaterial }
-
-            skillsByDifficulty[difficulty] = SkillDifficultyStats(
-                enrolled = enrolled, completed = completed, running = running
-            )
-        }
-
         // Calculate practice statistics
         val totalPracticeSetsCompleted = practiceResults.size
         val totalCorrectAnswers =
@@ -164,7 +142,6 @@ class GetUserStatisticsUseCase(
             totalCorrectAnswers = totalCorrectAnswers,
             totalQuestions = totalQuestions,
             averageScore = averageScore,
-            skillsByDifficulty = skillsByDifficulty,
             recentActivities = recentActivities.sortedByDescending { it.timestamp }.take(7)
         )
     }
