@@ -38,6 +38,7 @@ import com.appsbase.jetcode.feature.dashboard.di.dashboardModule
 import com.appsbase.jetcode.feature.learning.di.learningModule
 import com.appsbase.jetcode.feature.practice.di.practiceModule
 import com.appsbase.jetcode.feature.profile.di.profileModule
+import com.appsbase.jetcode.feature.settings.di.settingsModule
 import com.appsbase.jetcode.main.MainViewModel
 import com.appsbase.jetcode.sync.SyncManager
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -257,4 +258,5 @@ val appModules = listOf(
     learningModule,
     practiceModule,
     profileModule,
+    settingsModule,
 )

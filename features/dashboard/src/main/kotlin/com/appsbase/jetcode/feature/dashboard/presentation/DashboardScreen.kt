@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material.icons.outlined.School
@@ -81,6 +82,7 @@ fun DashboardScreen(
     onViewAllPracticeClick: () -> Unit,
     onViewPracticeHistoryClick: () -> Unit,
     onProfileClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
@@ -95,6 +97,7 @@ fun DashboardScreen(
                 is DashboardEffect.NavigateToPracticeList -> onViewAllPracticeClick()
                 is DashboardEffect.NavigateToPracticeHistory -> onViewPracticeHistoryClick()
                 is DashboardEffect.NavigateToProfile -> onProfileClick()
+                is DashboardEffect.NavigateToSettings -> onSettingsClick()
                 is DashboardEffect.ShowError -> {
                     // Handle error display if needed
                 }
@@ -106,7 +109,8 @@ fun DashboardScreen(
         modifier = modifier, topBar = {
             DashboardTopBar(
                 userName = state.userName,
-                onProfileClick = { viewModel.handleIntent(DashboardIntent.ProfileClicked) })
+                onProfileClick = { viewModel.handleIntent(DashboardIntent.ProfileClicked) },
+                onSettingsClick = { viewModel.handleIntent(DashboardIntent.SettingsClicked) })
         }) { paddingValues ->
         when {
             state.isLoading && state.userSkills.isEmpty() -> {
@@ -143,7 +147,9 @@ fun DashboardScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DashboardTopBar(
-    userName: String, onProfileClick: () -> Unit
+    userName: String,
+    onProfileClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     TopAppBar(title = {
         Column {
@@ -159,6 +165,14 @@ private fun DashboardTopBar(
             )
         }
     }, actions = {
+        IconButton(onClick = onSettingsClick) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                modifier = Modifier.size(28.dp),
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            )
+        }
         IconButton(onClick = onProfileClick) {
             Icon(
                 imageVector = Icons.Default.AccountCircle,

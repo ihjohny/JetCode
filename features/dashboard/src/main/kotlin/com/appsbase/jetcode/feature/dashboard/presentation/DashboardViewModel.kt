@@ -35,6 +35,7 @@ class DashboardViewModel(
             is DashboardIntent.ViewAllPracticeClicked -> navigateToPracticeList()
             is DashboardIntent.ViewPracticeHistoryClicked -> navigateToPracticeHistory()
             is DashboardIntent.ProfileClicked -> navigateToProfile()
+            is DashboardIntent.SettingsClicked -> navigateToSettings()
             is DashboardIntent.RetryClicked -> loadDashboard()
         }
     }
@@ -108,5 +109,9 @@ class DashboardViewModel(
 
     private fun navigateToProfile() {
         sendEffect(DashboardEffect.NavigateToProfile)
+    }
+
+    private fun navigateToSettings() {
+        sendEffect(DashboardEffect.NavigateToSettings)
     }
 }

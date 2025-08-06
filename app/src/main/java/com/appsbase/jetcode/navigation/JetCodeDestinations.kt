@@ -10,6 +10,7 @@ object RouteConstants {
     const val DASHBOARD = "dashboard"
     const val SKILL_LIST = "skill_list"
     const val PROFILE = "profile"
+    const val SETTINGS = "settings"
     const val SKILL_DETAIL = "skill_detail"
     const val TOPIC_DETAIL = "topic_detail"
     const val PRACTICE_LIST = "practice_list"
@@ -25,6 +26,7 @@ sealed class JetCodeDestinations(val route: String) {
     object Dashboard : JetCodeDestinations(RouteConstants.DASHBOARD)
     object SkillList : JetCodeDestinations(RouteConstants.SKILL_LIST)
     object Profile : JetCodeDestinations(RouteConstants.PROFILE)
+    object Settings : JetCodeDestinations(RouteConstants.SETTINGS)
 
     data class SkillDetail(val skillId: String) :
         JetCodeDestinations("${RouteConstants.SKILL_DETAIL}/{${NavigationArgs.SKILL_ID}}") {

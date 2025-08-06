@@ -16,11 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 
 /**
- * Common top app bar with optional dropdown menu
+ * Common top app bar with optional dropdown menu and custom actions
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +30,7 @@ fun CommonTopAppBar(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     dropdownMenuItems: List<DropdownMenuItem> = emptyList(),
+    actions: @Composable () -> Unit = {},
 ) {
     var showDropdownMenu by remember { mutableStateOf(false) }
 
@@ -46,23 +48,27 @@ fun CommonTopAppBar(
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = "Navigate back"
                 )
             }
         },
         actions = {
+            // Custom actions slot
+            actions()
+
+            // Dropdown menu (if items are provided)
             if (dropdownMenuItems.isNotEmpty()) {
                 Box {
                     IconButton(onClick = { showDropdownMenu = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options",
+                            contentDescription = "More options"
                         )
                     }
 
                     DropdownMenu(
                         expanded = showDropdownMenu,
-                        onDismissRequest = { showDropdownMenu = false },
+                        onDismissRequest = { showDropdownMenu = false }
                     ) {
                         dropdownMenuItems.forEach { item ->
                             androidx.compose.material3.DropdownMenuItem(
@@ -71,12 +77,20 @@ fun CommonTopAppBar(
                                     item.onClick()
                                     showDropdownMenu = false
                                 },
+                                leadingIcon = item.icon?.let { icon ->
+                                    {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
                 }
             }
-        },
+        }
     )
 }
 
@@ -86,4 +100,5 @@ fun CommonTopAppBar(
 data class DropdownMenuItem(
     val text: String,
     val onClick: () -> Unit,
+    val icon: ImageVector? = null,
 )

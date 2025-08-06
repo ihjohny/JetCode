@@ -16,6 +16,7 @@ import com.appsbase.jetcode.feature.practice.presentation.practice_list.Practice
 import com.appsbase.jetcode.feature.practice.presentation.practice_list.PracticeTab
 import com.appsbase.jetcode.feature.practice.presentation.practice_quiz.PracticeQuizScreen
 import com.appsbase.jetcode.feature.profile.presentation.ProfileScreen
+import com.appsbase.jetcode.feature.settings.presentation.SettingsScreen
 
 /**
  * Main navigation host for the JetCode app with type-safe routing
@@ -68,6 +69,9 @@ fun JetCodeNavHost(
                 },
                 onProfileClick = {
                     navController.navigate(JetCodeDestinations.Profile.route)
+                },
+                onSettingsClick = {
+                    navController.navigate(JetCodeDestinations.Settings.route)
                 },
             )
         }
@@ -173,6 +177,15 @@ fun JetCodeNavHost(
         // Profile
         composable(JetCodeDestinations.Profile.route) {
             ProfileScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+            )
+        }
+
+        // Settings
+        composable(JetCodeDestinations.Settings.route) {
+            SettingsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },

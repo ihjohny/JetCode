@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":features:learning"))
     implementation(project(":features:practice"))
     implementation(project(":features:profile"))
+    implementation(project(":features:settings"))
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
