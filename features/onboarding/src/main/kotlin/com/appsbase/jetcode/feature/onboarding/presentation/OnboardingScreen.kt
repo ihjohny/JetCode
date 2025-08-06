@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,71 +57,75 @@ fun OnboardingScreen(
         )
     )
 
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f),
-        ) { page ->
-            OnboardingPageContent(
-                page = onboardingPages[page],
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-
-        // Bottom navigation
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+    Scaffold { padding ->
+        Column(
+            modifier = modifier
+                .padding(padding)
+                .fillMaxSize()
         ) {
-            // Skip button
-            if (pagerState.currentPage < onboardingPages.size - 1) {
-                TextButton(
-                    onClick = onOnboardingComplete
-                ) {
-                    Text("Skip")
-                }
-            } else {
-                Spacer(modifier = Modifier.width(72.dp))
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f),
+            ) { page ->
+                OnboardingPageContent(
+                    page = onboardingPages[page],
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
 
-            // Page indicators
+            // Bottom navigation
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                repeat(onboardingPages.size) { index ->
-                    val isSelected = index == pagerState.currentPage
-                    Box(
-                        modifier = Modifier
-                            .size(if (isSelected) 12.dp else 8.dp)
-                            .background(
-                                color = if (isSelected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.outline
-                                }, shape = androidx.compose.foundation.shape.CircleShape
-                            ),
-                    )
-                }
-            }
-
-            // Next/Get Started button
-            Button(
-                onClick = {
-                    if (pagerState.currentPage < onboardingPages.size - 1) {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        }
-                    } else {
-                        onOnboardingComplete()
+                // Skip button
+                if (pagerState.currentPage < onboardingPages.size - 1) {
+                    TextButton(
+                        onClick = onOnboardingComplete
+                    ) {
+                        Text("Skip")
                     }
-                },
-            ) {
-                Text(onboardingPages[pagerState.currentPage].buttonText)
+                } else {
+                    Spacer(modifier = Modifier.width(72.dp))
+                }
+
+                // Page indicators
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    repeat(onboardingPages.size) { index ->
+                        val isSelected = index == pagerState.currentPage
+                        Box(
+                            modifier = Modifier
+                                .size(if (isSelected) 12.dp else 8.dp)
+                                .background(
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.outline
+                                    }, shape = CircleShape
+                                ),
+                        )
+                    }
+                }
+
+                // Next/Get Started button
+                Button(
+                    onClick = {
+                        if (pagerState.currentPage < onboardingPages.size - 1) {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        } else {
+                            onOnboardingComplete()
+                        }
+                    },
+                ) {
+                    Text(onboardingPages[pagerState.currentPage].buttonText)
+                }
             }
         }
     }
